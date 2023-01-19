@@ -7,8 +7,8 @@
 Welcome to the AmazonMe scraper that scrape Amazon product database and save it into excel database. This repository contains the code for a web scraper that can extract information from the Amazon website. The scraper uses the Python Playwright library to automate the process of browsing and extracting data from the website.
 To get started, you will need to have Python and the necessary requirements installed on your machine.
 
-## Installin virual environment:
-It's always a good practice to install your own virutal machine before install necessary requirements:
+## Install virtual environment:
+It's always a good practice to install your a virtual environment before install necessary requirements:
 ```python
 python.exe -m venv environmentname
 environmentname/scripts/activate

@@ -31,3 +31,14 @@ python scraper.py
 
 After running the program, the scraper will ask you to enter a product url. Do it accordingly and it will scrape the data such as<br>
 **Product name**<br>
+**ASIN**<br>
+**Prices**<br>
+**Reviews**<br>
+**Links**
+
+Please note that the script is designed to work with Amazon and may not work with other types of websites. Additionally, the script may be blocked by the website if it detects excessive scraping activity, so please use it responsibly.
+
+If you have any issues or suggestions for improvements, please feel free to open an issue on the repository or submit a pull request.
+
+Thank you for using the AmazonMe!
+

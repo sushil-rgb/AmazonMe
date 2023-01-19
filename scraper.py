@@ -3,6 +3,7 @@ from tools import amazonMe
 
 start_time = time.time()
 
+# Make False if you want to see the live automation.
 make_headless = True
 
 amazonMe(make_headless)

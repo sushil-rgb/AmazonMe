@@ -111,7 +111,7 @@ def amazonMe(head):
     print(f"Scraping done. Now exporting to excel database.")
     
     df = pd.DataFrame(amazon_dicts)
-    df.to_excel(f"HP {product_name}-Amazon database.xlsx", index=False)
+    df.to_excel(f"{product_name}-Amazon database.xlsx", index=False)
     print(f"{product_name} Database is saved.")    
 
    

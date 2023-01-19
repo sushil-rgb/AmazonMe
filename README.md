@@ -8,7 +8,7 @@ Welcome to the AmazonMe scraper that scrape Amazon product database and save it 
 To get started, you will need to have Python and the necessary requirements installed on your machine.
 
 ## Install virtual environment:
-It's always a good practice to install your a virtual environment before install necessary requirements:
+It's always a good practice to install your a virtual environment before installing necessary requirements:
 ```python
 python.exe -m venv environmentname
 environmentname/scripts/activate

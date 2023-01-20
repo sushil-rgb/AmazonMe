@@ -29,16 +29,16 @@ playwright install
 python scraper.py
 ```
 
+## Features
 After running the program, the scraper will ask you to enter a product url. Do it accordingly and it will scrape the data such as<br>
-**Product name**<br>
-**ASIN**<br>
-**Prices**<br>
-**Reviews**<br>
-**Links**
+**Product name**, **ASIN**, **Prices**, **Reviews**, **Links**
 
-Please note that the script is designed to work with Amazon and may not work with other types of websites. Additionally, the script may be blocked by the website if it detects excessive scraping activity, so please use it responsibly.
+## Note
+Please note that the script is designed to work with Amazon and may not work with other types of websites. Additionally, the script may be blocked by the website if it detects excessive scraping activity, so please use this tool responsibly and in compliance with Amazon's terms of service
 
 If you have any issues or suggestions for improvements, please feel free to open an issue on the repository or submit a pull request.
 
-Thank you for using the AmazonMe!
+## License
+This project is licensed under GPL-3.0 license. This scraper is provides as-is and the author is not repsonsible for any damages or legal issues that may result from its user. Use it at your own risk. Thank you for using the AmazonMe!
+
 

@@ -88,6 +88,7 @@ def amazonMe(head):
 
         for click in range(int(last_page)):
             print(f"Scraping page | {click+1}")
+            page.wait_for_timeout(timeout=randomTime(8)*1000)
             for content in page.query_selector_all(main_content):
                 data = {
                     "Product": catchClause.text(content.query_selector(hyperlink)),

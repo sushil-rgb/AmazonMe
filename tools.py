@@ -88,7 +88,7 @@ def amazonMe(head):
 
         for click in range(int(last_page)):
             print(f"Scraping page | {click+1}")
-            page.wait_for_timeout(timeout=randomTime(8)*1000)
+            page.wait_for_timeout(timeout=randomTime(5)*1000)
             for content in page.query_selector_all(main_content):
                 data = {
                     "Product": catchClause.text(content.query_selector(hyperlink)),
@@ -106,14 +106,14 @@ def amazonMe(head):
             try:
                 page.query_selector(next_button).click()
             except AttributeError:
-                print(f'Issues on page number {click+1}')
-                continue
+                print(f"Oops content loading error beyond this page. Issue on url {page.url} | number:> {click+1}")
+                break
 
         browser.close()
 
     print(f"Scraping done. Now exporting to excel database.")
 
     df = pd.DataFrame(amazon_dicts)
-    df.to_excel(f"Car and vehicle electronics-Amazon database.xlsx", index=False)
-    print(f"Automotive Database is saved.")
+    df.to_excel(f"Baby products 2-Amazon database.xlsx", index=False)
+    print(f"Baby products Database is saved.")
 

@@ -5,7 +5,7 @@ from tools import amazonMe
 start_time = time.time()
 
 # Make False if you want to see the live automation.
-make_headless = False
+make_headless = True
 
 amazonMe(make_headless)
 
@@ -15,4 +15,3 @@ time_in_mins = round(total_time/60)
 
 print(f"Took {time_in_secs} seconds | {time_in_mins} minutes.")
 
-  

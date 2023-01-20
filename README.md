@@ -1,5 +1,8 @@
 <p align='center'>
-  <a href='https://www.amazon.com'><img src='https://m.media-amazon.com/images/I/31%2BDgxPWXtL._SR80,60_.jpg'></a>
+  <a href='https://www.amazon.com'><img src='https://miro.medium.com/max/799/1*Sjalm0U8yZgRBMmRVuGGLQ.png'
+                                        width='300'
+                                        height=auto
+                                        ></a>
 </p>
 
 
@@ -39,6 +42,6 @@ Please note that the script is designed to work with Amazon and may not work wit
 If you have any issues or suggestions for improvements, please feel free to open an issue on the repository or submit a pull request.
 
 ## License
-This project is licensed under GPL-3.0 license. This scraper is provided as-is and for eductaional purposes only. The author is not repsonsible for any damages or legal issues that may result from its user. Use it at your own risk. Thank you for using the AmazonMe!
+This project is licensed under GPL-3.0 license. This scraper is provided as-is and for educational purposes only. The author is not repsonsible for any damages or legal issues that may result from its user. Use it at your own risk. Thank you for using the AmazonMe!
 
 

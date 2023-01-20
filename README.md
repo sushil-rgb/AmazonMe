@@ -39,6 +39,6 @@ Please note that the script is designed to work with Amazon and may not work wit
 If you have any issues or suggestions for improvements, please feel free to open an issue on the repository or submit a pull request.
 
 ## License
-This project is licensed under GPL-3.0 license. This scraper is provided as-is and for eductaional purposes only. The author is not repsonsible for any damages or legal issues that may result from its user. Use it at your own risk. Thank you for using the AmazonMe!
+This project is licensed under GPL-3.0 license. This scraper is provided as-is and for educational purposes only. The author is not repsonsible for any damages or legal issues that may result from its user. Use it at your own risk. Thank you for using the AmazonMe!
 
 

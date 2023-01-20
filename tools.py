@@ -106,13 +106,14 @@ def amazonMe(head):
             try:
                 page.query_selector(next_button).click()
             except AttributeError:
-                break
+                print(f'Issues on page number {click+1}')
+                continue
 
         browser.close()
 
     print(f"Scraping done. Now exporting to excel database.")
 
     df = pd.DataFrame(amazon_dicts)
-    df.to_excel(f"{product_name}-Amazon database.xlsx", index=False)
-    print(f"{product_name} Database is saved.")
+    df.to_excel(f"Car and vehicle electronics-Amazon database.xlsx", index=False)
+    print(f"Automotive Database is saved.")
 

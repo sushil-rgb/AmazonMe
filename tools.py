@@ -1,12 +1,13 @@
 import re
 import sys
 import random
-import itertools
 import pandas as pd
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
 
 
-# random time interval between each requests made to server. Scrape responsibly:
+# Random time interval between each requests made to server.
+# You can decrease the time interval for faster scraping, however I discourage you to do so as it may hurt the server and Amazon may ban your IP address.
+#  Scrape responsibly:
 def randomTime(val):
     ranges = [i for i in range(3, val+1)]
     return random.choice(ranges)
@@ -19,18 +20,13 @@ def userAgents():
         return random.choice(agents)
 
 
-# Using intertools to flatten multi-dimensional list:
-def flat(d_lists):
-    return list(itertools.chain(*d_lists))
-
-
-# Try except to return the value when there is no element. This helpsto a
+# Try except to return the value when there is no element. This helps to avoid throwing an error when there is no element.
 class TryExcept:
     def text(self, element):
         try:
             return element.inner_text().strip()
         except AttributeError:
-            return "N/A"    
+            return "N/A"
 
     def attributes(self, element, attr):
         try:
@@ -42,31 +38,30 @@ class TryExcept:
 def amazonMe(head):
     print(f"Initiating the Amazon automation | Powered by Playwright.")
     amazon_dicts = []
-    catchClause = TryExcept()    
+    catchClause = TryExcept()
 
-    user_input = str(input("Enter a URL:> "))   
-    # user_input = """https://www.amazon.com/s?k=creatine&crid=1O52ZAP5GFBTQ&sprefix=creatine%2Caps%2C538&ref=nb_sb_noss_1"""
-    amazon_link_pattern = re.search("^https://www.amazon.com/s?k=*", user_input) 
+    user_input = str(input("Enter a URL:> "))    
+    amazon_link_pattern = re.search("^https://www.amazon.com/s\?k=.*", user_input)
     if amazon_link_pattern != None:
         print(f"Invalid link. Please try proper Amazon link.")
         sys.exit()
-    
-    with sync_playwright() as play:    
+
+    with sync_playwright() as play:
         browser = play.chromium.launch(headless=head, slow_mo=3*1000)
         page = browser.new_page(user_agent=userAgents())
         page.goto(user_input)
-    
+
         page.wait_for_timeout(timeout=randomTime(4)*1000)
 
-        ##################### XPATH selectors ###########################################################################################################    
+        ##################### XPATH selectors ###########################################################################################################
         search_name = "//span[@class='a-color-state a-text-bold']"
         total_page_number_first = "//span[@class='s-pagination-item s-pagination-disabled']"
         total_page_number_second = "//span[@class='s-pagination-strip']/a"
         next_button = "//a[@class='s-pagination-item s-pagination-next s-pagination-button s-pagination-separator']"
-        
-        main_content = "//div[@data-component-type='s-search-result']"        
-        
-        hyperlink = "//a[@class='a-link-normal s-underline-text s-underline-link-text s-link-style a-text-normal']"        
+
+        main_content = "//div[@data-component-type='s-search-result']"
+
+        hyperlink = "//a[@class='a-link-normal s-underline-text s-underline-link-text s-link-style a-text-normal']"
         price = "//span[@data-a-color='base']/span[@class='a-offscreen']"
         old_price = "//span[@data-a-color='secondary']/span[@class='a-offscreen']"
         review = "//span[@class='a-declarative']/a/i/span[@class='a-icon-alt']"
@@ -74,14 +69,20 @@ def amazonMe(head):
         image = "//img[@class='s-image']"
         ###################################################################################################################################################
 
-        product_name = re.sub(r"[^a-zA-Z0-9]", "", catchClause.text(page.query_selector(search_name))).capitalize()                
-        page.wait_for_selector(main_content, timeout=10*1000)
+        product_name = re.sub(
+            r"[^a-zA-Z0-9]", "", catchClause.text(page.query_selector(search_name))).capitalize()
 
         try:
-            last_page = page.query_selector(total_page_number_first).inner_text().strip()
+            page.wait_for_selector(main_content, timeout=10*1000)
+        except PlaywrightTimeoutError:
+            print(f"Content loading error. Please try again in few minute.")
+
+        try:
+            last_page = page.query_selector(
+                total_page_number_first).inner_text().strip()
         except AttributeError:
-            last_page = page.query_selector_all(total_page_number_second)[-2].get_attribute('aria-label').split()[-1] 
-        
+            last_page = page.query_selector_all(total_page_number_second)[-2].get_attribute('aria-label').split()[-1]
+
         print(f"Number of pages | {last_page}.")
         print(f"Scraping | {product_name}.")
 
@@ -98,21 +99,19 @@ def amazonMe(head):
                     "Hyperlinnk": f"""http://www.amazon.com{catchClause.attributes(content.query_selector(hyperlink), 'href')}""",
                     "Image": f"""{catchClause.attributes(content.query_selector(image), 'src')}""",
                 }
-           
-                amazon_dicts.append(data)         
-       
+
+                amazon_dicts.append(data)
+
             try:
-                page.query_selector(next_button).click() 
+                page.query_selector(next_button).click()
             except AttributeError:
-                break    
+                break
 
         browser.close()
 
     print(f"Scraping done. Now exporting to excel database.")
-    
+
     df = pd.DataFrame(amazon_dicts)
     df.to_excel(f"{product_name}-Amazon database.xlsx", index=False)
-    print(f"{product_name} Database is saved.")    
+    print(f"{product_name} Database is saved.")
 
-   
-    

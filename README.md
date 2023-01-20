@@ -1,5 +1,8 @@
 <p align='center'>
-  <a href='https://www.amazon.com'><img src='https://miro.medium.com/max/799/1*Sjalm0U8yZgRBMmRVuGGLQ.png'></a>
+  <a href='https://www.amazon.com'><img src='https://miro.medium.com/max/799/1*Sjalm0U8yZgRBMmRVuGGLQ.png'
+                                        width='300'
+                                        height=auto
+                                        ></a>
 </p>
 
 

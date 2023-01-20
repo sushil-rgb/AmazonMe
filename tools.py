@@ -7,7 +7,7 @@ from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeo
 
 # Random time interval between each requests made to server.
 # You can decrease the time interval for faster scraping, however I discourage you to do so as it may hurt the server and Amazon may ban your IP address.
-#  Scrape responsibly:
+# Scrape responsibly:
 def randomTime(val):
     ranges = [i for i in range(3, val+1)]
     return random.choice(ranges)

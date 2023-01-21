@@ -1,0 +1,16 @@
+# XPATH selectors:
+
+product_name_one: "//div[@id='departments']/ul[@class='a-unordered-list a-nostyle a-vertical a-spacing-medium']/li[@class='a-spacing-micro s-navigation-indent-1']/span[@class='a-list-item']/span[@class='a-size-base a-color-base a-text-bold']"
+product_name_two: "//div[@id='departments']/ul[@class='a-unordered-list a-nostyle a-vertical a-spacing-medium']/li[@class='a-spacing-micro']/span[@class='a-list-item']"
+
+total_page_number_first: "//span[@class='s-pagination-item s-pagination-disabled']"
+total_page_number_second: "//span[@class='s-pagination-strip']/a"
+next_button: "//a[@class='s-pagination-item s-pagination-next s-pagination-button s-pagination-separator']"
+
+main_content: "//div[@data-component-type='s-search-result']"
+hyperlink: "//a[@class='a-link-normal s-underline-text s-underline-link-text s-link-style a-text-normal']"
+price: "//span[@data-a-color='base']/span[@class='a-offscreen']"
+old_price: "//span[@data-a-color='secondary']/span[@class='a-offscreen']"
+review: "//span[@class='a-declarative']/a/i/span[@class='a-icon-alt']"
+review_count: "//a[@class='a-link-normal s-underline-text s-underline-link-text s-link-style']/span[@class='a-size-base s-underline-text']"
+image: "//img[@class='s-image']"

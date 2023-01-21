@@ -30,10 +30,11 @@ def userAgents():
         agents = f.read().split("\n")
         return randomMe(agents)
 
+
 # function for yaml selectors:
 def yamlMe(selectors):
     with open(f"{selectors}.yaml") as file:
-        sel = yaml.load(file, Loader=yaml.FullLoader) 
+        sel = yaml.load(file, Loader=yaml.SafeLoader) 
         return sel
 
 
@@ -122,6 +123,6 @@ def amazonMe(head):
     print(f"Scraping done. Now exporting to excel database.")
 
     df = pd.DataFrame(amazon_dicts)
-    df.to_excel(f"Amazon database//{product_name}-Amazon database.xlsx", index=False)
+    df.to_excel(f"{product_name}-Amazon database.xlsx", index=False)
     print(f"{product_name} is saved.")
 

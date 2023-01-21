@@ -69,7 +69,8 @@ def amazonMe(head):
 
     with sync_playwright() as play:
         browser = play.chromium.launch(headless=head, slow_mo=3*1000)
-        page = browser.new_page(user_agent=userAgents())
+        context = browser.new_context(user_agent=userAgents())
+        page = context.new_page()
         page.goto(user_input)
 
         page.wait_for_timeout(timeout=randomTime(4)*1000)
@@ -121,6 +122,6 @@ def amazonMe(head):
     print(f"Scraping done. Now exporting to excel database.")
 
     df = pd.DataFrame(amazon_dicts)
-    df.to_excel(f"{product_name}-Amazon database.xlsx", index=False)
+    df.to_excel(f"Amazon database//{product_name}-Amazon database.xlsx", index=False)
     print(f"{product_name} is saved.")
 

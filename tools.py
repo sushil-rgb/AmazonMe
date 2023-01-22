@@ -1,5 +1,4 @@
 import re
-import sys
 import yaml
 import random
 import pandas as pd
@@ -65,8 +64,9 @@ def amazonMe(head):
     # Below regex pattern is to verify certain pattern on amazon link after clicking products, it may look confusing.
     amazon_link_pattern = re.search("^https://www.amazon\.(com|co\.uk)/s\?.+", user_input)
     if amazon_link_pattern == None:
-        print(f"Invalid link. Please enter an amazon link including product category of your choice.")
-        sys.exit()
+        message = "Invalid link. Please enter an amazon link including product category of your choice."
+        return message
+        
 
     with sync_playwright() as play:
         browser = play.chromium.launch(headless=head, slow_mo=3*1000)

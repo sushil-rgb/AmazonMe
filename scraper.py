@@ -7,7 +7,7 @@ start_time = time.time()
 # Make False if you want to see the live automation.
 make_headless = True
 
-amazonMe(make_headless)
+print(amazonMe(make_headless))
 
 total_time = round(time.time()-start_time, 2)
 time_in_secs = round(total_time)

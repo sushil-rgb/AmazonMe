@@ -3,7 +3,7 @@
 product_name_one: "//div[@id='departments']/ul[@class='a-unordered-list a-nostyle a-vertical a-spacing-medium']/li[@class='a-spacing-micro s-navigation-indent-1']/span[@class='a-list-item']/span[@class='a-size-base a-color-base a-text-bold']"
 product_name_two: "//div[@id='departments']/ul[@class='a-unordered-list a-nostyle a-vertical a-spacing-medium']/li[@class='a-spacing-micro']/span[@class='a-list-item']"
 
-total_page_number_first: "//span[@class='s-pagination-item s-pagination-disabled']"
+total_page_number_first: "//span[@class='s-pagination-strip']/span[@class='s-pagination-item s-pagination-disabled']"
 total_page_number_second: "//span[@class='s-pagination-strip']/a"
 next_button: "//a[@class='s-pagination-item s-pagination-next s-pagination-button s-pagination-separator']"
 

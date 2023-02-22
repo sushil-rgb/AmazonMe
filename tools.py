@@ -1,4 +1,5 @@
 import re
+import os
 import yaml
 import random
 import pandas as pd
@@ -62,7 +63,7 @@ def amazonMe(head):
     
     # regex pattern to verify if the entered link is correct Amazon link:
     # Below regex pattern is to verify certain pattern on amazon link after clicking products, it may look confusing.
-    amazon_link_pattern = re.search("^https://www.amazon\.(com|co\.uk)/s\?.+", user_input)
+    amazon_link_pattern = re.search("^https://www.amazon\.(com|co\.uk)(/s\?.|/b/.)+", user_input)
     if amazon_link_pattern == None:
         message = "Invalid link. Please enter an amazon link including product category of your choice."
         return message
@@ -91,8 +92,11 @@ def amazonMe(head):
             last_page = page.query_selector(
                 selectors['total_page_number_first']).inner_text().strip()
         except AttributeError:
-            last_page = page.query_selector_all(selectors['total_page_number_second'])[-2].get_attribute('aria-label').split()[-1]
-
+            try:
+                last_page = page.query_selector_all(selectors['total_page_number_second'])[-2].get_attribute('aria-label').split()[-1]
+            except IndexError:
+                last_page = 3
+        
         print(f"Number of pages | {last_page}.")
         print(f"Scraping | {product_name}.")
 
@@ -122,7 +126,14 @@ def amazonMe(head):
 
     print(f"Scraping done. Now exporting to excel database.")
 
+    path_dir = os.path.join(os.getcwd(), 'Amazon database')
+
+    if os.path.exists(path_dir):
+        pass
+    else:
+        os.mkdir(path_dir)
+
     df = pd.DataFrame(amazon_dicts)
-    df.to_excel(f"{product_name}-Amazon database.xlsx", index=False)
+    df.to_excel(f"{os.getcwd()}//Amazon database//{product_name}-Amazon database.xlsx", index=False)
     print(f"{product_name} is saved.")
 

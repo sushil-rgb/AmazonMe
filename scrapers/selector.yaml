@@ -14,3 +14,7 @@ old_price: "//span[@data-a-color='secondary']/span[@class='a-offscreen']"
 review: "//span[@class='a-declarative']/a/i/span[@class='a-icon-alt']"
 review_count: "//a[@class='a-link-normal s-underline-text s-underline-link-text s-link-style']/span[@class='a-size-base s-underline-text']"
 image: "//img[@class='s-image']"
+
+# Below selectors are for individual links:
+ASIN: "//div[@data-feature-name='title']"
+ASIN_I: "//div[@data-feature-name='titleblock']"

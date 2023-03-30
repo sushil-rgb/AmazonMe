@@ -107,11 +107,11 @@ class Amazon:
             
             asin_element = await page.query_selector(self.selectors['ASIN'])
             try:
-                asin = await asin_element.get_attribute('data-csa-c-asin')
+                asin = f"""ASIN: {await asin_element.get_attribute('data-csa-c-asin')}"""
             except AttributeError:
                 try:
                     asin_one = await page.query_selector(self.selectors['ASIN_I'])
-                    asin = await asin_one.get_attribute('data-csa-c-asin')
+                    asin = f"""ISBN: {await asin_one.get_attribute('data-csa-c-asin')}"""
                 except PlaywrightTimeoutError:
                     asin = "Content loading error. Please try again in few minutes."
 

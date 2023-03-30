@@ -32,7 +32,7 @@ def run_discord_bot():
 
         if message.guild is None and message.content.startswith('https://www.amazon.com/'):
             asin = await Amazon().getASIN(user_message)
-            await message.author.send(f"""ASIN | {asin}""")
+            await message.author.send(asin)
         else:
             await message.author.send(f"Invalid link. Please try a proper valid Amazon product link.")
         

@@ -114,6 +114,9 @@ class Amazon:
                     asin = f"""ISBN: {await asin_one.get_attribute('data-csa-c-asin')}"""
                 except PlaywrightTimeoutError:
                     asin = "Content loading error. Please try again in few minutes."
+                    
+            
+            await browser.close()
 
             return asin
        

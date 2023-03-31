@@ -1,4 +1,5 @@
 import os
+import re
 import sys
 import discord
 from dotenv import load_dotenv
@@ -36,7 +37,8 @@ def run_discord_bot():
         else:
             await message.author.send(f"Invalid link. Please try a proper valid Amazon product link.")
         
-        if message.guild is None and message.content.startswith('hi'):
-            await message.author.send(f"hey {username}")
+        regex_pattern = re.compile("/(hi|hello|hey|yo)\b/i", re.IGNORECASE)
+        if message.guild is None and message.content.startswith(regex_pattern):
+            await message.author.send(f"hey {username}. Type '!help' to know list of commands.")
     
     client.run(Token)

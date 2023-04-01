@@ -7,6 +7,7 @@ from playwright.async_api import async_playwright, TimeoutError as PlaywrightTim
 
 class Amazon:
     def __init__(self):
+        self.headers = {'User-Agent': userAgents()}
         self.catchClause = TryExcept()
         self.selectors = yamlMe('selector')
 
@@ -91,8 +92,35 @@ class Amazon:
         df.to_excel(f"{os.getcwd()}//Amazon database//{product_name}-Amazon database.xlsx", index=False)
         print(f"{product_name} is saved.")
 
-
     async def getASIN(self, url):
         split_url = url.split('/')[-2]
         return split_url
         
+    async def dataByAsin(self, asin=None):        
+        url = f"https://www.amazon.com/dp/{asin}"        
+        async with async_playwright() as play:
+            browser= await play.chromium.launch(headless = True)
+            context = await browser.new_context(user_agent = userAgents())
+            page = await context.new_page()
+
+            try:
+                await page.goto(url) 
+            except PlaywrightTimeoutError:
+                return 'Content loading error. Please try again in few minutes.'
+
+            datas = {
+                'Name': await self.catchClause.text(page.query_selector(self.selectors['name'])),
+                'Price': await self.catchClause.text(page.query_selector(self.selectors['price_us'])),
+                'Rating': await self.catchClause.text(page.query_selector(self.selectors['review'])),
+                'Rating count': (await self.catchClause.text(page.query_selector(self.selectors['rating_count']))),
+                'Hyperlink': url,
+                'Image': await self.catchClause.attributes(page.query_selector(self.selectors['image_link']), 'src'),
+                'Store': str(await self.catchClause.text(page.query_selector(self.selectors['store']))).split('Visit the')[-1].strip(),
+                'Store link': f"""https://www.amazon.com{str(await self.catchClause.attributes(page.query_selector(self.selectors['store']), 'href'))}""",
+                
+             }
+
+            await browser.close()
+
+            return datas
+       

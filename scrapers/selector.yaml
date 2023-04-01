@@ -15,6 +15,11 @@ review: "//span[@class='a-declarative']/a/i/span[@class='a-icon-alt']"
 review_count: "//a[@class='a-link-normal s-underline-text s-underline-link-text s-link-style']/span[@class='a-size-base s-underline-text']"
 image: "//img[@class='s-image']"
 
-# Below selectors are for individual links:
-ASIN: "//div[@data-feature-name='title']"
-ASIN_I: "//div[@data-feature-name='titleblock']"
+# Below selectors are for individual datas:
+name: "span#productTitle"
+price_uk: "span#price"
+price_us: "span#price_inside_buybox"
+price_in: "span.a-price.aok-align-center.reinventPricePriceToPayMargin.priceToPay span.a-offscreen"
+rating_count: "span#acrCustomerReviewText"
+image_link: "div#imgTagWrapperId img"
+store: "//a[@id='bylineInfo']"

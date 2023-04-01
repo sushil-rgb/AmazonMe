@@ -2,6 +2,7 @@ import re
 import os
 import sys
 import discord
+import datetime
 
 sys.path.append(os.getcwd())
 from scrapers.scraper import Amazon
@@ -20,26 +21,21 @@ async def asin_isbn(userInput):
     return datas
 
 
-async def send_message(message):
-    if message.author == client.user:
-        return
+async def getdataByasin(userInput, user):
+    datas = await Amazon().dataByAsin(userInput)
+
+    embed = discord.Embed(title=datas['Name'], url=datas['Hyperlink'], color=0xff9900)    
     
-    username = str(message.author)
-    user_message = str(message.content)
-    channel = str(message.channel)
+    embed.add_field(name = 'Price', value = datas['Price'], inline = False)
+    embed.add_field(name = "Store", value = f"[{datas['Store']}]({datas['Store link']})", inline = False)
+    embed.add_field(name = 'Rating', value = datas['Rating'], inline = False)
+    embed.add_field(name ='Review count', value = datas['Rating count'], inline = False)      
+    embed.set_thumbnail(url = datas['Image'])
+    
+    
+    embed.timestamp = datetime.datetime.now()
+    embed.set_footer(text = 'Powered by Python', icon_url = 'https://logos-download.com/wp-content/uploads/2016/10/Python_logo_icon.png')
 
-    print(f'{username} said: {user_message} {channel}.')
-
-    regex_pattern = """^hi|hello|hey|yo"""
-    amazon_pattern = '(https?://)?(www\.)?amazon\.(com|in|co\.uk)/.+'
-    if message.guild is None and re.match(regex_pattern, message.content):
-        await message.author.send(f"Hey {username}. Type '!help' to know the list of commands.")
-    elif message.content == '!help':
-        await message.author.send('Paste the Amazon products link to know the ASIN or ISBN respectively.')
-    elif message.guild is None and re.search(amazon_pattern, user_message):        
-        datas = await asin_isbn(user_message)
-        await message.author.send(datas)
-    elif message.guild is not None and isinstance(message.author, discord.Member): 
-        await message.author.send(f"Invalid link. Please try a valid Amazon product link.")
+    await user.send(embed = embed)
     
     

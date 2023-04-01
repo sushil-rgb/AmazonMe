@@ -31,7 +31,7 @@ async def send_message(message):
     print(f'{username} said: {user_message} {channel}.')
 
     regex_pattern = """^hi|hello|hey|yo"""
-    amazon_pattern = '(https?://)?(www\.)?amazon\.com/.+'
+    amazon_pattern = '(https?://)?(www\.)?amazon\.(com|in|co\.uk)/.+'
     if message.guild is None and re.match(regex_pattern, message.content):
         await message.author.send(f"Hey {username}. Type '!help' to know the list of commands.")
     elif message.content == '!help':

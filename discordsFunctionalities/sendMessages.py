@@ -36,12 +36,10 @@ async def send_message(message):
         await message.author.send(f"Hey {username}. Type '!help' to know the list of commands.")
     elif message.content == '!help':
         await message.author.send('Paste the Amazon products link to know the ASIN or ISBN respectively.')
-    elif message.guild is None and re.search(amazon_pattern, user_message):
-        await message.author.send('Please wait.')
+    elif message.guild is None and re.search(amazon_pattern, user_message):        
         datas = await asin_isbn(user_message)
         await message.author.send(datas)
     elif message.guild is not None and isinstance(message.author, discord.Member): 
         await message.author.send(f"Invalid link. Please try a valid Amazon product link.")
     
-
     

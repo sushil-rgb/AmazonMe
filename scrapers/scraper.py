@@ -10,24 +10,22 @@ class Amazon:
         self.catchClause = TryExcept()
         self.selectors = yamlMe('selector')
 
-    async def amazonMe(self, head):
+    async def amazonMe(self, head, url):
         print(f"Initiating the Amazon automation | Powered by Playwright.")
-        amazon_dicts = []
-
-        user_input = str(input("Enter a URL:> "))          
+        amazon_dicts = []                  
 
         # regex pattern to verify if the entered link is correct Amazon link:
         # Below regex pattern is to verify certain pattern on amazon link after clicking products, it may look confusing.
-        amazon_link_pattern = re.search("^https://www.amazon\.(com|co\.uk)(/s\?.|/b/.)+", user_input)
+        amazon_link_pattern = re.search("^https://www.amazon\.(com|co\.uk)(/s\?.|/b/.)+", url)
         if amazon_link_pattern == None:
             message = "Invalid link. Please enter an amazon link including product category of your choice."
             return message
         
         async with async_playwright() as play:
-            browser = await play.chromium.launch(headless=head, slow_mo=3*1000)
-            context = await browser.new_context(user_agent=userAgents())
+            browser = await play.chromium.launch(headless=head, slow_mo=3*1000) 
+            context = await browser.new_context(user_agent = userAgents())                      
             page = await context.new_page()
-            await page.goto(user_input)
+            await page.goto(url)
 
             await page.wait_for_timeout(timeout=randomTime(4)*1000)
 
@@ -36,27 +34,29 @@ class Amazon:
                 product_name = (await (await page.query_selector(self.selectors['product_name_one'])).inner_text()).strip()                
             except AttributeError:
                 product_name = (await (await page.query_selector(self.selectors['product_name_two'])).inner_text()).strip()
-                        
+                    
             try:
                 await page.wait_for_selector(self.selectors['main_content'], timeout=10*1000)
-            except PlaywrightTimeoutError:
-                print(f"Content loading error. Please try again in few minute.")       
-                   
+            except TimeoutError:
+                print(f"Content loading error. Please try again in few minute.")  
+                return     
+
+            num_of_pages = '3'
             try:
                 num_of_pages = (await (await page.query_selector(self.selectors['total_page_number_first'])).inner_text()).strip()                
             except AttributeError:
-                try:
-                    num_of_pages = (await page.query_selector_all(self.selectors['total_page_number_second']))[-2].get_attribute('aria-label').split()[-1]                    
-                except IndexError:
-                    num_of_pages += '3'
-            
+                try:                    
+                    num_of_pages = (await page.query_selector_all(self.selectors['total_page_number_second']))[-2].get_attribute('aria-label').split()[-1]      
+                except (TimeoutError, IndexError):
+                    pass                
+        
             print(f"Number of pages | {num_of_pages}.")
             print(f"Scraping | {product_name}.")
 
-            for click in range(1, int(num_of_pages)+1):
+            for click in range(1, int(num_of_pages)):
                 print(f"Scraping page | {click}")
                 await page.wait_for_timeout(timeout=randomTime(8)*1000)
-                
+
                 card_contents = await page.query_selector_all(self.selectors['main_content'])
                 for content in card_contents:
                     data = {                        
@@ -70,7 +70,7 @@ class Amazon:
                         "Image URL": f"""{await self.catchClause.attributes(content.query_selector(self.selectors['image']), 'src')}""",                    
                     }
                     amazon_dicts.append(data)
-                
+
                 try:
                     await (await page.query_selector(self.selectors['next_button'])).click()
                 except AttributeError:
@@ -102,11 +102,11 @@ class Amazon:
             
             asin_element = await page.query_selector(self.selectors['ASIN'])
             try:
-                asin = f"""ASIN: {await asin_element.get_attribute('data-csa-c-asin')}"""
+                asin = await asin_element.get_attribute('data-csa-c-asin')
             except AttributeError:
                 try:
                     asin_one = await page.query_selector(self.selectors['ASIN_I'])
-                    asin = f"""ISBN: {await asin_one.get_attribute('data-csa-c-asin')}"""
+                    asin = await asin_one.get_attribute('data-csa-c-asin')
                 except PlaywrightTimeoutError:
                     asin = "Content loading error. Please try again in few minutes."
                     

@@ -12,7 +12,8 @@ make_headless = True
 
 
 async def main():
-    datas = await Amazon().amazonMe(make_headless)
+    userInput = input("Enter a URL:> ")
+    datas = await Amazon().amazonMe(make_headless, userInput)
     return datas
 
 
@@ -28,4 +29,3 @@ if __name__ == '__main__':
     
     print(f"Took {time_in_secs} seconds | {time_in_mins} minutes.")
 
-    

@@ -39,16 +39,17 @@ def yamlMe(selectors):
 
 
 class TryExcept:
-    def text(self, element):
+    async def text(self, element):        
         try:
-            return element.inner_text().strip()
+            elements = (await (await element).inner_text()).strip()
         except AttributeError:
-            return "N/A"
+            elements = "N/A"        
+        return elements
 
-    def attributes(self, element, attr):
+    async def attributes(self, element, attr):        
         try:
-            return element.get_attribute(attr)
+            elements = await (await element).get_attribute(attr) 
         except AttributeError:
-            return "N/A"
-
+            elements = "N/A"
+        return elements
 

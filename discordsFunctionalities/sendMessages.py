@@ -39,9 +39,10 @@ async def send_message(message):
         await message.author.send('Please wait.')
         datas = await asin_isbn(user_message)
         await message.author.send(datas)
-    else: 
+    elif message.guild is None: 
         await message.author.send(f"Invalid link. Please try a valid Amazon product link.")
-
+    else:
+        pass
     
     
 

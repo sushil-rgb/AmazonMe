@@ -6,6 +6,14 @@
 </p>
 
 
+# Discord Integration
+The web scraper now has a Discord bot that can extract the ASIN or ISBN of a product from
+a link sent in a direct message. To use the bot follow these steps:
+
+1. Invite the bot to your Discord server using this <a href = "https://discord.com/api/oauth2/authorize?client_id=1091094561314582528&permissions=1634235578438&scope=bot">amazonBuddy.</a>
+2. Send a product link to the bot in a direct message.
+3. The bot will search the link for an ASIN or ISBN, and respond with the appropriate identifier.
+
 # AmazonMe
 Welcome to the AmazonMe scraper that scrape Amazon product database and save it into excel database. This repository contains the code for a web scraper that can extract information from the Amazon website. The scraper uses the Python Playwright library to automate the process of browsing and extracting data from the website.
 To get started, you will need to have Python and the necessary requirements installed on your machine.

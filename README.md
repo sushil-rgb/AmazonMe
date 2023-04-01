@@ -6,7 +6,7 @@
 </p>
 
 
-# Discord Integration
+### Discord Integration
 The web scraper now has a Discord bot that can extract the ASIN or ISBN of a product from
 a link sent in a direct message. To use the bot follow these steps:
 

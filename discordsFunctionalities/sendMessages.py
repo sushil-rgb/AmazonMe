@@ -25,7 +25,7 @@ async def send_message(message):
         return
     
     username = str(message.author)
-    user_message = str(message.content.lower())
+    user_message = str(message.content)
     channel = str(message.channel)
 
     print(f'{username} said: {user_message} {channel}.')

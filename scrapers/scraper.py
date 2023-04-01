@@ -93,26 +93,6 @@ class Amazon:
 
 
     async def getASIN(self, url):
-        async with async_playwright() as play:
-            browser = await play.chromium.launch(headless = True, slow_mo = 3 * 1000)
-            context = await browser.new_context(user_agent = userAgents())
-            page = await context.new_page()
-
-            await page.goto(url)
-            
-            asin_element = await page.query_selector(self.selectors['ASIN'])
-            try:
-                asin = await asin_element.get_attribute('data-csa-c-asin')
-            except AttributeError:
-                try:
-                    asin_one = await page.query_selector(self.selectors['ASIN_I'])
-                    asin = await asin_one.get_attribute('data-csa-c-asin')
-                except PlaywrightTimeoutError:
-                    asin = "Content loading error. Please try again in few minutes."
-                    
-            
-            await browser.close()
-
-            return asin
-       
+        split_url = url.split('/')[-2]
+        return split_url
         

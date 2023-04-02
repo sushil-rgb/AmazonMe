@@ -20,6 +20,7 @@ name: "span#productTitle"
 price_uk: "span#price"
 price_us: "//span[@class='a-offscreen']"
 price_in: "span.a-price.aok-align-center.reinventPricePriceToPayMargin.priceToPay span.a-offscreen"
+availability: "//div[@id='availability']/span[@class='a-size-medium a-color-price']"
 rating_count: "span#acrCustomerReviewText"
 image_link_I: "//img[@id='landingImage']"
 image_link_II: //img[@id='imgBlkFront']

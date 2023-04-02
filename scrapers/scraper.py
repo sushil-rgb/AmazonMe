@@ -93,7 +93,7 @@ class Amazon:
         print(f"{product_name} is saved.")
 
     async def getASIN(self, url):
-        split_url = url.split('/')[-2]
+        split_url = url.split('dp')[-1].split('/')[1]
         return split_url
         
     async def dataByAsin(self, asin=None):        

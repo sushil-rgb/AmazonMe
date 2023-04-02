@@ -11,9 +11,9 @@ async def on_ready():
     print(f"Buddy is now running.")
 
 
-async def asin_isbn(userInput):
+async def asin_isbn(user, userInput):
     datas = await Amazon().getASIN(userInput)    
-    return datas
+    await user.send(datas)
 
 
 async def getdataByasin(userInput, user):

@@ -40,7 +40,7 @@ def run_discord_bot():
         elif message.content == '!help':
             await message.author.send('Paste the Amazon products link to know the ASIN or ISBN respectively.\nPaste the ASIN/ISBN to get the product details.')
         elif message.guild is None and re.search(amazon_pattern, user_message):        
-            await asin_isbn(message.author)
+            await asin_isbn(message.author, user_message)
         elif message.guild is None and (re.match(asin_pattern, message.content)):
             await message.author.send('Please wait. Fetching data from Amazon.')
             await getdataByasin(user_message, message.author)           

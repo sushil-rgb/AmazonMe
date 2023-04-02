@@ -119,13 +119,13 @@ class Amazon:
                 image_link = await (await page.query_selector(self.selectors['image_link_II'])).get_attribute('src') 
 
             try:
-                availability = (await (await page.query_selector(self.selectors['availability'])).inner_text()).strip() 
+                availabilities = (await (await page.query_selector(self.selectors['availability'])).inner_text()).strip() 
             except AttributeError:
-                availability = "In stock"      
+                availabilities = "In stock"      
             datas = {
                 'Name': await self.catchClause.text(page.query_selector(self.selectors['name'])),
                 'Price': await self.catchClause.text(page.query_selector(self.selectors['price_us'])),
-                'Availability': availability,
+                'Availability': availabilities,
                 'Rating': await self.catchClause.text(page.query_selector(self.selectors['review'])),
                 'Rating count': (await self.catchClause.text(page.query_selector(self.selectors['rating_count']))),
                 'Hyperlink': url,

@@ -34,10 +34,6 @@ def yamlMe(selectors):
         return sel
 
 
-# Verify amazon link:
-
-
-
 class TryExcept:
     async def text(self, element):        
         try:

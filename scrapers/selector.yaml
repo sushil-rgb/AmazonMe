@@ -21,5 +21,6 @@ price_uk: "span#price"
 price_us: "//span[@class='a-offscreen']"
 price_in: "span.a-price.aok-align-center.reinventPricePriceToPayMargin.priceToPay span.a-offscreen"
 rating_count: "span#acrCustomerReviewText"
-image_link: "div#imgTagWrapperId img"
+image_link_I: "//img[@id='landingImage']"
+image_link_II: //img[@id='imgBlkFront']
 store: "//a[@id='bylineInfo']"

@@ -96,25 +96,31 @@ class Amazon:
         split_url = url.split('dp')[-1].split('/')[1]
         return split_url
         
-    async def dataByAsin(self, asin=None):        
-        url = f"https://www.amazon.com/dp/{asin}"        
+    async def dataByAsin(self, asin):        
+        url = f"https://www.amazon.com/dp/{asin}"   
+        # return url     
         async with async_playwright() as play:
             browser= await play.chromium.launch(headless = True)
             context = await browser.new_context(user_agent = userAgents())
-            page = await context.new_page()
+            page = await context.new_page() 
+           
+            await page.goto(url) 
+            try:
+                await page.wait_for_url(url, timeout = 6 * 1000)
+            except PlaywrightTimeoutError:
+                return 'Content loading error. Please try again in few minutes.' 
 
             try:
-                await page.goto(url) 
-            except PlaywrightTimeoutError:
-                return 'Content loading error. Please try again in few minutes.'
-
+                image_link = await (await page.query_selector(self.selectors['image_link_I'])).get_attribute('src')          
+            except AttributeError:
+                image_link = await (await page.query_selector(self.selectors['image_link_II'])).get_attribute('src')          
             datas = {
                 'Name': await self.catchClause.text(page.query_selector(self.selectors['name'])),
                 'Price': await self.catchClause.text(page.query_selector(self.selectors['price_us'])),
                 'Rating': await self.catchClause.text(page.query_selector(self.selectors['review'])),
                 'Rating count': (await self.catchClause.text(page.query_selector(self.selectors['rating_count']))),
                 'Hyperlink': url,
-                'Image': await self.catchClause.attributes(page.query_selector(self.selectors['image_link']), 'src'),
+                'Image': image_link,
                 'Store': str(await self.catchClause.text(page.query_selector(self.selectors['store']))).split('Visit the')[-1].strip(),
                 'Store link': f"""https://www.amazon.com{str(await self.catchClause.attributes(page.query_selector(self.selectors['store']), 'href'))}""",
                 
@@ -123,4 +129,5 @@ class Amazon:
             await browser.close()
 
             return datas
+       
        

@@ -6,10 +6,6 @@ import datetime
 sys.path.append(os.getcwd())
 from scrapers.scraper import Amazon
 
-intents = discord.Intents.default()
-intents.members = True
-client = discord.Client(intents = intents)
-
 
 async def on_ready():
     print(f"Buddy is now running.")

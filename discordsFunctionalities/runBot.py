@@ -40,15 +40,10 @@ def run_discord_bot():
         elif message.content == '!help':
             await message.author.send('Paste the Amazon products link to know the ASIN or ISBN respectively.\nPaste the ASIN/ISBN to get the product details.')
         elif message.guild is None and re.search(amazon_pattern, user_message):        
-            datas = await asin_isbn(user_message)
-            await message.author.send(datas)
+            await asin_isbn(message.author)
         elif message.guild is None and (re.match(asin_pattern, message.content)):
             await message.author.send('Please wait. Fetching data from Amazon.')
-            datas = await getdataByasin(user_message, message.author)
-            try:
-                await message.author.send(datas)
-            except discord.errors.HTTPException:
-                pass
+            await getdataByasin(user_message, message.author)           
         else: 
             await message.author.send(f"Invalid link. Please try a valid Amazon product link.")              
 

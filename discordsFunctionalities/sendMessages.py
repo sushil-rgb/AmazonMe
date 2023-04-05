@@ -2,6 +2,7 @@ import os
 import sys
 import discord
 import datetime
+from mySQLfunctionalities.db import export_to_db
 
 sys.path.append(os.getcwd())
 from scrapers.scraper import Amazon
@@ -18,9 +19,11 @@ async def asin_isbn(user, userInput):
 
 async def getdataByasin(userInput, user):
     datas = await Amazon().dataByAsin(userInput)
-
-    embed = discord.Embed(title=datas['Name'], url=datas['Hyperlink'], color=0xff9900)    
     
+    try:
+        embed = discord.Embed(title=datas['Name'], url=datas['Hyperlink'], color=0xff9900)    
+    except TypeError:
+        await user.send("Content loading error. Please try again in few minutes.")
     embed.add_field(name = 'Price', value = datas['Price'], inline = False)
     embed.add_field(name = 'Availability', value = datas['Availability'], inline = False)
     embed.add_field(name = "Store", value = f"[{datas['Store']}]({datas['Store link']})", inline = False)

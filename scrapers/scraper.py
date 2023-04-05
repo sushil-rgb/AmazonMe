@@ -125,9 +125,9 @@ class Amazon:
             datas = {
                 'Name': await self.catchClause.text(page.query_selector(self.selectors['name'])),
                 'Price': await self.catchClause.text(page.query_selector(self.selectors['price_us'])),
-                'Availability': availabilities,
                 'Rating': await self.catchClause.text(page.query_selector(self.selectors['review'])),
                 'Rating count': (await self.catchClause.text(page.query_selector(self.selectors['rating_count']))),
+                'Availability': availabilities,
                 'Hyperlink': url,
                 'Image': image_link,
                 'Store': str(await self.catchClause.text(page.query_selector(self.selectors['store']))).split('Visit the')[-1].strip(),

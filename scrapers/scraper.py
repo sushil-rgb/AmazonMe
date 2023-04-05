@@ -109,7 +109,7 @@ class Amazon:
            
             await page.goto(url) 
             try:
-                await page.wait_for_url(url, timeout = 60 * 1000)
+                await page.wait_for_url(url, timeout = 30 * 1000)
             except PlaywrightTimeoutError:
                 return 'Content loading error. Please try again in few minutes. Or probably the ISBN or ASIN belong to digital or audiobook category.' 
 

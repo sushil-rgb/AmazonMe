@@ -5,17 +5,7 @@ from dotenv import load_dotenv
 load_dotenv(f"{os.getcwd()}//environmentVariables//.env")
 
 
-cnx = mysql.connector.connect(
-        host = os.getenv('DB_HOST'),
-        port = os.getenv('PORT'),
-        user = os.getenv('DB_USERNAME'),
-        password = os.getenv('DB_PASSWORD'),
-        database = os.getenv('DATABASE'),
-    )
-
-
-
-async def verifyASIN(amazon_asin):
+async def mysql_connections():
     cnx = mysql.connector.connect(
         host = os.getenv('DB_HOST'),
         port = os.getenv('PORT'),
@@ -23,6 +13,12 @@ async def verifyASIN(amazon_asin):
         password = os.getenv('DB_PASSWORD'),
         database = os.getenv('DATABASE'),
     )
+
+    return cnx
+
+
+async def verifyASIN(amazon_asin):
+    cnx = await mysql_connections()
     cursor = cnx.cursor()
     sql_check_query = """SELECT * FROM asin_collections WHERE ASIN = %s"""
     params = (amazon_asin,)
@@ -34,14 +30,8 @@ async def verifyASIN(amazon_asin):
         return
     
 
-async def export_to_db(amazon_asin): 
-    cnx = mysql.connector.connect(
-        host = os.getenv('DB_HOST'),
-        port = os.getenv('PORT'),
-        user = os.getenv('DB_USERNAME'),
-        password = os.getenv('DB_PASSWORD'),
-        database = os.getenv('DATABASE'),
-    )
+async def export_to_db(amazon_asin, user = None): 
+    cnx = await mysql_connections()
     select_query = f"""SELECT * FROM asin_collections WHERE ASIN = '{amazon_asin}'"""
     cursor = cnx.cursor()  
     if await verifyASIN(amazon_asin):        
@@ -51,8 +41,11 @@ async def export_to_db(amazon_asin):
         columns = [col[0] for col in cursor.description]
 
         result_dict = dict(zip(columns, row))
+        print(f"{amazon_asin} already exists.")
         return result_dict
-    else:        
+    
+    else: 
+        # await user.send("Please wait, fetching data from Amazon.")       
         amazon_datas = await Amazon().dataByAsin(amazon_asin)   
         # return amazon_datas
 
@@ -68,22 +61,10 @@ async def export_to_db(amazon_asin):
         columns = [col[0] for col in cursor.description]
 
         result_dict = dict(zip(columns, row))
+        print(f"{amazon_asin} added to database.")
         return result_dict
 
-    cursor.close()
-    cnx.close()
-    print(f"{amazon_asin} added to database.")
+    
 
-
-async def show_details(amazon_asin):
-    mysql_pwd = os.getenv('MYSQL_PWD')
-    cnx = mysql.connector.connect(
-        host = '127.0.0.1',
-        port = 2000,
-        user = 'sus',
-        password = mysql_pwd,
-        database = 'asinDB',
-    ) 
-    cursor = cnx.cursor() 
 
 

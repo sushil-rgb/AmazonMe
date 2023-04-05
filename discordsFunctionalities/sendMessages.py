@@ -18,8 +18,7 @@ async def asin_isbn(user, userInput):
 
 
 async def getdataByasin(userInput, user):
-    datas = await export_to_db(userInput)
-    
+    datas = await export_to_db(userInput, user)    
     try:
         embed = discord.Embed(title=datas['Name'], url=datas['Hyperlink'], color=0xff9900)    
     except TypeError:

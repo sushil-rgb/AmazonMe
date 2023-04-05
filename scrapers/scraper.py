@@ -109,14 +109,17 @@ class Amazon:
            
             await page.goto(url) 
             try:
-                await page.wait_for_url(url, timeout = 6 * 1000)
+                await page.wait_for_url(url, timeout = 60 * 1000)
             except PlaywrightTimeoutError:
-                return 'Content loading error. Please try again in few minutes.' 
+                return 'Content loading error. Please try again in few minutes. Or probably the ISBN or ASIN belong to digital or audiobook category.' 
 
             try:
                 image_link = await (await page.query_selector(self.selectors['image_link_I'])).get_attribute('src')          
             except AttributeError:
-                image_link = await (await page.query_selector(self.selectors['image_link_II'])).get_attribute('src') 
+                try:
+                    image_link = await (await page.query_selector(self.selectors['image_link_II'])).get_attribute('src')
+                except AttributeError:
+                    return "Content loading error. Please try again in few minutes." 
 
             try:
                 availabilities = (await (await page.query_selector(self.selectors['availability'])).inner_text()).strip() 

@@ -30,7 +30,7 @@ async def verifyASIN(amazon_asin):
         return
     
 
-async def export_to_db(amazon_asin, user = None): 
+async def export_to_db(amazon_asin, user): 
     cnx = await mysql_connections()
     select_query = f"""SELECT * FROM asin_collections WHERE ASIN = '{amazon_asin}'"""
     cursor = cnx.cursor()  
@@ -45,7 +45,7 @@ async def export_to_db(amazon_asin, user = None):
         return result_dict
     
     else: 
-        # await user.send("Please wait, fetching data from Amazon.")       
+        await user.send("Please wait, fetching data from Amazon.")       
         amazon_datas = await Amazon().dataByAsin(amazon_asin)   
         # return amazon_datas
 

@@ -8,8 +8,8 @@ load_dotenv(f"{os.getcwd()}//environmentVariables//.env")
 mysql_pwd = os.getenv('MYSQL_PWD')
 
 cnx = mysql.connector.connect(
-        host = '127.0.0.1',
-        port = 2000,
+        host = '0.0.0.0',
+        port = '$PORT',
         user = 'sus',
         password = mysql_pwd,
         database = 'asinDB',
@@ -20,8 +20,8 @@ cnx = mysql.connector.connect(
 async def verifyASIN(amazon_asin):
     mysql_pwd = os.getenv('MYSQL_PWD')
     cnx = mysql.connector.connect(
-            host = '127.0.0.1',
-            port = 2000,
+            host = '0.0.0.0',
+            port = '$PORT',
             user = 'sus',
             password = mysql_pwd,
             database = 'asinDB',

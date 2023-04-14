@@ -13,7 +13,7 @@ a link sent in a direct message. To use the bot follow these steps:
 1. Invite the bot to your Discord server using this <a href = "https://discord.com/api/oauth2/authorize?client_id=1091094561314582528&permissions=1634235578438&scope=bot">amazonBuddy.</a>
 2. Send an Amazon product link to the bot in a direct message.
 3. The bot will search the link for an ASIN or ISBN, and respond with the appropriate identifier.
-4. If you want to retrieve the product details for a specific ASIN, you can send the ASIN to 
+4. If you want to retrieve the product details for a specific ASIN, you can send the ASIN to
 the bot in a direct message, and it will repsond with product information.
 
 *The bot is in development and currently works only for US Amazon products on the ".com" domain.*
@@ -57,5 +57,4 @@ If you have any issues or suggestions for improvements, please feel free to open
 
 ## License
 This project is licensed under GPL-3.0 license. This scraper is provided as-is and for educational purposes only. The author is not repsonsible for any damages or legal issues that may result from its user. Use it at your own risk. Thank you for using the AmazonMe!
-
 

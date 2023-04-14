@@ -20,9 +20,9 @@ def run_discord_bot():
     @client.event
     async def initiation():
         await on_ready()
-    
+
     @client.event
-    async def on_message(message):        
+    async def on_message(message):
         if message.author == client.user:
             return
 
@@ -39,14 +39,14 @@ def run_discord_bot():
             await message.author.send(f"Hey {username}. Type '!help' to know the list of commands.")
         elif message.content == '!help':
             await message.author.send('Paste the Amazon products link to know the ASIN or ISBN respectively.\nPaste the ASIN/ISBN to get the product details.')
-        elif message.guild is None and re.search(amazon_pattern, user_message):        
+        elif message.guild is None and re.search(amazon_pattern, user_message):
             await asin_isbn(message.author, user_message)
         elif message.guild is None and (re.match(asin_pattern, message.content)):
             # await export_to_db(user_message)
-            # await message.author.send('Please wait. Fetching data from Amazon.')            
-            await getdataByasin(user_message, message.author)           
-        else: 
-            await message.author.send(f"Invalid link. Please try a valid Amazon product link.")              
+            # await message.author.send('Please wait. Fetching data from Amazon.')
+            await getdataByasin(user_message, message.author)
+        else:
+            await message.author.send(f"Invalid link. Please try a valid Amazon product link.")
 
     client.run(Token)
 

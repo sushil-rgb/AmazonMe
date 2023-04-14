@@ -28,13 +28,13 @@ async def verifyASIN(amazon_asin):
         return True
     else:
         return
-    
 
-async def export_to_db(amazon_asin, user): 
+
+async def export_to_db(amazon_asin, user=None):
     cnx = await mysql_connections()
     select_query = f"""SELECT * FROM asin_collections WHERE ASIN = '{amazon_asin}'"""
-    cursor = cnx.cursor()  
-    if await verifyASIN(amazon_asin):        
+    cursor = cnx.cursor()
+    if await verifyASIN(amazon_asin):
         cursor.execute(select_query)
         row = cursor.fetchone()
 
@@ -43,10 +43,10 @@ async def export_to_db(amazon_asin, user):
         result_dict = dict(zip(columns, row))
         print(f"{amazon_asin} already exists.")
         return result_dict
-    
-    else: 
-        await user.send("Please wait, fetching data from Amazon.")       
-        amazon_datas = await Amazon().dataByAsin(amazon_asin)   
+
+    else:
+        # await user.send("Please wait, fetching data from Amazon.")
+        amazon_datas = await Amazon().dataByAsin(amazon_asin)
         # return amazon_datas
 
         insert_query = f"""INSERT INTO `asin_collections` (`ASIN`, `Name`, `Price`, `Rating`, `Rating count`, `Availability`, `Hyperlink`, `Image`, `Store`, `Store link`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
@@ -63,8 +63,4 @@ async def export_to_db(amazon_asin, user):
         result_dict = dict(zip(columns, row))
         print(f"{amazon_asin} added to database.")
         return result_dict
-
-    
-
-
 

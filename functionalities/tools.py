@@ -1,3 +1,5 @@
+import re
+import os
 import yaml
 import random
 
@@ -12,11 +14,30 @@ def randomMe(my_lists, seed=None):
     return random.choice(my_lists)
 
 
+# Verify the Amazon link:
+async def verify_amazon(url):
+    amazon_pattern = re.search("""^https://www.amazon\.(com|co\.uk)(/s\?.|/b/.)+""", url)
+    if amazon_pattern == None:
+        return True
+    else:
+        pass
+
+
+# Create a path directory if exists:
+async def create_path(dir_name):
+    path_dir = os.path.join(os.getcwd(), dir_name)
+
+    if os.path.exists(path_dir):
+        pass
+    else:
+        os.mkdir(path_dir)
+
+
 # Random time interval between each requests made to server.
 # You can decrease the time interval for faster scraping, however I discourage you to do so as it may hurt the server and Amazon may ban your IP address.
 # Scrape responsibly:
 def randomTime(val):
-    ranges = [i for i in range(3, val+1)]
+    ranges = [i for i in range(2, val+1)]
     return randomMe(ranges)
 
 
@@ -30,21 +51,21 @@ def userAgents():
 # function for yaml selectors:
 def yamlMe(selectors):
     with open(f"scrapers//{selectors}.yaml") as file:
-        sel = yaml.load(file, Loader=yaml.SafeLoader) 
+        sel = yaml.load(file, Loader=yaml.SafeLoader)
         return sel
 
 
 class TryExcept:
-    async def text(self, element):        
+    async def text(self, element):
         try:
             elements = (await (await element).inner_text()).strip()
         except AttributeError:
-            elements = "N/A"        
+            elements = "N/A"
         return elements
 
-    async def attributes(self, element, attr):        
+    async def attributes(self, element, attr):
         try:
-            elements = await (await element).get_attribute(attr) 
+            elements = await (await element).get_attribute(attr)
         except AttributeError:
             elements = "N/A"
         return elements

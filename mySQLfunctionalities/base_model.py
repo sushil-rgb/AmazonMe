@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 class IPORecord(BaseModel):
     ASIN: str = Field(..., alias = "ASIN")
     Name: str = Field(..., alias = "Name")
-    Price: str = Field(..., alias = "Price")    
+    Price: str = Field(..., alias = "Price")
     Rating: str = Field(..., alias = "Rating")
     Rating_count: str = Field(..., alias = "Rating count")
     Availability: str = Field(..., alias = "Availability")

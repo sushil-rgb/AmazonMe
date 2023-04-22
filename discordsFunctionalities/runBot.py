@@ -44,6 +44,7 @@ def run_discord_bot():
         elif message.guild is None and (re.match(asin_pattern, message.content)):
             # await export_to_db(user_message)
             # await message.author.send('Please wait. Fetching data from Amazon.')
+            await message.author.send(f"Please wait. Fetching data from Amazon.")
             await getdataByasin(user_message, message.author)
         else:
             await message.author.send(f"Invalid link. Please try a valid Amazon product link.")

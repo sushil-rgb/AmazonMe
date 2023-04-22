@@ -14,8 +14,8 @@ make_headless = True
 
 
 async def main():
-    userInput = "https://www.amazon.com/s?k=gaming+headsets&pd_rd_r=9a4b1cba-7756-4d6e-896c-7425f9f02b0a&pd_rd_w=Vcxlr&pd_rd_wg=eHBrI&pf_rd_p=12129333-2117-4490-9c17-6d31baf0582a&pf_rd_r=8P8E912Y1YGGR8JTXHDH&ref=pd_gw_unk"
-    time_interval = 4
+    userInput = "https://www.amazon.com/s?i=specialty-aps&bbn=16225018011&rh=n%3A7141123011%2Cn%3A16225018011%2Cn%3A679337011&ref=nav_em__nav_desktop_sa_intl_shoes_0_2_12_3"
+    time_interval = 2
     datas = await Amazon().amazonMe(time_interval, make_headless, userInput)
     return datas
 

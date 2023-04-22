@@ -2,7 +2,6 @@ import os
 import sys
 import discord
 import datetime
-from mySQLfunctionalities.db import export_to_db
 
 sys.path.append(os.getcwd())
 from scrapers.scraper import Amazon
@@ -18,7 +17,7 @@ async def asin_isbn(user, userInput):
 
 
 async def getdataByasin(userInput, user):
-    datas = await export_to_db(userInput, user)
+    datas = await Amazon().dataByAsin(userInput, user)
     try:
         embed = discord.Embed(title=datas['Name'], url=datas['Hyperlink'], color=0xff9900)
     except TypeError:

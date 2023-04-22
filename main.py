@@ -23,7 +23,7 @@ async def main():
 if __name__ == '__main__':
     start_time = time.time()
 
-    asyncio.run(main())
+    # asyncio.run(main())
 
     total_time = round(time.time()-start_time, 2)
     time_in_secs = round(total_time)

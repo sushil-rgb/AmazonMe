@@ -17,7 +17,7 @@ async def asin_isbn(user, userInput):
 
 
 async def getdataByasin(userInput, user):
-    datas = await Amazon().dataByAsin(userInput, user)
+    datas = await Amazon().dataByAsin(userInput)
     try:
         embed = discord.Embed(title=datas['Name'], url=datas['Hyperlink'], color=0xff9900)
     except TypeError:

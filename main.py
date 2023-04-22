@@ -14,7 +14,7 @@ make_headless = True
 
 
 async def main():
-    userInput = input("Enter a URL:> ")
+    userInput = "https://www.amazon.com/s?k=gaming+headsets&pd_rd_r=9a4b1cba-7756-4d6e-896c-7425f9f02b0a&pd_rd_w=Vcxlr&pd_rd_wg=eHBrI&pf_rd_p=12129333-2117-4490-9c17-6d31baf0582a&pf_rd_r=8P8E912Y1YGGR8JTXHDH&ref=pd_gw_unk"
     time_interval = 4
     datas = await Amazon().amazonMe(time_interval, make_headless, userInput)
     return datas
@@ -23,7 +23,7 @@ async def main():
 if __name__ == '__main__':
     start_time = time.time()
 
-    # asyncio.run(main())
+    asyncio.run(main())
 
     total_time = round(time.time()-start_time, 2)
     time_in_secs = round(total_time)

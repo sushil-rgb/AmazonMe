@@ -99,7 +99,7 @@ class Amazon:
     async def dataByAsin(self, asin):
         url = f"https://www.amazon.com/dp/{asin}"
         async with async_playwright() as play:
-            browser= await play.firefox.launch(headless = True)
+            browser= await play.chromium.launch(headless = True)
             context = await browser.new_context(user_agent = userAgents())
             page = await context.new_page()
 

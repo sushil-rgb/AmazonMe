@@ -12,7 +12,6 @@ from scrapers.scraper import Amazon
 # Make False if you want to see the live automation.
 make_headless = True
 
-
 async def main():
     userInput = "https://www.amazon.com/s?i=specialty-aps&bbn=16225018011&rh=n%3A7141123011%2Cn%3A16225018011%2Cn%3A679337011&ref=nav_em__nav_desktop_sa_intl_shoes_0_2_12_3"
     time_interval = 2

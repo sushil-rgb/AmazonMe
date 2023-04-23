@@ -33,7 +33,10 @@ class Amazon:
             page = await context.new_page()
 
             print(f"Initiating the Amazon automation | Powered by Playwright.")
-            await page.goto(url)
+            try:
+                await page.goto(url)
+            except Exception as e:
+                return "Content loading error. Please try again in few minutes."
             await page.wait_for_timeout(timeout=randomTime(interval)*1000)
 
             # Below variable is for the searched product, there could be more that two elements for it.

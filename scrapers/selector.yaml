@@ -1,5 +1,5 @@
 # CSS selectors:
-product_name: "span.a-size-base-plus.a-color-base.a-text-normal"
+product_name: "div.a-section.a-spacing-none.a-spacing-top-small.s-title-instructions-style"
 searches: "div.a-section.a-spacing-small.a-spacing-top-small span.a-color-state.a-text-bold"
 
 pages: "span.s-pagination-strip span.s-pagination-item.s-pagination-disabled"

@@ -45,10 +45,7 @@ class Amazon:
             except PlaywrightTimeoutError:
                 print(f"Content loading error. Please try again in a few minutes.")
                 return "Content loading error"
-
-            # Below variable is for the searched product, there could be more that two elements for it.
            
-            product_name = (await (await page.query_selector(self.selectors['product_name'])).inner_text()).strip()
             search_results = re.sub(r"""["]""", "", ((await (await page.query_selector(self.selectors['searches'])).inner_text()).strip()).title())
             
             try:

@@ -31,40 +31,43 @@ class Amazon:
             browser = await play.chromium.launch(headless=head, slow_mo=3*1000)
             context = await browser.new_context(user_agent = userAgents())
             page = await context.new_page()
+            
+            await page.set_viewport_size({"width": 1200, "height": 1080})
 
             print(f"Initiating the Amazon automation | Powered by Playwright.")
-            try:
-                await page.goto(url)
-            except Exception as e:
-                return "Content loading error. Please try again in few minutes."
+            
+            await page.goto(url)
             await page.wait_for_timeout(timeout=randomTime(interval)*1000)
+            await page.wait_for_load_state("networkidle")
+                        
+            try:
+                await page.wait_for_selector(self.selectors['main_content'], timeout=10*1000)
+            except PlaywrightTimeoutError:
+                print(f"Content loading error. Please try again in a few minutes.")
+                return "Content loading error"
 
             # Below variable is for the searched product, there could be more that two elements for it.
-            try:
-                product_name = (await (await page.query_selector(self.selectors['product_name_one'])).inner_text()).strip()
-            except AttributeError:
-                product_name = (await (await page.query_selector(self.selectors['product_name_two'])).inner_text()).strip()
-
+           
+            product_name = (await (await page.query_selector(self.selectors['product_name'])).inner_text()).strip()
+            search_results = re.sub(r"""["]""", "", ((await (await page.query_selector(self.selectors['searches'])).inner_text()).strip()).title())
+            
             try:
                 await page.wait_for_selector(self.selectors['main_content'], timeout=10*1000)
             except PlaywrightTimeoutError:
                 print(f"Content loading error. Please try again in few minute.")
                 return
 
-            num_of_pages = '3'
-            try:
-                num_of_pages = (await (await page.query_selector(self.selectors['total_page_number_first'])).inner_text()).strip()
-            except AttributeError:
-                try:
-                    num_of_pages = (await page.query_selector_all(self.selectors['total_page_number_second']))[-2].get_attribute('aria-label').split()[-1]
-                except (PlaywrightTimeoutError, IndexError):
-                    pass
-
-            print(f"Number of pages | {num_of_pages}.")
-            print(f"Scraping | {product_name}.")
-
-            for click in range(1, int(num_of_pages)):
-                print(f"Scraping page | {click}")
+            # num_of_pages = await (await page.query_selector(await page.query_selector_all(self.selectors['pages']))[-1]).inner_text()
+            # return num_of_pages
+            # print(f"Number of pages | {num_of_pages}.")
+            print(f"Scraping | {search_results}.")
+            
+            pages = 0
+            while True:
+                pages += 1
+                next_btn = await page.query_selector(self.selectors['next_button'])
+                print(f"Scraping pages {pages}" 
+                      )
                 await page.wait_for_timeout(timeout=randomTime(interval)*1000)
 
                 card_contents = await page.query_selector_all(self.selectors['main_content'])
@@ -83,10 +86,10 @@ class Amazon:
                     amazon_dicts.append(data)
 
                 try:
-                    await (await page.query_selector(self.selectors['next_button'])).click()
-                except AttributeError:
-                    print(f"Oops content loading error beyond this page. Issue on url {page.url} | number:> {click}")
-                    break
+                    await (next_btn).click()
+                except Exception as e:
+                    print(f"Message | {str(e)}")
+                    break                
 
             await browser.close()
         print(f"Scraping done. Now exporting to excel database.")
@@ -95,8 +98,8 @@ class Amazon:
         await create_path(directory_name)
 
         df = pd.DataFrame(amazon_dicts)
-        df.to_excel(f"{os.getcwd()}//Amazon database//{product_name}-Amazon database.xlsx", index=False)
-        print(f"{product_name} is saved.")
+        df.to_excel(f"{os.getcwd()}//Amazon database//{search_results}-Amazon database.xlsx", index=False)
+        print(f"{search_results} is saved.")
 
 
     async def dataByAsin(self, asin):

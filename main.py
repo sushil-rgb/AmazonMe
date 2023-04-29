@@ -15,7 +15,7 @@ if __name__ == '__main__':
     
     
     async def main():
-        test = await Amazon().dataByAsin('B08SLK6DFT')
+        test = await Amazon().pagination('https://www.amazon.com/s?i=specialty-aps&bbn=16225007011&rh=n%3A16225007011%2Cn%3A13896617011&ref=nav_em__nav_desktop_sa_intl_computers_tablets_0_2_6_4')
         return test
         # userInput = "https://www.amazon.com/s?rh=n%3A1&fs=true&ref=lp_1_sar"
         # time_interval = 5

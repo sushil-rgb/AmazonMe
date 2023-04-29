@@ -23,6 +23,7 @@ class Amazon:
         return split_url
 
 
+  
     async def amazonMe(self, interval, head, url):
         amazon_dicts = []
         if await verify_amazon(url):
@@ -128,10 +129,10 @@ class Amazon:
                 store_link = f"""https://www.amazon.com{await self.catchClause.static_attributes(soup.select_one(self.selectors['store']), 'href')}"""
                                 
                 datas = {
-                    'Name': soup.select_one(self.selectors['name']).text.strip(),
-                    'Price': soup.select_one(self.selectors['price_us']),
-                    'Rating': soup.select_one(self.selectors['review']),
-                    'Rating count': soup.select_one(self.selectors['rating_count']),
+                    'Name': self.catchClause.statitc_text(soup.select_one(self.selectors['name'])),
+                    'Price': self.catchClause.statitc_text(soup.select_one(self.selectors['price_us'])),
+                    'Rating': self.catchClause.statitc_text(soup.select_one(self.selectors['review'])),
+                    'Rating count': self.catchClause.statitc_text(soup.select_one(self.selectors['rating_count'])),
                     'Availability': availabilities,
                     'Hyperlink': url,
                     'Image': image_link,

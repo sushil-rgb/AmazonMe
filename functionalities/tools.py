@@ -69,4 +69,21 @@ class TryExcept:
         except AttributeError:
             elements = "N/A"
         return elements
+    
+    
+    # for static connections (for the link that doesn't need automation for scraping.)
+    async def statitc_text(self, element):
+        try:
+            elements = element.text.strip()
+        except AttributeError:
+            elements = "N/A"
+        return elements
+        
+    async def static_attributes(self, element, attr):
+        try:
+            elements = element.get(attr)
+        except AttributeError:
+            elements = "N/A"
+        
+        return elements
 

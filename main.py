@@ -15,10 +15,12 @@ if __name__ == '__main__':
     
     
     async def main():
-        userInput = "https://www.amazon.com/s?k=gaming+mouse&rh=n%3A402052011%2Cp_n_feature_fifteen_browse-bin%3A23974318011&dc&ds=v1%3A0zO58sX6fcMBFhsRC%2BaQX2j%2B0dl%2FF%2FVLTYj3LYlL3qk&pd_rd_r=0a3620f7-00fd-4f1c-b005-3d059df8303d&pd_rd_w=o3Scp&pd_rd_wg=H8F8c&pf_rd_p=12129333-2117-4490-9c17-6d31baf0582a&pf_rd_r=T6N3Y9JMWWR276B6G4SC&qid=1682685655&rnid=23974204011&ref=sr_nr_p_n_feature_fifteen_browse-bin_1"
-        time_interval = 2
-        datas = await Amazon().amazonMe(time_interval, make_headless, userInput)
-        return datas
+        test = await Amazon().dataByAsin('B08SLK6DFT')
+        return test
+        # userInput = "https://www.amazon.com/s?rh=n%3A1&fs=true&ref=lp_1_sar"
+        # time_interval = 5
+        # datas = await Amazon().amazonMe(time_interval, make_headless, userInput)
+        # return datas
     
     
     start_time = time.time()

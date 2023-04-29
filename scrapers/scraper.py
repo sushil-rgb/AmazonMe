@@ -1,9 +1,11 @@
+from functionalities.tools import TryExcept, yamlMe, randomTime, userAgents, verify_amazon, create_path
+
+from playwright.async_api import async_playwright, TimeoutError as PlaywrightTimeoutError
+from bs4 import BeautifulSoup
+import pandas as pd
+import aiohttp
 import re
 import os
-import pandas as pd
-from playwright.async_api import async_playwright, TimeoutError as PlaywrightTimeoutError
-
-from functionalities.tools import TryExcept, yamlMe, randomTime, userAgents, verify_amazon, create_path
 
 
 class Amazon:
@@ -45,9 +47,11 @@ class Amazon:
             except PlaywrightTimeoutError:
                 print(f"Content loading error. Please try again in a few minutes.")
                 return "Content loading error"
-           
-            search_results = re.sub(r"""["]""", "", ((await (await page.query_selector(self.selectors['searches'])).inner_text()).strip()).title())
             
+            try:
+                search_results = re.sub(r"""["]""", "", ((await (await page.query_selector(self.selectors['searches'])).inner_text()).strip()).title())
+            except AttributeError:
+                search_results = "Results"
             try:
                 await page.wait_for_selector(self.selectors['main_content'], timeout=10*1000)
             except PlaywrightTimeoutError:
@@ -101,41 +105,41 @@ class Amazon:
 
     async def dataByAsin(self, asin):
         url = f"https://www.amazon.com/dp/{asin}"
-        async with async_playwright() as play:
-            browser= await play.chromium.launch(headless = True)
-            context = await browser.new_context(user_agent = userAgents())
-            page = await context.new_page()
-
-            await page.goto(url)
-            await page.wait_for_url(url, timeout = 30 * 1000)
-
-            try:
-                image_link = await (await page.query_selector(self.selectors['image_link_I'])).get_attribute('src')
-            except AttributeError:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url, headers = self.headers) as resp:
+                content = await resp.read()
+                soup = BeautifulSoup(content, 'lxml')
+                
                 try:
-                    image_link = await (await page.query_selector(self.selectors['image_link_II'])).get_attribute('src')
+                    image_link = soup.select_one(self.selectors['image_link_I']).get('src')
                 except AttributeError:
-                    return "Content loading error. Please try again in few minutes."
+                    try:
+                        image_link = soup.select_one(self.selectors['image_link_II']).get('src')
+                    except AttributeError:
+                        return 'Content loading error. Please try again in few minutes.'
+                
+                
+                try:
+                    availabilities = soup.select_one(self.selectors['availability']).text.strip()
+                except AttributeError:
+                    availabilities = 'In stock'
+                    
+                store = await self.catchClause.statitc_text(soup.select_one(self.selectors['store']))
+                store_link = f"""https://www.amazon.com{await self.catchClause.static_attributes(soup.select_one(self.selectors['store']), 'href')}"""
+                                
+                datas = {
+                    'Name': soup.select_one(self.selectors['name']).text.strip(),
+                    'Price': soup.select_one(self.selectors['price_us']),
+                    'Rating': soup.select_one(self.selectors['review']),
+                    'Rating count': soup.select_one(self.selectors['rating_count']),
+                    'Availability': availabilities,
+                    'Hyperlink': url,
+                    'Image': image_link,
+                    'Store': store,
+                    'Store link': store_link,
 
-            try:
-                availabilities = (await (await page.query_selector(self.selectors['availability'])).inner_text()).strip()
-            except AttributeError:
-                availabilities = "In stock"
-
-            datas = {
-                'Name': await self.catchClause.text(page.query_selector(self.selectors['name'])),
-                'Price': await self.catchClause.text(page.query_selector(self.selectors['price_us'])),
-                'Rating': await self.catchClause.text(page.query_selector(self.selectors['review'])),
-                'Rating count': (await self.catchClause.text(page.query_selector(self.selectors['rating_count']))),
-                'Availability': availabilities,
-                'Hyperlink': url,
-                'Image': image_link,
-                'Store': str(await self.catchClause.text(page.query_selector(self.selectors['store']))).split('Visit the')[-1].strip(),
-                'Store link': f"""https://www.amazon.com{str(await self.catchClause.attributes(page.query_selector(self.selectors['store']), 'href'))}""",
-
-             }
-
-            await browser.close()
-
-            return datas
-
+                }                
+                
+                return datas
+                
+        

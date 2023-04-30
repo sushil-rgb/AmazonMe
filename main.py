@@ -14,13 +14,11 @@ if __name__ == '__main__':
     make_headless = True
     
     
-    async def main():
-        test = await Amazon().pagination('https://www.amazon.com/s?i=specialty-aps&bbn=16225007011&rh=n%3A16225007011%2Cn%3A13896617011&ref=nav_em__nav_desktop_sa_intl_computers_tablets_0_2_6_4')
-        return test
-        # userInput = "https://www.amazon.com/s?rh=n%3A1&fs=true&ref=lp_1_sar"
-        # time_interval = 5
-        # datas = await Amazon().amazonMe(time_interval, make_headless, userInput)
-        # return datas
+    async def main():        
+        userInput = "https://www.amazon.com/s?k=pet+supplies&s=date-desc-rank&crid=3IF5TSVMY5YRB&pd_rd_r=1d0e730c-a5ac-4cf1-81c4-c5dc08935339&pd_rd_w=DxSyR&pd_rd_wg=Qfftc&pf_rd_p=ab475c0d-7817-4703-9d6d-f003bf2156bf&pf_rd_r=5V5JYYGATNCEKDE7ZJYZ&qid=1632868254&sprefix=pet+sup%2Caps%2C268&ref=pd_gw_unk"
+        time_interval = 5
+        datas = await Amazon().amazonMe(time_interval, make_headless, userInput)
+        return datas
     
     
     start_time = time.time()

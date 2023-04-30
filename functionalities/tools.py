@@ -72,7 +72,7 @@ class TryExcept:
     
     
     # for static connections (for the link that doesn't need automation for scraping.)
-    async def statitc_text(self, element):
+    async def static_text(self, element):
         try:
             elements = element.text.strip()
         except AttributeError:

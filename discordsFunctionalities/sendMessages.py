@@ -1,22 +1,47 @@
-import os
-import sys
-import discord
 import datetime
+import discord
+import sys
+import os
 
 sys.path.append(os.getcwd())
 from scrapers.scraper import Amazon
 
 
 async def on_ready():
+    """
+    This function prints a message when the bot is ready to use.
+    """
     print(f"Buddy is now running.")
 
 
 async def asin_isbn(user, userInput):
+    """
+    This function takes a user object and a user input as parameters, calls the Amazon class to get ASIN and ISBN numbers, 
+    and sends the results to the user. 
+    
+    Args:
+        -user (discord.User): User object.
+        -userInput (str): User input.
+    
+    Returns:
+        -None
+    """
     datas = await Amazon().getASIN(userInput)
     await user.send(datas)
 
 
 async def getdataByasin(userInput, user):
+    """
+    This function takes a user input and a suer object as parameters, call the Amazon class to get product data using ASIN, 
+    creates a discord embed with the product data, and send the embed to the user.
+    
+    Args:
+        -userInput (str): User input.
+        -user (discord.User): User object.
+    
+    Returns:
+        -None
+    """
     datas = await Amazon().dataByAsin(userInput)
     try:
         embed = discord.Embed(title=datas['Name'], url=datas['Hyperlink'], color=0xff9900)

@@ -175,16 +175,16 @@ class Amazon:
         
         # Loop through all the URLs and scrape data from each page:
         for pages in range(len(urls)):
-            print("\n---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------")
+            # print("\n---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------")
             print(f"Scraping pages || {pages + 1}")
             print("---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------")
-            
-            # Wait for random interval before making next request
-            await asyncio.sleep(randomTime(interval)) 
-            
+                        
             # Get content and soup from current URL:
             content = await self.static_connection(urls[pages])
             soup = BeautifulSoup(content, 'lxml')
+            
+            # Wait for random interval before making next request
+            await asyncio.sleep(randomTime(interval)) 
             
             # Get product card contents from current page:         
             card_contents = soup.select(self.scrape['main_content'])
@@ -200,7 +200,7 @@ class Amazon:
                     'Price': await self.catch.text(datas.select_one(self.scrape['price'])),
                     'Original price': await self.catch.text(datas.select_one(self.scrape['old_price'])),
                     'Review': await self.catch.text(datas.select_one(self.scrape['review'])),
-                    'Review count': await self.catch.text(soup.select_one(self.scrape['review_count'])),
+                    'Review count': await self.catch.text(datas.select_one(self.scrape['review_count'])),
                     'Hyperlink': prod_hyperlink,
                     'Image url': f"""{await self.catch.attributes(datas.select_one(self.scrape['image']), 'src')}""",
                 }

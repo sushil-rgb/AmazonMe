@@ -12,16 +12,16 @@ if __name__ == '__main__':
         
     async def main():
         # While it is possible to reduce the time interval for faster scraping, I would advise against doing so as this could potentially overload the server and result in Amazon blocking your IP address.
-        # Default time-interval ranges from (30 seconds to 2 minutes). Scrape responsibly:
-        sleep = 2 * 60    
+        # Default time-interval ranges from (2 to 5 minutes). Scrape responsibly:
+        sleep = 5 * 60    
         
-        base_url = "https://www.amazon.com/s?i=specialty-aps&bbn=4954955011&rh=n%3A4954955011%2Cn%3A%212617942011%2Cn%3A378733011&ref=nav_em__nav_desktop_sa_intl_crafting_0_2_8_4"
+        base_url = "https://www.amazon.com/s?k=gaming+laptops&rh=n%3A565108&dc&ds=v1%3AZn7LVZmG1FzeUynGJkMc9NgpLjSEtjqo7e4JEg0ky%2B8&pf_rd_i=23508887011&pf_rd_m=ATVPDKIKX0DER&pf_rd_p=434db2ed-6d53-4c59-b173-e8cd550a2e4f&pf_rd_r=ZPW1PS5X1DPJQWGRXWKD&pf_rd_s=merchandised-search-5&pf_rd_t=101&qid=1682970011&rnid=2941120011&ref=sr_nr_n_1"
         amazon = Amazon()
         
         if await verify_amazon(base_url):
             return "I'm sorry, the link you provided is invalid. Could you please provide a valid Amazon link for the product category of your choice?"
         
-        print(f"-----------------------Welcome to Amazon scraper---------------------------------")
+        print(f"-----------------------Welcome to Amazon crawler---------------------------------")
         
         await asyncio.sleep(2)
         
@@ -38,7 +38,7 @@ if __name__ == '__main__':
         # Split the pagination and convert it list of urls
         url_lists = await amazon.split_url(base_url)        
         
-        print(f"Initiating the Extraction.")
+        print(f"The extraction process has begun and is currently in progress. The web scraper is scanning through all the links and collecting relevant information. Please be patient while the data is being gathered.")
         coroutines = [amazon.scrape_and_save(sleep, url) for url in url_lists]
         dfs = await asyncio.gather(*coroutines)
         results = pd.concat(dfs)

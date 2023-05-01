@@ -38,10 +38,6 @@ pip install -r requirements.txt
 playwright install
 ```
 
-## The repository includes the following files:
-**scraper.py**: This is the main script that initiate the automation.<br>
-**tools.py**: This file contains the main code for the scraper.
-
 ## To run the script, go to terminal....
 ```python
 python main.py

@@ -1,5 +1,5 @@
 import pandas as pd
-import random
+import secrets
 import yaml
 import re
 import os
@@ -47,7 +47,7 @@ def random_values(d_lists):
     
     Args
     """
-    idx = random.randint(0, len(d_lists) - 1)
+    idx = secrets.randbelow(len(d_lists))
     return d_lists[idx]
 
 
@@ -78,7 +78,7 @@ async def randomTime(val):
     Returns:
         -A random interger between 2 and the input value. So, the default time interval is 2 seconds.
     """
-    ranges = [i for i in range(3, val+1)]
+    ranges = [i for i in range(10, val+1)]
     return random_values(ranges)
 
 

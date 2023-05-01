@@ -149,9 +149,9 @@ class Amazon:
         soup = BeautifulSoup(content, 'lxml')
         
         try:
-            search_results = re.sub(r"""["]""", "", soup.select_one(self.scrape['searches']).text.strip()).title()
+            search_results = soup.select_one('a-color-state a-text-bold').text.strip().title()            
         except AttributeError:
-            search_results = soup.select_one('span.a-list-item').text.strip()
+            search_results = re.sub(r"""["]""", "", soup.select_one(self.scrape['searches']).text.strip()).title()
         
         return search_results.replace(":", "")        
             

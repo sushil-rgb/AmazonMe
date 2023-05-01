@@ -5,7 +5,6 @@ import pandas as pd
 import asyncio
 import aiohttp
 import re
-import os
 
 
 class Amazon:
@@ -39,11 +38,14 @@ class Amazon:
             
         Raises:
             aiohttp.ClientError: If an error occurs while making the request.
-        """        
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url, headers = self.headers) as resp:
-                content = await resp.read()
-                return content
+        """  
+        try:      
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url, headers = self.headers) as resp:
+                    content = await resp.read()
+                    return content
+        except Exception as e:
+            return f"Content loading erro: URL |> {url} | Error |> {str(e)}."
     
     
     async def num_of_pages(self, url):
@@ -72,7 +74,7 @@ class Amazon:
             return 2
     
     
-    async def split_url(self, url):  
+    async def split_url(self, url):   
         """
         Splits a given Amazon URL into multiple URLs, with each URL pointing to a different page of search results.
         
@@ -83,29 +85,26 @@ class Amazon:
             -list: A list of URLs, with each URL pointing to a different page of search results.
         """      
         
-        # Create a list to store the split URLs, and add the original URL to it.
-        split_url = [url]          
+        # Create a list to store the split URLs, and add the orignal URL to it:           
+        split_url = [url]     
         
-        # Use the 'num_of_pages' method to get the total number of search result pages for the given URL.
-        total_pages = await self.num_of_pages(url)  
+        # Use the 'num_of_pages' method to get the total number of search result pages for the given URL:                     
+        total_pages = await self.num_of_pages(url)         
         
-        print(f"Total number of pages || {str(total_pages)}.")        
-         
-        # Use the 'static_connection' method to make a static connection to the given URL and get its HTMl content.         
-        content = await self.static_connection(url)
-        
+        # Use the 'static_connection' method to make a static connection to the given URL and get its HTML content:   
+        content = await self.static_connection(url)        
+
         # Making a soup:
-        soup = BeautifulSoup(content, 'lxml')
+        soup = BeautifulSoup(content, 'lxml')        
         
-        # Get the URL of the next button on the search result page and construct the URL of the next search result page.
-        next_link = f"""https://www.amazon.com{await self.catch.attributes(soup.select_one(self.scrape['next_button']), 'href')}"""            
+        # Get the URL of the next button on the search result page and costruct the URL of the next search result page:
+        next_link = f"""https://www.amazon.com{await self.catch.attributes(soup.select_one(self.scrape['next_button']), 'href')}"""     
         
-        # Loop through all the search result pages and construct a URL for each page.
         for num in range(1, total_pages):
-            # Replace the page number in the URL with current page number increment by 1.
-            next_url = re.sub(r'page=\d+', f'page={num+1}' , next_link)
+            # Replace the 'page' number in the URL with curren tpage number increment by 1:            
+            next_url = re.sub(r'page=\d+', f'page={num+1}' , next_link)            
             
-            # Replace the 'sr_pg_' parameter in the URL with the current page number.
+            # Replace the 'sr_pg_' parameter in the URL with current page number:
             next_url = re.sub(r'sr_pg_\d+', f'sr_pg_{num}', next_url)
             
             split_url.append(next_url)
@@ -135,87 +134,94 @@ class Amazon:
             
         return split_url              
 
-  
-    async def amazonMe(self, interval, urls):
+    
+    async def search_results(self, url):
         """
-        Scrapes data from multiple pages of an Amazon search result for a given interval of time and saves the data into an Excel file.
+        Retrieves the name of search results on the given Amazon search page URL.
         
         Args:
-            -interval (int): The time interval between each page request in seconds.
-            -urls (list): Alist of URLs to scrape data from.
-        
-        Returns:
-            -str: A message indicating the success of the scraping and saving operation.
+            -url (str): The Amazon search page URL to retrive category name.
             
         Raises:
-            -Exception: If there is an error loading the content from Amazon or extracting data from the HTML.
+            -AttributeError: If the search results cannot be retrieved from the URL.
         """
-        amazon_dicts = []
+        content = await self.static_connection(url)
+        soup = BeautifulSoup(content, 'lxml')
         
-        # Verify if the first URL is a valid Amazon link:
-        if await verify_amazon(urls[0]):
-            print("Invalid link. Please try proper amazon link product category of your choice.")
-            return              
-        
-        # Get base content and soup from first URL:
-        base_content = await self.static_connection(urls[0])  
-        base_soup = BeautifulSoup(base_content, 'lxml')        
-        
-        # Get search results from first URL:
         try:
-            search_results = re.sub(r"""["]""", "", base_soup.select_one(self.scrape['searches']).text.strip()).title()
+            search_results = re.sub(r"""["]""", "", soup.select_one(self.scrape['searches']).text.strip()).title()
         except AttributeError:
-            search_results = base_soup.select_one('span.a-list-item').text.strip()
+            search_results = soup.select_one('span.a-list-item').text.strip()
+        
+        return search_results.replace(":", "")        
+            
+    
+    async def scrape_data(self, url):   
+        """
+        Scrapes product data from the Amazon search results page for the given URL.
+        
+        Args:
+            -list: A list of dictionaries, with each dictionary containing product data for single product.
+        
+        Raises:
+            -Expecation: If there is an error while loading the content of the Amazon search results page.
+        """     
+        amazon_dicts = []         
+        
+        # Use the 'static_connection' method to download the HTML content of the search results bage 
+        content = await self.static_connection(url)  
+        soup = BeautifulSoup(content, 'lxml')                     
         
         # Check if main content element exists on page:
         try:
-            base_soup.select_one(self.scrape['main_content'])
+            soup.select_one(self.scrape['main_content'])
         except Exception as e:
-            return f"Content loading error. Please try again in few minutes. Error message: {e}"        
+            return f"Content loading error. Please try again in few minutes. Error message: {e}"      
         
-        # Loop through all the URLs and scrape data from each page:
-        for pages in range(len(urls)):
-            # print("\n---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------")
-            print(f"Scraping pages || {pages + 1}")
-            print("---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------")
-                        
-            # Get content and soup from current URL:
-            content = await self.static_connection(urls[pages])
-            soup = BeautifulSoup(content, 'lxml')
-            
-            # Wait for random interval before making next request
-            await asyncio.sleep(randomTime(interval)) 
-            
-            # Get product card contents from current page:         
-            card_contents = soup.select(self.scrape['main_content'])
-            
-            # Loop through all product cards and extract data:            
-            for datas in card_contents:
-                prod_hyperlink = f"""https://www.amazon.com{await self.catch.attributes(datas.select_one(self.scrape['hyperlink']), 'href')}"""
-                prod_name = await self.catch.text(datas.select_one(self.scrape['hyperlink']))
-                print(prod_name)
-                data = {
-                    'Product': prod_name,
-                    'ASIN': await self.getASIN(prod_hyperlink),
-                    'Price': await self.catch.text(datas.select_one(self.scrape['price'])),
-                    'Original price': await self.catch.text(datas.select_one(self.scrape['old_price'])),
-                    'Review': await self.catch.text(datas.select_one(self.scrape['review'])),
-                    'Review count': await self.catch.text(datas.select_one(self.scrape['review_count'])),
-                    'Hyperlink': prod_hyperlink,
-                    'Image url': f"""{await self.catch.attributes(datas.select_one(self.scrape['image']), 'src')}""",
-                }
-                amazon_dicts.append(data)       
+        # Get product card contents from current page:         
+        card_contents = soup.select(self.scrape['main_content'])
         
-        # Create directory to save Excel file:
-        directory_name = 'Amazon database'
-        await create_path(directory_name)
+        # Loop through all product cards and extract data:            
+        for datas in card_contents:
+            prod_hyperlink = f"""https://www.amazon.com{await self.catch.attributes(datas.select_one(self.scrape['hyperlink']), 'href')}"""
+            prod_name = await self.catch.text(datas.select_one(self.scrape['hyperlink']))
+            print(prod_name)
+            data = {
+                'Product': prod_name,
+                'ASIN': await self.getASIN(prod_hyperlink),
+                'Price': await self.catch.text(datas.select_one(self.scrape['price'])),
+                'Original price': await self.catch.text(datas.select_one(self.scrape['old_price'])),
+                'Review': await self.catch.text(datas.select_one(self.scrape['review'])),
+                'Review count': await self.catch.text(datas.select_one(self.scrape['review_count'])),
+                'Hyperlink': prod_hyperlink,
+                'Image url': f"""{await self.catch.attributes(datas.select_one(self.scrape['image']), 'src')}""",
+            }
+            amazon_dicts.append(data)       
+        
+        return amazon_dicts
 
-        # Save data to Excel file:
-        df = pd.DataFrame(amazon_dicts)
-        df.to_excel(f"{os.getcwd()}//Amazon database//{search_results}-Amazon database.xlsx", index=False)
-        print(f"{search_results} is saved.")
-
-
+        
+    async def scrape_and_save(self, interval, url):
+        """
+        Scrapes data from a given URL, saves it to a file, and returns the scarped data as a Pandas Dataframe.
+        
+        Args:
+            -interval (int): Time interval in seconds to sleep before scraping the data.
+            -url (str): The URL to scrape data from.
+        
+        Returns:
+            -pd.DataFrame: A Pandas DataFrame containing the scraped data.
+            
+        Raises:
+            -HTTPError: If the HTTP request to the URL returns an error status code.
+            -Exception: If there is an error while scraping the data.
+        """
+        random_sleep = await randomTime(interval)
+        await asyncio.sleep(random_sleep)
+        datas = await self.scrape_data(url)
+        return pd.DataFrame(datas)
+        
+    
     async def dataByAsin(self, asin):
         """
         Extracts product information from the Amazon product page by ASIN (Amazon Standard Identification Number).

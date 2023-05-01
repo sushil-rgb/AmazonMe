@@ -1,30 +1,43 @@
+from functionalities.tools import randomTime, verify_amazon, export_to_sheet
 from scrapers.scraper import Amazon
+import pandas as pd
 import asyncio
 import time
 
 
-if __name__ == '__main__':    
-    
-    
-    # Define an async main functio that runs the web scraper:
-    async def main():
-        # Instantiate an Amazon object:
-        amazon = Amazon()
-        
-        # Define the URL to scrape:
-        userInput = "https://www.amazon.com/s?k=health+and+beauty&i=beauty-intl-ship&bbn=16225006011&rh=n%3A11062741&dc&ds=v1%3AaTUGn90NLjQvoihGF3%2FqZ1jr%2FIFcsvhBnS3xK%2FaJ3u0&crid=2036DM6EKNYNA&pd_rd_r=fa4603d4-0acc-4de5-a94e-3f047374ec2e&pd_rd_w=LUiIR&pd_rd_wg=yiJls&pf_rd_p=c9097eb6-837b-4ba7-94d7-51428f6e8d2a&pf_rd_r=6W2WTX74X54Y6G5DMXQQ&qid=1682875043&rnid=16225006011&sprefix=health+and+beauty%2Cbeauty-intl-ship%2C173&ref=sr_nr_n_6"
-        
-        # Split the pagination into URLs 
-        split_links = await amazon.split_url(userInput)            
-        
-        # Define the time interval between scraping requests
-        time_interval = 3
-        datas = await amazon.amazonMe(time_interval, split_links)
-        return datas
-    
-    
+if __name__ == '__main__':  
     # Start the timer to measure how long the wb scraping process takes
     start_time = time.time()
+        
+        
+    async def main():
+        # You can decrease the time-interval, however I discourage you to do say as the action may overload the server and Amazon may block your IP address
+        sleep = 20
+        base_url = "https://www.amazon.com/s?i=specialty-aps&bbn=16225019011&rh=n%3A7141123011%2Cn%3A16225019011%2Cn%3A1040658&ref=nav_em__nav_desktop_sa_intl_clothing_0_2_13_2"
+        amazon = Amazon()
+        
+        if await verify_amazon(base_url):
+            return "Invalid link. Please try proper amazon link product category of your choice."
+        
+        # Pull the number of pages of the category
+        number_pages = await amazon.num_of_pages(base_url)
+        print(f"Total pages || {number_pages}.")
+        
+        await asyncio.sleep(sleep)
+        
+        searches = await amazon.search_results(base_url)
+        print(f"Scraping category || {searches}.")
+        
+        # Split the pagination and convert it list of urls
+        url_lists = await amazon.split_url(base_url)        
+        
+        print(f"Initiating the Extraction.")
+        coroutines = [amazon.scrape_and_save(sleep, url) for url in url_lists]
+        dfs = await asyncio.gather(*coroutines)
+        results = pd.concat(dfs)
+        
+        await export_to_sheet(results, searches)
+        
 
     # Run the async main function and run the scraper:
     print(asyncio.run(main()))

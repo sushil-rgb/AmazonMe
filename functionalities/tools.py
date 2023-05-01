@@ -78,7 +78,7 @@ async def randomTime(val):
     Returns:
         -A random interger between 2 and the input value. So, the default time interval is 2 seconds.
     """
-    ranges = [i for i in range(10, val+1)]
+    ranges = [i for i in range(30, val+1)]
     return random_values(ranges)
 
 

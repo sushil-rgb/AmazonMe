@@ -1,4 +1,4 @@
-from functionalities.tools import randomTime, verify_amazon, export_to_sheet
+from functionalities.tools import verify_amazon, export_to_sheet
 from scrapers.scraper import Amazon
 import pandas as pd
 import asyncio
@@ -11,14 +11,15 @@ if __name__ == '__main__':
         
         
     async def main():
-        # You can decrease the time-interval, however I discourage you to do say as the action may overload the server and Amazon may block your IP address
-        sleep = 60
+        # While it is possible to reduce the time interval for faster scraping, I would advise against doing so as this could potentially overload the server and result in Amazon blocking your IP address.
+        # Default time-interval ranges from (30 seconds to 2 minutes). Scrape responsibly:
+        sleep = 2 * 60    
         
-        base_url = "https://www.amazon.com/s?rh=n%3A16225006011&fs=true&ref=lp_16225006011_sar"
+        base_url = "https://www.amazon.com/s?i=specialty-aps&bbn=4954955011&rh=n%3A4954955011%2Cn%3A%212617942011%2Cn%3A378733011&ref=nav_em__nav_desktop_sa_intl_crafting_0_2_8_4"
         amazon = Amazon()
         
         if await verify_amazon(base_url):
-            return "Invalid link. Please try proper amazon link product category of your choice."
+            return "I'm sorry, the link you provided is invalid. Could you please provide a valid Amazon link for the product category of your choice?"
         
         print(f"-----------------------Welcome to Amazon scraper---------------------------------")
         

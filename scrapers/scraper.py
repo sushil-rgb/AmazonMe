@@ -1,4 +1,4 @@
-from functionalities.tools import TryExcept, yaml_load, randomTime, userAgents, verify_amazon, create_path
+from functionalities.tools import TryExcept, yaml_load, randomTime, userAgents, verify_amazon, export_to_sheet
 from playwright.async_api import async_playwright, TimeoutError as PlaywrightTimeoutError
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -220,7 +220,36 @@ class Amazon:
         await asyncio.sleep(random_sleep)
         datas = await self.scrape_data(url)
         return pd.DataFrame(datas)
+    
+    
+    async def concurrent_scraping(self, interval, url):
+        if await verify_amazon(url):
+            return "I'm sorry, the link you provided is invalid. Could you please provide a valid Amazon link for the product category of your choice?"
         
+        print(f"-----------------------Welcome to Amazon crawler---------------------------------")
+        
+        await asyncio.sleep(2)
+        
+        searches = await self.search_results(url)
+        print(f"Scraping category || {searches}.")
+        
+        await asyncio.sleep(2)
+        # Pull the number of pages of the category       
+        number_pages = await self.num_of_pages(url)
+        print(f"Total pages || {number_pages}.")
+        
+        await asyncio.sleep(2)        
+        
+        # Split the pagination and convert it list of urls
+        url_lists = await self.split_url(url)        
+        
+        print(f"The extraction process has begun and is currently in progress. The web scraper is scanning through all the links and collecting relevant information. Please be patient while the data is being gathered.")
+        coroutines = [self.scrape_and_save(interval, url) for url in url_lists]
+        dfs = await asyncio.gather(*coroutines)
+        results = pd.concat(dfs)
+        
+        await export_to_sheet(results, searches)
+    
     
     async def dataByAsin(self, asin):
         """

@@ -1,6 +1,6 @@
 # CSS selectors:
 product_name: "div.a-section.a-spacing-none.a-spacing-top-small.s-title-instructions-style h2 a span"
-searches: "ul[aria-labelledby='n-title'] span li.a-spacing-micro.s-navigation-indent-1"
+searches: "span.a-size-base.a-color-base.a-text-bold"
 
 pages: "span.s-pagination-strip span.s-pagination-item.s-pagination-disabled"
 next_button: "a.s-pagination-item.s-pagination-next.s-pagination-button.s-pagination-separator"

@@ -134,25 +134,20 @@ class Amazon:
         return split_url              
 
     
-    async def search_results(self, url):
+    async def category_name(self, url):
         """
-        Retrieves the name of search results on the given Amazon search page URL.
+        Retrieves the category name of search results on the given Amazon search page URL.
         
         Args:
             -url (str): The Amazon search page URL to retrive category name.
             
         Raises:
-            -AttributeError: If the search results cannot be retrieved from the URL.
+            -None.
         """
         content = await self.static_connection(url)
         soup = BeautifulSoup(content, 'lxml')
-        
-        try:
-            search_results = re.sub(r"""["]""", "", soup.select_one(self.scrape['searches']).text.strip()).title()      
-        except AttributeError:
-            search_results = soup.select_one('a-color-state a-text-bold').text.strip().title()            
-        
-        return search_results.replace(":", "")        
+        searches_results = soup.select(self.scrape['searches'])[-1].text.strip()
+        return searches_results                
             
     
     async def scrape_data(self, url):   
@@ -184,7 +179,7 @@ class Amazon:
         for datas in card_contents:
             prod_hyperlink = f"""https://www.amazon.com{await self.catch.attributes(datas.select_one(self.scrape['hyperlink']), 'href')}"""
             prod_name = await self.catch.text(datas.select_one(self.scrape['hyperlink']))
-            print(prod_name)
+            # print(prod_name)
             data = {
                 'Product': prod_name,
                 'ASIN': await self.getASIN(prod_hyperlink),
@@ -229,7 +224,7 @@ class Amazon:
         
         await asyncio.sleep(2)
         
-        searches = await self.search_results(url)
+        searches = await self.category_name(url)
         print(f"Scraping category || {searches}.")
         
         await asyncio.sleep(2)

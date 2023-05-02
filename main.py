@@ -17,7 +17,7 @@ if __name__ == '__main__':
         
         base_url = """https://www.amazon.com/s?k=toys&rh=n%3A165793011%2Cp_lbr_characters_browse-bin%3AMarvel&s=date-desc-rank&dc&ds=v1%3A%2FeymYW%2FsRcJHKpJ5thadssumCt46%2BYpL8ZSuUFudxQs&pd_rd_r=31755823-b564-461f-b957-a300b2ebf1a6&pd_rd_w=lWA8X&pd_rd_wg=yzOjA&pf_rd_p=779cadfb-bc4d-465d-931f-0b68c1ba5cd5&pf_rd_r=P6G2816X5D6F883T5QNY&qid=1683017903&rnid=3296952011&ref=sr_nr_p_lbr_characters_browse-bin_1"""
         amazon = Amazon()
-        return await amazon.search_results(base_url)
+        
         datas = await amazon.concurrent_scraping(sleep, base_url)
         return datas
         

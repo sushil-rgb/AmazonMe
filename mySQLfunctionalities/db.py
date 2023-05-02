@@ -1,7 +1,8 @@
 from scrapers.scraper import Amazon
-import mysql.connector
 from dotenv import load_dotenv
+import mysql.connector
 import os
+
 
 load_dotenv(f"{os.getcwd()}//environmentVariables//.env")
 

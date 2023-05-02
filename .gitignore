@@ -5,3 +5,6 @@ environmentVariables
 debug.py
 tempCodeRunnerFile.py
 .vs
+
+fastAPI_functionalities
+fastapiApp.py

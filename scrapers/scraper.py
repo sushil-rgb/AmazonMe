@@ -145,8 +145,12 @@ class Amazon:
             -None.
         """
         content = await self.static_connection(url)
-        soup = BeautifulSoup(content, 'lxml')
-        searches_results = soup.select(self.scrape['searches'])[-1].text.strip()
+        soup = BeautifulSoup(content, 'lxml') 
+        try:       
+            searches_results = (re.sub(r"""["]""", "", soup.select('span.a-color-state.a-text-bold')[-1].text.strip())).title()
+        except IndexError:
+        # if searches_results == 'Climate Pledge Friendly':
+            searches_results = soup.select(self.scrape['searches_ii'])[1].text.strip()
         return searches_results                
             
     
@@ -178,15 +182,15 @@ class Amazon:
         # Loop through all product cards and extract data:            
         for datas in card_contents:
             prod_hyperlink = f"""https://www.amazon.com{await self.catch.attributes(datas.select_one(self.scrape['hyperlink']), 'href')}"""
-            prod_name = await self.catch.text(datas.select_one(self.scrape['hyperlink']))
-            # print(prod_name)
+            prod_name = await self.catch.text(datas.select_one(self.scrape['hyperlink']))     
+            print(prod_name)
             data = {
                 'Product': prod_name,
                 'ASIN': await self.getASIN(prod_hyperlink),
                 'Price': await self.catch.text(datas.select_one(self.scrape['price'])),
                 'Original price': await self.catch.text(datas.select_one(self.scrape['old_price'])),
                 'Review': await self.catch.text(datas.select_one(self.scrape['review'])),
-                'Review count': await self.catch.text(datas.select_one(self.scrape['review_count'])),
+                'Review count': await self.catch.text(datas.select_one(self.scrape['review_count'])),                
                 'Hyperlink': prod_hyperlink,
                 'Image url': f"""{await self.catch.attributes(datas.select_one(self.scrape['image']), 'src')}""",
             }
@@ -215,7 +219,7 @@ class Amazon:
         datas = await self.scrape_data(url)
         return pd.DataFrame(datas)
     
-    
+        
     async def concurrent_scraping(self, interval, url):
         if await verify_amazon(url):
             return "I'm sorry, the link you provided is invalid. Could you please provide a valid Amazon link for the product category of your choice?"

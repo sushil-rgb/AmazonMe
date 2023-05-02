@@ -15,9 +15,9 @@ if __name__ == '__main__':
         # Default time-interval ranges from (2 to 5 minutes). Scrape responsibly:
         sleep = 5 * 60    
         
-        base_url = """https://www.amazon.com/s?i=toys-and-games-intl-ship&bbn=16225015011&rh=n%3A166057011%2Cn%3A166063011&dc&fs=true&ds=v1%3AV1B7arK1p578K2lcJNDNYx9%2BypkQEHgRTzIQCTIaMeA&qid=1682975431&rnid=166057011&ref=sr_nr_n_3"""
+        base_url = """https://www.amazon.com/s?k=toys&rh=n%3A165793011%2Cp_lbr_characters_browse-bin%3AMarvel&s=date-desc-rank&dc&ds=v1%3A%2FeymYW%2FsRcJHKpJ5thadssumCt46%2BYpL8ZSuUFudxQs&pd_rd_r=31755823-b564-461f-b957-a300b2ebf1a6&pd_rd_w=lWA8X&pd_rd_wg=yzOjA&pf_rd_p=779cadfb-bc4d-465d-931f-0b68c1ba5cd5&pf_rd_r=P6G2816X5D6F883T5QNY&qid=1683017903&rnid=3296952011&ref=sr_nr_p_lbr_characters_browse-bin_1"""
         amazon = Amazon()
-        
+        return await amazon.search_results(base_url)
         datas = await amazon.concurrent_scraping(sleep, base_url)
         return datas
         

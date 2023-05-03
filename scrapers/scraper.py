@@ -220,7 +220,7 @@ class Amazon:
         return pd.DataFrame(datas)
     
         
-    async def concurrent_scraping(self, interval, url, channel):
+    async def concurrent_scraping(self, interval, url):
         if await verify_amazon(url):
             return "I'm sorry, the link you provided is invalid. Could you please provide a valid Amazon link for the product category of your choice?"
         

@@ -16,6 +16,9 @@ a link sent in a direct message. To use the bot follow these steps:
 4. If you want to retrieve the product details for a specific ASIN, you can send the ASIN to
 the bot in a direct message, and it will repsond with product information.
 
+<p align = 'center'><img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNWU0YjJjMTEyODBmYzI0Mjk1Mjg1YTdmMTVkYWNiNGM5YWFkNDVkZSZlcD12MV9pbnRlcm5hbF9naWZzX2dpZklkJmN0PWc/Jg3cKSlnweCsRp5RC1/giphy.gif" alt="Discord bot"></p>
+
+
 *The bot is in development and currently works only for US Amazon products on the ".com" domain.*
 
 

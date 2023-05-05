@@ -1,4 +1,4 @@
-from functionalities.tools import TryExcept, yaml_load, randomTime, userAgents, verify_amazon, export_to_sheet
+from tools.tool import TryExcept, yaml_load, randomTime, userAgents, verify_amazon, export_to_sheet
 from bs4 import BeautifulSoup
 import pandas as pd
 import asyncio

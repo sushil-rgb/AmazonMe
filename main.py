@@ -1,4 +1,5 @@
 from scrapers.scraper import Amazon
+from tools.tool import verify_amazon
 import asyncio
 import time
 
@@ -15,7 +16,7 @@ if __name__ == '__main__':
         
         base_url = "https://www.amazon.com/s?k=Nintendo+Switch+Games&rh=n%3A16227133011&pf_rd_i=23508887011&pf_rd_m=ATVPDKIKX0DER&pf_rd_p=434db2ed-6d53-4c59-b173-e8cd550a2e4f&pf_rd_r=MG60RM4M4REFVTTRWYCZ&pf_rd_s=merchandised-search-5&pf_rd_t=101&ref=nb_sb_noss"
         amazon = Amazon()            
-        
+        # return await verify_amazon(base_url)
         datas = await amazon.concurrent_scraping(sleep, base_url)        
         return datas
         

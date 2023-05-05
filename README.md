@@ -42,6 +42,8 @@ environmentname/scripts/activate
   # To run the script, go to terminal and type:
 python main.py
 ```
+<p align = 'center'><i>Demo of the scraper scraping the content from Amazon</i></p>
+<p align = 'center'><img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOTdiZjE5MjllNDFiYmY0OGNmMWRjOWFhMTU5MjIxMDc3NzZlMWFjNiZlcD12MV9pbnRlcm5hbF9naWZzX2dpZklkJmN0PWc/ZdNgH3imLqwCEujnrq/giphy.gif" alt="Discord bot"></p>
 
 ## Features
 After running the program, the scraper will ask you to enter a product url. Do it accordingly and it will scrape the data such as<br>

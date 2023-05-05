@@ -92,7 +92,7 @@ def userAgents():
     Returns:
         -A string representing a ranom user agent.        
     """
-    with open('functionalities//user-agents.txt') as f:
+    with open('tools//user-agents.txt') as f:
         agents = f.read().split("\n")
         return random_values(agents)
 

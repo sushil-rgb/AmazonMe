@@ -1,5 +1,4 @@
 from scrapers.scraper import Amazon
-from discordsFunctionalities.sendMessages import getdataByasin
 import asyncio
 import time
 
@@ -12,11 +11,12 @@ if __name__ == '__main__':
     async def main():
         # While it is possible to reduce the time interval for faster scraping, I would advise against doing so as this could potentially overload the server and result in Amazon blocking your IP address.
         # Default time-interval ranges from (2 to 5 minutes). Scrape responsibly:
-        sleep = 5 * 60    
+        sleep = 5 * 60
         
-        base_url = """https://www.amazon.com/s?i=computers-intl-ship&bbn=16225007011&rh=n%3A16225007011%2Cn%3A3011391011%2Cn%3A172470&dc&ds=v1%3A8N2eRjOSpZiOYgwKFB6ym9syZpPZhKxcxu%2FHnziiHyw&qid=1683035856&rnid=3011391011&ref=sr_nr_n_1"""
-        amazon = Amazon()                    
-        datas = await amazon.concurrent_scraping(sleep, base_url)
+        base_url = "https://www.amazon.com/s?k=Nintendo+Switch+Games&rh=n%3A16227133011&pf_rd_i=23508887011&pf_rd_m=ATVPDKIKX0DER&pf_rd_p=434db2ed-6d53-4c59-b173-e8cd550a2e4f&pf_rd_r=MG60RM4M4REFVTTRWYCZ&pf_rd_s=merchandised-search-5&pf_rd_t=101&ref=nb_sb_noss"
+        amazon = Amazon()            
+        
+        datas = await amazon.concurrent_scraping(sleep, base_url)        
         return datas
         
 

@@ -273,14 +273,10 @@ class Amazon:
         
         try:
             # Try to extract the image link using the second first selector.
-            image_link = soup.select_one(self.scrape['image_link_I']).get('src')
-        except AttributeError:
-            try:
-                # If images not found in first selector, try second selector:
-                image_link = soup.select_one(self.scrape['image_link_II']).get('src')
-            except AttributeError:
-                # If the image link cannot be extracted, return an error message:
-                return 'Content loading error. Please try again in few minutes.'        
+            image_link = soup.select_one(self.scrape['image_link']).get('src')
+        except AttributeError:                          
+            # If the image link cannot be extracted, return an error message:
+            return 'Content loading error. Please try again in few minutes.'        
         
         try:
             availabilities = soup.select_one(self.scrape['availability']).text.strip()

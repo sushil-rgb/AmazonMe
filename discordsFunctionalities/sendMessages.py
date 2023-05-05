@@ -44,7 +44,10 @@ async def getdataByasin(userInput, user):
     """
     datas = await Amazon().dataByAsin(userInput)
     
-    embed = discord.Embed(title=datas['Name'], url=datas['Hyperlink'], color=0xff9900)
+    name = datas['Name']
+    hyperlink = datas['Hyperlink']
+    
+    embed = discord.Embed(title=name, url=hyperlink, color=0xff9900)
     embed.add_field(name = 'Price', value = datas['Price'], inline = False)
     embed.add_field(name = 'Availability', value = datas['Availability'], inline = False)
     embed.add_field(name = "Store", value = f"[{datas['Store']}]({datas['Store link']})", inline = False)

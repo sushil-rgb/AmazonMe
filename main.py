@@ -1,4 +1,5 @@
 from scrapers.scraper import Amazon
+from discordsFunctionalities.sendMessages import getdataByasin
 import asyncio
 import time
 
@@ -14,8 +15,7 @@ if __name__ == '__main__':
         sleep = 5 * 60    
         
         base_url = """https://www.amazon.com/s?i=computers-intl-ship&bbn=16225007011&rh=n%3A16225007011%2Cn%3A3011391011%2Cn%3A172470&dc&ds=v1%3A8N2eRjOSpZiOYgwKFB6ym9syZpPZhKxcxu%2FHnziiHyw&qid=1683035856&rnid=3011391011&ref=sr_nr_n_1"""
-        amazon = Amazon()            
-        
+        amazon = Amazon()                    
         datas = await amazon.concurrent_scraping(sleep, base_url)
         return datas
         

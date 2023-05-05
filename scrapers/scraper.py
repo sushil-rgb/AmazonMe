@@ -124,15 +124,10 @@ class Amazon:
         Raises:
             IndexError: If the ASIN cannot be extracted from the URL.
         """
-        try:
-            # If the URL contains 'dp', extract the ASIN from the second element of the list obtained by splitting the URL by 'dp'.
-            split_url = url.split('dp')[-1].split('/')[1]
-        except IndexError:
-            # If indexerror as there may vary in links structure, extract the ASIN from the first element of the list obtained by splitting the URL by 'dp' and then by '?'.
-            split_url = url.split('dp')[1].split("?")[0].replace("/", "")
-            
-        return split_url              
-
+        pattern = r"(?<=dp\/)[\w\d]+"
+        split_url = re.search(pattern, url)
+        return split_url.group(0)
+        
     
     async def category_name(self, url):
         """

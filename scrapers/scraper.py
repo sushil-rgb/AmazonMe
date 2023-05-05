@@ -269,7 +269,14 @@ class Amazon:
         
         # Retrieve the page content using 'static_connection' method:
         content = await self.static_connection(url)       
-        soup = BeautifulSoup(content, 'lxml')            
+        soup = BeautifulSoup(content, 'lxml')
+        
+        try:
+            # Try to extract the image link using the second first selector.
+            image_link = soup.select_one(self.scrape['image_link']).get('src')
+        except Exception as e:                          
+            # If the image link cannot be extracted, return an error message:
+            return f'Content loading error. Please try again in few minutes. Error message || {str(e)}.'        
         
         try:
             availabilities = soup.select_one(self.scrape['availability']).text.strip()
@@ -287,7 +294,7 @@ class Amazon:
             'Rating count': await self.catch.text(soup.select_one(self.scrape['rating_count'])),
             'Availability': availabilities,
             'Hyperlink': url,
-            'Image': soup.select_one(self.scrape['image_link']).get('src'),
+            'Image': image_link,
             'Store': store,
             'Store link': store_link,
 

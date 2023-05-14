@@ -144,12 +144,8 @@ class Amazon:
         """
         content = await self.static_connection(url)
         soup = BeautifulSoup(content, 'lxml') 
-        try:       
-            searches_results = (re.sub(r"""["]""", "", soup.select('span.a-color-state.a-text-bold')[-1].text.strip())).title()
-        except IndexError:
-        # if searches_results == 'Climate Pledge Friendly':
-            searches_results = soup.select(self.scrape['searches_ii'])[1].text.strip()
-        return searches_results                
+        searches_results = soup.select_one(self.scrape['searches']).text.strip()
+        return searches_results
             
     
     async def scrape_data(self, url):   

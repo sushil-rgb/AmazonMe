@@ -124,8 +124,8 @@ class Amazon:
         Raises:
             IndexError: If the ASIN cannot be extracted from the URL.
         """
-        pattern = r"(?<=dp\/)[A-Za-z|0-9]+"
-        try:
+        pattern = r"(?<=dp\/)[A-Za-z|0-9]+"  
+        try:     
             asin = (re.search(pattern, url)).group(0)
         except Exception as e:
             asin = "N/A"

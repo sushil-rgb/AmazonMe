@@ -12,7 +12,7 @@ if __name__ == '__main__':
         # Default time-interval ranges from (2 to 5 minutes). Scrape responsibly:
         sleep = 10 * 60
         
-        base_url = "https://www.amazon.com/s?i=stripbooks&bbn=1000&rh=n%3A283155%2Cn%3A3&dc&fs=true&ds=v1%3AquYJ%2FdhELcWi%2FDjm7W%2FF6XW0CiUJcVO%2Frp%2FnKP%2BJp2A&qid=1684055913&rnid=1000&ref=sr_nr_n_3"
+        base_url = "https://www.amazon.com/s?rh=n%3A3736081&fs=true&ref=lp_3736081_sar"
         
         amazon = Amazon()      
         datas = await amazon.concurrent_scraping(sleep, base_url)

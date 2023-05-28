@@ -144,7 +144,10 @@ class Amazon:
         """
         content = await self.static_connection(url)
         soup = BeautifulSoup(content, 'lxml') 
-        searches_results = soup.select_one(self.scrape['searches']).text.strip()
+        try:
+            searches_results = soup.select_one(self.scrape['searches_I']).text.strip()
+        except AttributeError:
+            searches_results = re.sub(r'["]', '', soup.select_one(self.scrape['searches_II']).text.strip())
         return searches_results
             
     

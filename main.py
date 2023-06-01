@@ -16,7 +16,7 @@ if __name__ == '__main__':
         amazon = Amazon()      
         datas = await amazon.concurrent_scraping(sleep, base_url)
         
-        return datas 
+        return datas
     
     
     # Start the timer to measure how long the wb scraping process takes

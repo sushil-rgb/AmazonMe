@@ -1,0 +1,15 @@
+{
+    "type": "object",
+    "properties": {
+      "categoryUrl": {
+        "type": "string",
+        "description": "The URL of the Amazon category page to scrape"
+      },
+      "asin": {
+        "type": "string",
+        "description": "The Amazon Standard Identification Number (ASIN) of the product to retrieve information"
+      }
+    },
+    "required": ["categoryUrl", "asin"]
+  }
+  

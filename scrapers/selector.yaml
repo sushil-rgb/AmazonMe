@@ -24,3 +24,15 @@ rating_count: "span#acrCustomerReviewText"
 image_link_i: "div.imgTagWrapper img"
 image_link_ii: "img.a-dynamic-image.image-stretch-vertical.frontImage"
 store: "a#bylineInfo"
+
+
+# Reviews selectors
+profile_name: span.a-profile-name
+stars: i[data-hook="review-star-rating-view-point"] span.a-icon-alt
+review_title: span[data-hook='review-title']
+full_review: "div.a-row.a-spacing-top-mini span.a-size-base"
+
+
+# Goldbox section selectors:
+gold_pages: li.a-disabled
+next_page: li.a-last

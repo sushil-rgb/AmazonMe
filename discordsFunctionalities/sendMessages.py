@@ -45,6 +45,7 @@ async def getdataByasin(userInput, user):
     try:
         datas = await Amazon().dataByAsin(userInput)
         
+        
         name = datas['Name']
         hyperlink = datas['Hyperlink']
         
@@ -53,7 +54,8 @@ async def getdataByasin(userInput, user):
         embed.add_field(name = 'Availability', value = datas['Availability'], inline = False)
         embed.add_field(name = "Store", value = f"[{datas['Store']}]({datas['Store link']})", inline = False)
         embed.add_field(name = 'Rating', value = datas['Rating'], inline = False)
-        embed.add_field(name ='Review count', value = datas['Rating count'], inline = False)
+        embed.add_field(name = 'Review count', value = datas['Rating count'], inline = False)
+        
         embed.set_thumbnail(url = datas['Image'])
         embed.timestamp = datetime.datetime.now()
         embed.set_footer(text = 'Powered by Python', icon_url = 'https://logos-download.com/wp-content/uploads/2016/10/Python_logo_icon.png')

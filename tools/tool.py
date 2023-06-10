@@ -1,8 +1,31 @@
 import pandas as pd
+import itertools
 import secrets
 import yaml
 import re
 import os
+
+
+def filter(raw_lists):
+    filtered_lists = []
+    for file in raw_lists:
+        if not file in filtered_lists:
+            filtered_lists.append(file)
+    return filtered_lists
+
+
+def flat(d_lists):  
+    """
+    Flatten a multi-dimentional list.
+
+    Args:
+    - d_lists (list): A multi-dimensional list.
+
+    Returns:
+    - list: A flattened version of the input list.
+    """
+
+    return list(itertools.chain(*d_lists))
 
 
 async def verify_amazon(url):

@@ -1,4 +1,4 @@
-from tools.tool import TryExcept, yaml_load, randomTime, userAgents, verify_amazon, export_to_sheet
+from tools.tool import TryExcept, yaml_load, randomTime, userAgents, verify_amazon, export_to_sheet, filter
 from playwright.async_api import async_playwright, TimeoutError as PlayError
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -301,26 +301,7 @@ class Amazon:
         }                
         
         return datas
-                
-
-    async def goldbox(self, url):
-        async with async_playwright() as p:
-            browser = await p.chromium.launch(headless = True)
-            context = await browser.new_context(user_agent = userAgents())
-            page = await context.new_page()
-            
-            await page.goto(url)
-            
-            await page.wait_for_selector(self.scrape['gold_pages'])
-            content = await page.content()
-            soup = BeautifulSoup(content, 'lxml')
-            
-            pages = soup.select(self.scrape['gold_pages'])[-1].text.strip()
-            next_link = await page.query_selector(self.scrape['next_page'])
-            await next_link.click()
-            next_url = page.url
-            return next_url
-        
+    
     
     async def product_review(self, asin):
         # asin = await self.getASIN(url)
@@ -359,4 +340,98 @@ class Amazon:
                     }
             }
             return datas
+        
+
+    async def goldbox(self, url):
+        print(f"Crawling Amazon deal products. Please be patient.")
+        gold_dicts = []
+        async with async_playwright() as p:
+            browser = await p.chromium.launch(headless = True)
+            context = await browser.new_context(user_agent = userAgents())
+            page = await context.new_page()
             
+            await page.goto(url)
+            
+            await page.wait_for_selector(self.scrape['gold_pages'])
+            content = await page.content()
+            soup = BeautifulSoup(content, 'lxml')
+            
+            pages = soup.select(self.scrape['gold_pages'])[-1].text.strip()
+            print(f"Total pages {pages}.\n-------------------")
+            await asyncio.sleep(2)
+            goldboxes = soup.select(self.scrape['gold_links'])
+            for num in range(int(pages)):                
+                print(f"Crawling page | {num + 1}.")
+                await page.wait_for_selector(self.scrape['next_page'])
+                next_link = await page.query_selector(self.scrape['next_page'])
+                for gold in goldboxes:
+                    prod = gold.get('href')
+                    if prod.startswith('https://www.amazon.com/deal'):
+                        pass
+                    else:                       
+                        gold_dicts.append(prod)
+                    
+                await asyncio.sleep(3)
+                try:
+                    await next_link.click()
+                except Exception as e:
+                    print(f"Content loading error beyond this page. Error message | {str(e)}.")
+                    break
+                
+            await browser.close()
+            return filter(gold_dicts)
+            
+    
+    async def scrape_goldbox_info(self, url):        
+        gold_dicts = []
+        if await verify_amazon(url):
+            return "I'm sorry, the link you provided is invalid. Could you please provide a valid Amazon link for the product category of your choice?"
+        
+        content = await self.static_connection(url)
+        soup = BeautifulSoup(content, 'lxml')        
+        product = await self.catch.text(soup.select_one(self.scrape['name']))
+        try:
+            deal_price = await self.catch.text(soup.select(self.scrape['deal_price'])[0])
+        except IndexError:
+            deal_price = "N/A"
+        try:
+            savings = await self.catch.text(soup.select(self.scrape['savings'])[-1])
+        except IndexError:
+            savings = "N/A"
+            
+        print(product)     
+           
+        datas = {
+            'Product': product,            
+            'Description': ' '.join([des.text.strip() for des in soup.select(self.scrape['description'])]),
+            'Breakdown': ' '.join([br.text.strip() for br in soup.select(self.scrape['prod_des'])]),
+            'Original Price': await self.catch.text(soup.select_one(self.scrape['price_us'])),
+            'Deal Price': deal_price,
+            'You saved': savings,
+            'Rating': await self.catch.text(soup.select_one(self.scrape['review'])),
+            'Rating count': await self.catch.text(soup.select_one(self.scrape['rating_count'])),
+            'Store': (await self.catch.text(soup.select_one(self.scrape['store']))).replace("Visit the ", ""),
+            'Store link': f"""https://www.amazon.com{await self.catch.attributes(soup.select_one(self.scrape['store']), 'href')}""",
+            'Images': [imgs.get('src') for imgs in soup.select(self.scrape['image_lists'])],
+            'Image': await self.catch.attributes(soup.select_one(self.scrape['image_link_i']), 'src'),
+            'URL': url,
+        }
+        gold_dicts.append(datas)
+        return gold_dicts
+    
+    
+    async def scrape_and_save_gb(self, url):       
+        # random_sleep = await randomTime(interval)
+        await asyncio.sleep(5)
+        datas = await self.scrape_goldbox_info(url)
+        return pd.DataFrame(datas)
+    
+    
+    async def concurrent_scraping_gb(self, url_lists):            
+        print(f"The extraction process has begun and is currently in progress. The web scraper is scanning through all the links and collecting relevant information. Please be patient while the data is being gathered.")
+        coroutines = [self.scrape_and_save_gb(url) for url in url_lists]
+        dfs = await asyncio.gather(*coroutines)
+        results = pd.concat(dfs)        
+        await export_to_sheet(results, "Today's deals")
+                
+                    

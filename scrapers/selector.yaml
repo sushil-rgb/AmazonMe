@@ -16,11 +16,16 @@ image: "img.s-image"
 
 # Below selectors are for individual datas:
 name: "span#productTitle"
+prod_des: "div#productOverview_feature_div table.a-normal.a-spacing-micro tr"
+description: div.a-section.a-spacing-medium.a-spacing-top-small ul.a-unordered-list.a-vertical.a-spacing-mini li
 price_uk: "span#price"
 price_us: "span.a-offscreen"
 price_in: "span.a-price.aok-align-center.reinventPricePriceToPayMargin.priceToPay span.a-offscreen"
+deal_price: span.a-price.a-text-price.a-size-medium.apexPriceToPay span.a-offscreen
+savings: span.a-price.a-text-price.a-size-base span.a-offscreen
 availability: "div#availability span.a-size-medium.a-color-price"
 rating_count: "span#acrCustomerReviewText"
+image_lists: ul.a-unordered-list.a-nostyle.a-button-list.a-vertical.a-spacing-top-micro.regularAltImageViewLayout img
 image_link_i: "div.imgTagWrapper img"
 image_link_ii: "img.a-dynamic-image.image-stretch-vertical.frontImage"
 store: "a#bylineInfo"
@@ -35,4 +40,6 @@ full_review: "div.a-row.a-spacing-top-mini span.a-size-base"
 
 # Goldbox section selectors:
 gold_pages: li.a-disabled
-next_page: li.a-last
+next_page: li.a-last a
+# main_contents: div.DealGridItem-module__dealItemDisplayGrid_e7RQVFWSOrwXBX4i24Tqg.DealGridItem-module__withBorders_2jNNLI6U1oDls7Ten3Dttl.DealGridItem-module__withoutActionButton_2OI8DAanWNRCagYDL2iIqN
+gold_links: div.DealGridItem-module__dealItemDisplayGrid_e7RQVFWSOrwXBX4i24Tqg.DealGridItem-module__withBorders_2jNNLI6U1oDls7Ten3Dttl.DealGridItem-module__withoutActionButton_2OI8DAanWNRCagYDL2iIqN div[data-testid="deal-card"] a.a-link-normal.DealCardDynamic-module__linkOutlineOffset_2XU8RDGmNg2HG1E-ESseNq

@@ -1,5 +1,7 @@
 import pandas as pd
 import itertools
+import asyncio
+import aiohttp
 import secrets
 import yaml
 import re
@@ -26,6 +28,35 @@ def flat(d_lists):
     """
 
     return list(itertools.chain(*d_lists))
+
+
+async def static_connection(url, max_attempts=3):
+    """
+    Sends a GET request to the given URL and returns the response content.
+    
+    Args:
+        url (str): The URL to send the GET request to.
+        max_attempts (int): The maximum number of retry attempts (default: 3).
+    
+    Returns:
+        bytes: The response content in bytes.
+        
+    Raises:
+        aiohttp.ClientError: If an error occurs while making the request after the maximum number of attempts.
+    """
+    attempts = 0
+    while attempts < max_attempts:
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url, headers={'User-Agent': userAgents()}) as resp:
+                    content = await resp.read()
+                    return content
+        except aiohttp.ClientError:
+            attempts += 1
+            await asyncio.sleep(1)  # Wait for 1 second before the next attempt
+            
+    
+    raise aiohttp.ClientError(f"Failed to make the request after {max_attempts} attempts.")
 
 
 async def verify_amazon(url):
@@ -101,7 +132,7 @@ async def randomTime(val):
     Returns:
         -A random interger between 2 and the input value. So, the default time interval is 2 seconds.
     """
-    ranges = [i for i in range(120, val+1)]
+    ranges = [i for i in range(0, val+1)]
     return random_values(ranges)
 
 

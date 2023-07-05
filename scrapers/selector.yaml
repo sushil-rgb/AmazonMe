@@ -1,4 +1,7 @@
 # CSS selectors:
+# searches: span[data-csa-c-type="element"] li.a-spacing-micro.s-navigation-indent-1 span.a-list-item span.a-size-base.a-color-base.a-text-bold
+
+# CSS selectors:
 product_name: "div.a-section.a-spacing-none.a-spacing-top-small.s-title-instructions-style h2 a span"
 searches_I: "div#departments span.a-size-base.a-color-base.a-text-bold"
 searches_II: "span.a-color-state.a-text-bold"

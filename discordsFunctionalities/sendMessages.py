@@ -43,8 +43,7 @@ async def getdataByasin(userInput, user):
         -None
     """
     try:
-        datas = await Amazon().dataByAsin(userInput)
-        
+        datas = await Amazon().dataByAsin(userInput)        
         
         name = datas['Name']
         hyperlink = datas['Hyperlink']

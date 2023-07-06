@@ -5,7 +5,6 @@
                                         ></a>
 </p>
 
-
 ### Discord Integration
 The web scraper now has a Discord bot that can extract the ASIN or ISBN of a product from
 a link sent in a direct message. To use the bot follow these steps:
@@ -18,12 +17,10 @@ the bot in a direct message, and it will repsond with product information.
 
 <p align = 'center'><img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNWU0YjJjMTEyODBmYzI0Mjk1Mjg1YTdmMTVkYWNiNGM5YWFkNDVkZSZlcD12MV9pbnRlcm5hbF9naWZzX2dpZklkJmN0PWc/Jg3cKSlnweCsRp5RC1/giphy.gif" alt="Discord bot"></p>
 
-
 *The bot is in development and currently works only for US Amazon products on the ".com" domain.*
 
-
 # AmazonMe
-Welcome to AmazonMe, a webs craper designed to extract information from the Amazon website and store it in a MongoDB databse. This repository contains
+Welcome to AmazonMe, a web scraper designed to extract information from the Amazon website and store it in a MongoDB databse. This repository contains
 the code for the scraper, which utilizes the Requests and BeautifulSoup libraries to automate the scraping process. The scraper also leverages
 asyncio concurrency to efficiently extract thousands of data points from the website.
 
@@ -39,22 +36,22 @@ Install necessary requirements:
 ```
 
 ## Usage
-```python  
-  async def main():                
+```python
+  async def main():
     base_url = ""  # Enter a desired URL product category of your choice:
     mongo_to_db = await export_to_mong(base_url)
-    sheet_name = "Dinnerware & accessories"  # Please use the name of the collection in your MongoDB database to specify the name of the spreadsheet you intend to export. 
-    # sheets = await mongo_to_sheet(sheet_name)  # Uncomment this to export to excel database.   
-    # return sheets
-    return mongo_to_db   
-  # To run the script, go to terminal and type:
-python main.py
+    return mongo_to_db
+```
+
+# To run the script, go to terminal and type:
+```python
+  python main.py
 ```
 <p align = 'center'><i>Demo of the scraper scraping the content from Amazon</i></p>
 <p align = 'center'><img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNmNmZjFmNzlkMmZhMGI3ZTVmZTc1MDFiNmZhMDAyOTFmOTI2YTU0ZCZlcD12MV9pbnRlcm5hbF9naWZzX2dpZklkJmN0PWc/z1yvTb9gwvuZG9N0Xz/giphy.gif" alt="Discord bot"></p>
 
 ## Features
-After running the program, the scraper will ask you to enter a product url. Do it accordingly and it will scrape the data such as<br>
+Upon executing the program, the scraper commences its operation by extracting the following fields and storing the required product information in Mongo databases.<br>
 <ul>
   <li><b>Product</b></li>
   <li><b>ASIN</b></li>

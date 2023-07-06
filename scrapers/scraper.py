@@ -1,5 +1,5 @@
-from tools.tool import TryExcept, flat, yaml_load, randomTime, userAgents, verify_amazon, export_sheet, filter
-from playwright.async_api import async_playwright, TimeoutError as PlayError
+from tools.tool import TryExcept, yaml_load, randomTime, userAgents, verify_amazon, export_sheet, filter
+from playwright.async_api import async_playwright
 from bs4 import BeautifulSoup
 import pandas as pd
 import asyncio

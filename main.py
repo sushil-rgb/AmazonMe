@@ -7,9 +7,9 @@ if __name__ == '__main__':
 
 
     async def main():
-        base_url = "https://www.amazon.com/s?k=Dinnerware+%26+accessories&rh=n%3A284507%2Cn%3A367155011&dc&ds=v1%3AYjiGQ92N5boPICF0lGxs8%2BHfhbxCKGqThae99X5xlak&crid=IBML6MYDLJ4A&pd_rd_r=d7f8c442-11ba-4bba-8382-9b2832436b2b&pd_rd_w=T81wA&pd_rd_wg=oa9mB&pf_rd_p=c0480761-6b7c-400b-bca5-28ff417248d1&pf_rd_r=V1F3KQQVXDJGHS8A3MAQ&qid=1688628736&rnid=2941120011&sprefix=dinnerware+%26+accessorie%2Caps%2C190&ref=sr_nr_n_5"
+        base_url = "https://www.amazon.com/s?i=electronics&bbn=1266092011&rh=n%3A172282%2Cn%3A1266092011%2Cn%3A172659&field-shipping_option-bin=3242350011&pf_rd_i=16225009011&pf_rd_m=ATVPDKIKX0DER&pf_rd_p=85a9188d-dbd5-424e-9512-339a1227d37c&pf_rd_r=QAXJDW5692A2A6XJ3KFY&pf_rd_s=merchandised-search-5&pf_rd_t=101&qid=1588978526&rnid=1266092011&ref=sr_nr_n_13"
         mongo_to_db = await export_to_mong(base_url)
-        sheet_name = "Dinnerware & accessories"  # Please use the name of the collection in your MongoDB database to specify the name of the spreadsheet you intend to export. 
+        sheet_name = "Dinnerware & accessories"  # Please use the name of the collection in your MongoDB database to specify the name of the spreadsheet you intend to export.
         # sheets = await mongo_to_sheet(sheet_name)  # Uncomment this to export to excel database.
         # return sheets
         return mongo_to_db

@@ -16,7 +16,7 @@ def run_discord_bot():
     """
     Function to run the Discord bot. Registers the event handlers.
     """
-    
+
     # Event handler for when the bot ready:
     @client.event
     async def initiation():
@@ -28,7 +28,7 @@ def run_discord_bot():
         # Ignore messages ent by the bot itself:
         if message.author == client.user:
             return
-        
+
         # Extract the username, user message, and channel from the message.
         username = str(message.author)
         user_message = str(message.content)
@@ -40,26 +40,26 @@ def run_discord_bot():
         asin_pattern = r"""^[A-Z0-9]{10}$"""
         regex_pattern = """^hi|hello|hey|yo"""
         amazon_pattern = '(https?://)?(www\.)?amazon\.(com|in|co\.uk)/.+'
-        
+
         # If the message is a greeting and is sent in a direct message:
         if message.guild is None and re.match(regex_pattern, message.content, re.IGNORECASE):
             await message.author.send(f"Hey {username}. Type '!help' to know the list of commands.")
-        
-        # If the message is !help and is sent in a direct message: 
+
+        # If the message is !help and is sent in a direct message:
         elif message.content == '!help':
             await message.author.send('Paste the Amazon products link to know the ASIN or ISBN respectively.\nPaste the ASIN/ISBN to get the product details.')
-        
+
         # If the message is an Amazon product link and is sent in a direct message:
         elif message.guild is None and re.search(amazon_pattern, user_message):
             await asin_isbn(message.author, user_message)
-        
+
         # IF the message is an ASIN/ISBN and is sent in a direct message:
         elif message.guild is None and (re.match(asin_pattern, message.content)):
             # await export_to_db(user_message)
             # await message.author.send('Please wait. Fetching data from Amazon.')
             await message.author.send(f"Please wait. Fetching data from Amazon.")
             await getdataByasin(user_message, message.author)
-        
+
         # If the message is not a valid link and is send in a direct message:
         else:
             await message.author.send(f"Invalid link. Please try a valid Amazon product link.")

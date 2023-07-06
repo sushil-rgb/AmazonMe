@@ -23,15 +23,19 @@ the bot in a direct message, and it will repsond with product information.
 
 
 # AmazonMe
-Welcome to the AmazonMe scraper that scrape Amazon product database and save it into excel database. This repository contains the code for a web scraper that can extract information from the Amazon website. The scraper uses the Requests, Beautifulsoup libararyto automate the process of scraping and uses asyncio conncurrency to extract thousands of data from the website.
-To get started, you will need to have Python and the necessary requirements installed on your machine.<br>
-**The bot currently scrapes 20,000 records under 10 minutes.**
+Welcome to AmazonMe, a webs craper designed to extract information from the Amazon website and store it in a MongoDB databse. This repository contains
+the code for the scraper, which utilizes the Requests and BeautifulSoup libraries to automate the scraping process. The scraper also leverages
+asyncio concurrency to efficiently extract thousands of data points from the website.
 
-## Install virtual environment:
+## Install necessary requirments:
 It's always a good practice to install a virtual environment before installing necessary requirements:
 ```python
 python.exe -m venv environmentname
 environmentname/scripts/activate
+```
+Install necessary requirements:
+```python
+  pip install -r requirements.txt
 ```
 
 ## Usage

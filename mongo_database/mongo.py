@@ -4,15 +4,15 @@ import pymongo as mong
 import pandas as pd
 
 
-async def export_to_mong(url):    
-    amazon = Amazon() 
+async def export_to_mong(url):
+    amazon = Amazon()
     client = mong.MongoClient("mongodb://localhost:27017/")
     db = client['amazon']
     collection_name = await amazon.category_name(url)
     print(f"Collecting {collection_name} to Mongo database.")
     collection = db[collection_name]
     datas = await amazon.concurrent_scraping(url)
-    
+
     result = collection.insert_many(flat(datas))
     # print("Inserted IDs:", result.inserted_ids)
     client.close()
@@ -45,7 +45,7 @@ async def data_by_asin(asin):
 # print(asyncio.run(data_by_asin("B09JFFX786")))
 # print(asyncio.run(export_to_mong()))
 # print(asyncio.run(export_to_sheet()))
-    
+
 
 
 

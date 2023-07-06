@@ -1,5 +1,5 @@
+from tools.tool import flat, export_sheet
 from scrapers.scraper import Amazon
-from tools.tool import flat
 import pymongo as mong
 import pandas as pd
 
@@ -19,13 +19,14 @@ async def export_to_mong(url):
     return result
 
 
-async def export_to_sheet(coll_name):
+async def mongo_to_sheet(coll_name):
     client = mong.MongoClient('mongodb://localhost:27017')
     db = client['amazon']
     collection_category = db[coll_name]
     datas = list(collection_category.find({}))
-    df = pd.DataFrame(datas)
-    df.to_excel(f"{coll_name}.xlsx", index = False)
+    await export_sheet(datas, coll_name)
+    # df = pd.DataFrame(datas)
+    # df.to_excel(f"{coll_name}.xlsx", index = False)
 
 
 async def data_by_asin(asin):

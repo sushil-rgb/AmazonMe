@@ -1,4 +1,4 @@
-from mongo import export_to_mong, export_to_sheet
+from mongo_database.mongo import export_to_mong, mongo_to_sheet
 import asyncio
 import time
 
@@ -6,23 +6,12 @@ import time
 if __name__ == '__main__':          
     
         
-    async def main():
-        # While it is possible to reduce the time interval for faster scraping, I would advise against doing so as this could potentially overload the server and result in Amazon blocking your IP address.
-        # Default time-interval ranges from (2 to 5 minutes). Scrape responsibly:
-        # sleep = 1 * 60
-        
-        base_url = "https://www.amazon.com/s?k=Knits+clothing&crid=23OTKP0I0AQDD&pd_rd_r=cdb0b781-3395-4f1d-b1ca-be09bae8b440&pd_rd_w=fOkVl&pd_rd_wg=INv7H&pf_rd_p=b4114be9-6d3d-4aed-8b31-fcbf38a83486&pf_rd_r=B88MMHMZZ45RP5A0AQ2T&sprefix=knits+clothing%2Caps%2C147&ref=pd_gw_unk"
-        # amazon = Amazon() 
-        
-        # # Below script checks if the Amazon is a Deal (goldbox) URL:
-        # if 'gp' in base_url:
-        #     urls = await amazon.goldbox(base_url)            
-        #     datas = await amazon.concurrent_scraping_gb(urls)
-        #     return datas
-        # else:
-        #     datas = await amazon.concurrent_scraping(sleep, base_url)     
-        mongo_to_db = await export_to_mong(base_url)     
-        # mongo_to_sheets = await export_to_sheet("s")     
+    async def main():                
+        base_url = "https://www.amazon.com/s?k=Dinnerware+%26+accessories&rh=n%3A284507%2Cn%3A367155011&dc&ds=v1%3AYjiGQ92N5boPICF0lGxs8%2BHfhbxCKGqThae99X5xlak&crid=IBML6MYDLJ4A&pd_rd_r=d7f8c442-11ba-4bba-8382-9b2832436b2b&pd_rd_w=T81wA&pd_rd_wg=oa9mB&pf_rd_p=c0480761-6b7c-400b-bca5-28ff417248d1&pf_rd_r=V1F3KQQVXDJGHS8A3MAQ&qid=1688628736&rnid=2941120011&sprefix=dinnerware+%26+accessorie%2Caps%2C190&ref=sr_nr_n_5"
+        mongo_to_db = await export_to_mong(base_url)
+        sheet_name = "Dinnerware & accessories"  # Please use the name of the collection in your MongoDB database to specify the name of the spreadsheet you intend to export. 
+        # sheets = await mongo_to_sheet(sheet_name)  # Uncomment this to export to excel database.   
+        # return sheets
         return mongo_to_db  
     
     

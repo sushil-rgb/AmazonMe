@@ -35,10 +35,14 @@ environmentname/scripts/activate
 ```
 
 ## Usage
-```python
-  # Enter a desired URL product category of your choice:
-  base_url = ""
-  
+```python  
+  async def main():                
+    base_url = ""  # Enter a desired URL product category of your choice:
+    mongo_to_db = await export_to_mong(base_url)
+    sheet_name = "Dinnerware & accessories"  # Please use the name of the collection in your MongoDB database to specify the name of the spreadsheet you intend to export. 
+    # sheets = await mongo_to_sheet(sheet_name)  # Uncomment this to export to excel database.   
+    # return sheets
+    return mongo_to_db   
   # To run the script, go to terminal and type:
 python main.py
 ```
@@ -47,7 +51,29 @@ python main.py
 
 ## Features
 After running the program, the scraper will ask you to enter a product url. Do it accordingly and it will scrape the data such as<br>
-**Product name**, **ASIN**, **Prices**, **Reviews**, **Links**
+<ul>
+  <li>**Product**</li>
+  <li>**ASIN**</li>
+  <li>**Price**</li>
+  <li>**Original price**</li>
+  <li>**Review**</li>
+  <li>**Review count**</li>
+  <li>**Hyperlink**</li>
+  <li>**Image url**</li>
+</ul>
+
+### MongoDB Integration
+Newly added to AmazonMe is the integration with MongoDB, allowing you to store the scraped data in a database for further analysis or usage. The scraper can now save the scraped data directly to a MongoDB database.
+
+To enable MongoDB integration, you need to follow these steps:
+
+1. Make sure you have MongoDB installed and running on your machine or a remote server.
+2. Install the `pymongo` package by running the following command:
+3. In the script or module where you handle the scraping and data extraction, import the `pymongo` package:
+```python
+pip install pymongo```
+
+With the MongoDB integration, you can easily query and retrieve the scraped data from the database, perform analytics, or use it for other purposes.
 
 ## Note
 Please note that the script is designed to work with Amazon and may not work with other types of websites. Additionally, the script may be blocked by the website if it detects excessive scraping activity, so please use this tool responsibly and in compliance with Amazon's terms of service

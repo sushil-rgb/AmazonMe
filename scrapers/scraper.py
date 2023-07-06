@@ -1,4 +1,4 @@
-from tools.tool import TryExcept, flat, yaml_load, randomTime, userAgents, verify_amazon, export_to_sheet, filter
+from tools.tool import TryExcept, flat, yaml_load, randomTime, userAgents, verify_amazon, export_sheet, filter
 from playwright.async_api import async_playwright, TimeoutError as PlayError
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -25,7 +25,7 @@ class Amazon:
         self.headers = {'User-Agent': userAgents()}
         self.catch = TryExcept()
         self.scrape = yaml_load('selector')
-        self.rand_time = 5 * 60
+        self.rand_time = 10 * 60
         
     
     async def static_connection(self, url):
@@ -229,15 +229,8 @@ class Amazon:
         coroutines = [self.scrape_and_save(url) for url in url_lists]
         all_datas = await asyncio.gather(*coroutines)
         return all_datas
-        
-    
-    async def exported_sheet(self, url):
-        # sheet_datas = await self.concurrent_scraping(url)
-        searches = await self.category_name(url)
-        datas = await self.concurrent_scraping(url)
-        results = pd.concat(datas)
-        await export_to_sheet(results, searches)
-        
+          
+
     
     async def dataByAsin(self, asin):
         """
@@ -424,6 +417,6 @@ class Amazon:
         coroutines = [self.scrape_and_save_gb(url) for url in url_lists]
         dfs = await asyncio.gather(*coroutines)
         results = pd.concat(dfs)        
-        await export_to_sheet(results, "Today's deals")
+        await export_sheet(results, "Today's deals")
                 
                     

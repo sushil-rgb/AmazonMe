@@ -76,7 +76,7 @@ async def verify_amazon(url):
         pass
 
 
-async def export_to_sheet(dicts, name):
+async def export_sheet(dicts, name):
     """
     Exports a list of dictinaries to an Excel file with the specified name and saves it to a directory called 'Amazon database':
     

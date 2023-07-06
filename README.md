@@ -52,14 +52,14 @@ python main.py
 ## Features
 After running the program, the scraper will ask you to enter a product url. Do it accordingly and it will scrape the data such as<br>
 <ul>
-  <li>**Product**</li>
-  <li>**ASIN**</li>
-  <li>**Price**</li>
-  <li>**Original price**</li>
-  <li>**Review**</li>
-  <li>**Review count**</li>
-  <li>**Hyperlink**</li>
-  <li>**Image url**</li>
+  <li><b>Product</b></li>
+  <li><b>ASIN</b></li>
+  <li><b>Price</b></li>
+  <li><b>Original price</b></li>
+  <li><b>Review</b></li>
+  <li><b>Review count</b></li>
+  <li><b>Hyperlink</b></li>
+  <li><b>Image url</b></li>
 </ul>
 
 ### MongoDB Integration
@@ -71,8 +71,8 @@ To enable MongoDB integration, you need to follow these steps:
 2. Install the `pymongo` package by running the following command:
 3. In the script or module where you handle the scraping and data extraction, import the `pymongo` package:
 ```python
-pip install pymongo```
-
+pip install pymongo
+```
 With the MongoDB integration, you can easily query and retrieve the scraped data from the database, perform analytics, or use it for other purposes.
 
 ## Note

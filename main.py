@@ -8,7 +8,7 @@ if __name__ == '__main__':
 
 
     async def main():
-        base_url = "https://www.amazon.com/s?k=Shoes&rh=p_36%3A-5000&crid=1QEZIUFPCL3YZ&pd_rd_r=f9174b12-d1e3-491c-8faa-358847a9ccfa&pd_rd_w=i0kWf&pd_rd_wg=ipulU&pf_rd_p=b0c3902d-ae70-4b80-8f54-4d0a3246745a&pf_rd_r=7P47VRB2WZ3PNW2MTV59&qid=1684823927&rnid=2661611011&sprefix=shoes%2Caps%2C145&ref=pd_gw_unk"
+        base_url = "https://www.amazon.com/s?k=sexy+dresses&rh=n%3A1045024%2Cn%3A11006703011&dc&ds=v1%3A%2B%2B%2BeqnlN6RopN%2BQAazKtqRPqLIORlC%2FwkWAKUFM%2B9Kc&qid=1688721535&rnid=2941120011&ref=sr_nr_n_4"
         # amzn = Amazon()
         # return await amzn.scrape_data(base_url)
         mongo_to_db = await export_to_mong(base_url)

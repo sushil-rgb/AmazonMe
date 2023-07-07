@@ -184,11 +184,11 @@ class Amazon:
             prod_hyperlink = f"""https://www.amazon.com{await self.catch.attributes(datas.select_one(self.scrape['hyperlink']), 'href')}"""
             prod_name = await self.catch.text(datas.select_one(self.scrape['hyperlink']))
             try:
-                price = float(datas.select_one(self.scrape['price']).text.strip().replace("$", ""))
+                price = float(re.sub(r'[$,]', '', datas.select_one(self.scrape['price']).text.strip().replace("$", "")))
             except AttributeError:
                 price = "N/A"
             try:
-                og_price = float(datas.select_one(self.scrape['old_price']).text.strip().replace("$", ""))
+                og_price = float(re.sub(r'[$,]', '', datas.select_one(self.scrape['old_price']).text.strip().replace("$", "")))
             except AttributeError:
                 og_price = "N/A"
             try:

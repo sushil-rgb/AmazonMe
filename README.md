@@ -70,10 +70,12 @@ To enable MongoDB integration, you need to follow these steps:
 
 1. Make sure you have MongoDB installed and running on your machine or a remote server.
 2. Install the `pymongo` package by running the following command:
-3. In the script or module where you handle the scraping and data extraction, import the `pymongo` package:
-```python
-pip install pymongo
-```
+                   <p align = 'center'>
+                    ```python
+                    pip install pymongo
+                    ```
+                                        </p>
+3. In the script or module where you handle the scraping and data extraction, import the `pymongo`
 With the MongoDB integration, you can easily query and retrieve the scraped data from the database, perform analytics, or use it for other purposes.
 
 ## Note

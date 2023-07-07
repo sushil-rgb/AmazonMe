@@ -183,14 +183,32 @@ class Amazon:
         for datas in card_contents:
             prod_hyperlink = f"""https://www.amazon.com{await self.catch.attributes(datas.select_one(self.scrape['hyperlink']), 'href')}"""
             prod_name = await self.catch.text(datas.select_one(self.scrape['hyperlink']))
+            try:
+                price = float(datas.select_one(self.scrape['price']).text.strip().replace("$", ""))
+            except AttributeError:
+                price = "N/A"
+            try:
+                og_price = await self.catch.text(datas.select_one(self.scrape['old_price']))
+            except AttributeError:
+                og_price = "N/A"
+            try:
+                review = float(datas.select_one(self.scrape['review']).text.strip().split()[0])
+            except AttributeError:
+                review = "N/A"
+            try:
+                review_count = int(datas.select_one(self.scrape['review_count']).text.strip().replace(",", ''))
+            except AttributeError:
+                review_count = "N/A"
+
             print(prod_name)
+
             data = {
                 'Product': prod_name,
                 'ASIN': await self.getASIN(prod_hyperlink),
-                'Price': await self.catch.text(datas.select_one(self.scrape['price'])),
-                'Original price': await self.catch.text(datas.select_one(self.scrape['old_price'])),
-                'Review': await self.catch.text(datas.select_one(self.scrape['review'])),
-                'Review count': await self.catch.text(datas.select_one(self.scrape['review_count'])),
+                'Price': price,
+                'Original price': og_price,
+                'Review': review,
+                'Review count': review_count,
                 'Hyperlink': prod_hyperlink,
                 'Image url': f"""{await self.catch.attributes(datas.select_one(self.scrape['image']), 'src')}""",
             }
@@ -256,7 +274,7 @@ class Amazon:
         try:
             # Try to extract the image link using the second first selector.
             image_link = soup.select_one(self.scrape['image_link_i']).get('src')
-        except Exception as e: 
+        except Exception as e:
             image_link = soup.select_one(self.scrape['image_link_ii']).get('src')
         # finally:
         #     # If the image link cannot be extracted, return an error message:
@@ -269,6 +287,7 @@ class Amazon:
 
         store = await self.catch.text(soup.select_one(self.scrape['store']))
         store_link = f"""https://www.amazon.com{await self.catch.attributes(soup.select_one(self.scrape['store']), 'href')}"""
+        price = await self.catch.text(soup.select_one(self.scrape['price_us']))
 
         # Construct the data dictionary containing product information:
         datas = {

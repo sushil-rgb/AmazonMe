@@ -188,7 +188,7 @@ class Amazon:
             except AttributeError:
                 price = "N/A"
             try:
-                og_price = await self.catch.text(datas.select_one(self.scrape['old_price']))
+                og_price = float(datas.select_one(self.scrape['old_price']).text.strip().replace("$", ""))
             except AttributeError:
                 og_price = "N/A"
             try:

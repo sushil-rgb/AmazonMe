@@ -207,7 +207,7 @@ class Amazon:
                 if 'Page' in price.split():
                     price = await self.catch.text(soup.select_one(self.scrape['price_us_i']))
                 # return price
-                if price != "N/A":
+                if not price.isdigit():
                     price = float(re.sub(r'[$,%()]', '', price))
                 try:
                     deal_price = await self.catch.text(soup.select(self.scrape['deal_price'])[0])
@@ -215,7 +215,7 @@ class Amazon:
                         deal_price = "N/A"
                 except Exception as e:
                     deal_price = "N/A"
-                if deal_price != "N/A":
+                if not deal_price.isdigit():
                     deal_price = float(re.sub(r'[$,%()]', '', deal_price))
                 try:
                     savings = await self.catch.text(soup.select(self.scrape['savings'])[-1])

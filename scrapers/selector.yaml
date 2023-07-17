@@ -23,6 +23,7 @@ prod_des: "div#productOverview_feature_div table.a-normal.a-spacing-micro tr"
 description: div.a-section.a-spacing-medium.a-spacing-top-small ul.a-unordered-list.a-vertical.a-spacing-mini li
 price_uk: "span#price"
 price_us: "span.a-offscreen"
+price_us_i: "span.a-size-base.a-color-price"
 price_in: "span.a-price.aok-align-center.reinventPricePriceToPayMargin.priceToPay span.a-offscreen"
 deal_price: span.a-price.a-text-price.a-size-medium.apexPriceToPay span.a-offscreen
 savings: span.a-price.a-text-price.a-size-base span.a-offscreen

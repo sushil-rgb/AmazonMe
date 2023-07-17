@@ -54,13 +54,21 @@ Install necessary requirements:
 Upon executing the program, the scraper commences its operation by extracting the following fields and storing the required product information in Mongo databases.<br>
 <ul>
   <li><b>Product</b></li>
-  <li><b>ASIN</b></li>
+  <li><b>Asin</b></li>
+  <li><b>Description</b></li>
+  <li><b>Breakdown</b></li>
   <li><b>Price</b></li>
-  <li><b>Original price</b></li>
-  <li><b>Review</b></li>
-  <li><b>Review count</b></li>
+  <li><b>Deal Price</b></li>
+  <li><b>You Saved</b></li>
+  <li><b>Rating</b></li>
+  <li><b>Rating count</b></li>
+  <li><b>Availability</b></li>
   <li><b>Hyperlink</b></li>
   <li><b>Image url</b></li>
+  <li><b>Image lists</b></li>
+  <li><b>Store</b></li>
+  <li><b>Store link</b></li>
+
 </ul>
 
 ### MongoDB Integration

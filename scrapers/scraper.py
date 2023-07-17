@@ -1,8 +1,9 @@
-from tools.tool import TryExcept, flat, static_connection, yaml_load, randomTime, userAgents, verify_amazon, export_sheet, filter
-from playwright.async_api import async_playwright
+from tools.tool import TryExcept, yaml_load, randomTime, userAgents, verify_amazon, export_sheet, flat, static_connection
+from playwright.async_api import async_playwright, TimeoutError as PlayError
 from bs4 import BeautifulSoup
 import pandas as pd
 import asyncio
+import aiohttp
 import re
 
 
@@ -177,6 +178,28 @@ class Amazon:
         results = await asyncio.gather(*coroutines)
         return flat(results)
 
+
+    async def scrape_and_save(self, interval, url):
+        """
+        Scrapes data from a given URL, saves it to a file, and returns the scarped data as a Pandas Dataframe.
+
+        Args:
+            -interval (int): Time interval in seconds to sleep before scraping the data.
+            -url (str): The URL to scrape data from.
+
+        Returns:
+            -pd.DataFrame: A Pandas DataFrame containing the scraped data.
+
+        Raises:
+            -HTTPError: If the HTTP request to the URL returns an error status code.
+            -Exception: If there is an error while scraping the data.
+        """
+        random_sleep = await randomTime(self.rand_time)
+        await asyncio.sleep(random_sleep)
+        datas = await self.scrape_data(url)
+        return pd.DataFrame(datas)
+
+
     async def scrape_product_info(self, url, max_retries = 13):
         amazon_dicts = []
         for retry in range(max_retries):
@@ -207,16 +230,16 @@ class Amazon:
                 if 'Page' in price.split():
                     price = await self.catch.text(soup.select_one(self.scrape['price_us_i']))
                 # return price
-                if price.isdigit():
-                    price = float(re.sub(r'[$,%()]', '', price))
+                if price != "N/A":
+                    price = float(re.sub(r'[$,]', '', price))
                 try:
                     deal_price = await self.catch.text(soup.select(self.scrape['deal_price'])[0])
                     if 'Page' in deal_price.split():
                         deal_price = "N/A"
                 except Exception as e:
                     deal_price = "N/A"
-                if deal_price.isdigit():
-                    deal_price = float(re.sub(r'[$,%()]', '', deal_price))
+                if deal_price != "N/A":
+                    deal_price = float(re.sub(r'[$,]', '', deal_price))
                 try:
                     savings = await self.catch.text(soup.select(self.scrape['savings'])[-1])
                 except IndexError:
@@ -227,8 +250,7 @@ class Amazon:
 
                 # Construct the data dictionary containing product information:
                 datas = {
-                    'Product': product,
-                    'Asin': await self.getASIN(url),
+                    'Name': product,
                     'Description': ' '.join([des.text.strip() for des in soup.select(self.scrape['description'])]),
                     'Breakdown': ' '.join([br.text.strip() for br in soup.select(self.scrape['prod_des'])]),
                     'Price': price,
@@ -258,7 +280,7 @@ class Amazon:
         raise Exception(f"Failed to retrieve valid data after {max_retries} retries.")
 
 
-    async def scrape_and_save(self, url):
+    async def scrape_and_save(self, interval, url):
         """
         Scrapes data from a given URL, saves it to a file, and returns the scarped data as a Pandas Dataframe.
 
@@ -274,13 +296,13 @@ class Amazon:
             -Exception: If there is an error while scraping the data.
         """
 
-        random_sleep = await randomTime(self.rand_time)
+        random_sleep = await randomTime(interval)
         await asyncio.sleep(random_sleep)
         datas = await self.scrape_product_info(url)
         return datas
 
 
-    async def concurrent_scraping(self):
+    async def concurrent_scraping(self, interval):
         if await verify_amazon(self.base_url):
             return "I'm sorry, the link you provided is invalid. Could you please provide a valid Amazon link for the product category of your choice?"
 
@@ -297,7 +319,7 @@ class Amazon:
         product_urls = await self.crawl_url()
 
         print(f"The extraction process has begun and is currently in progress. The web scraper is scanning through all the links and collecting relevant information. Please be patient while the data is being gathered.")
-        coroutines = [self.scrape_and_save(url) for url in product_urls]
+        coroutines = [self.scrape_and_save(interval, url) for url in product_urls]
         dfs = await asyncio.gather(*coroutines)
         return dfs
 
@@ -355,96 +377,42 @@ class Amazon:
         }
         return datas
 
-
-    async def goldbox(self, url):
-        print(f"Crawling Amazon deal products. Please be patient.")
-        gold_dicts = []
+    async def product_review(self, asin):
+        # asin = await self.getASIN(url)
+        # review_url = f"""https://{'/'.join(url.split("/")[2:4])}/product-reviews/{asin}/ref=cm_cr_arp_d_paging_btm_next_4?ie=UTF8&pageNumber=4&reviewerType=all_reviews&pageSize=10"""
+        review_url = f"https://www.amazon.com/product-reviews/{asin}"
         async with async_playwright() as p:
             browser = await p.chromium.launch(headless = True)
             context = await browser.new_context(user_agent = userAgents())
             page = await context.new_page()
 
-            await page.goto(url)
+            await page.goto(review_url)
 
-            await page.wait_for_selector(self.scrape['gold_pages'])
             content = await page.content()
             soup = BeautifulSoup(content, 'lxml')
 
-            pages = soup.select(self.scrape['gold_pages'])[-1].text.strip()
-            print(f"Total pages {pages}.\n-------------------")
-            await asyncio.sleep(2)
-            goldboxes = soup.select(self.scrape['gold_links'])
-            for num in range(int(pages)):
-                print(f"Crawling page | {num + 1}.")
-                await page.wait_for_selector(self.scrape['next_page'])
-                next_link = await page.query_selector(self.scrape['next_page'])
-                for gold in goldboxes:
-                    prod = gold.get('href')
-                    if prod.startswith('https://www.amazon.com/deal'):
-                        pass
-                    else:
-                        gold_dicts.append(prod)
+            profile_name = soup.select(self.scrape['profile_name'])
+            stars = soup.select(self.scrape['stars'])
+            review_title = soup.select(self.scrape['review_title'])
+            full_review = soup.select(self.scrape['full_review'])
 
-                await asyncio.sleep(3)
-                try:
-                    await next_link.click()
-                except Exception as e:
-                    print(f"Content loading error beyond this page. Error message | {str(e)}.")
-                    break
+            datas = {
+                'top positive review':
+                    {
+                        'customer': profile_name[0].text.strip(),
+                        'stars': stars[0].text.strip(),
+                        'title': review_title[0].text.strip(),
+                        'review': full_review[0].text.strip()
+                    },
 
-            await browser.close()
-            return filter(gold_dicts)
+                'top critical review':
+                    {
+                        'customer': profile_name[1].text.strip(),
+                        'stars': stars[1].text.strip(),
+                        'title': review_title[1].text.strip(),
+                        'review': full_review[1].text.strip()
+                    }
+            }
+            return datas
 
-
-    async def scrape_goldbox_info(self, url):
-        gold_dicts = []
-        if await verify_amazon(url):
-            return "I'm sorry, the link you provided is invalid. Could you please provide a valid Amazon link for the product category of your choice?"
-
-        content = await self.static_connection(url)
-        soup = BeautifulSoup(content, 'lxml')
-        product = await self.catch.text(soup.select_one(self.scrape['name']))
-        try:
-            deal_price = await self.catch.text(soup.select(self.scrape['deal_price'])[0])
-        except IndexError:
-            deal_price = "N/A"
-        try:
-            savings = await self.catch.text(soup.select(self.scrape['savings'])[-1])
-        except IndexError:
-            savings = "N/A"
-
-        print(product)
-
-        datas = {
-            'Product': product,
-            'Description': ' '.join([des.text.strip() for des in soup.select(self.scrape['description'])]),
-            'Breakdown': ' '.join([br.text.strip() for br in soup.select(self.scrape['prod_des'])]),
-            'Original Price': await self.catch.text(soup.select_one(self.scrape['price_us'])),
-            'Deal Price': deal_price,
-            'You saved': savings,
-            'Rating': await self.catch.text(soup.select_one(self.scrape['review'])),
-            'Rating count': await self.catch.text(soup.select_one(self.scrape['rating_count'])),
-            'Store': (await self.catch.text(soup.select_one(self.scrape['store']))).replace("Visit the ", ""),
-            'Store link': f"""https://www.amazon.com{await self.catch.attributes(soup.select_one(self.scrape['store']), 'href')}""",
-            'Images': [imgs.get('src') for imgs in soup.select(self.scrape['image_lists'])],
-            'Image': await self.catch.attributes(soup.select_one(self.scrape['image_link_i']), 'src'),
-            'URL': url,
-        }
-        gold_dicts.append(datas)
-        return gold_dicts
-
-
-    async def scrape_and_save_gb(self, url):
-        # random_sleep = await randomTime(interval)
-        await asyncio.sleep(5)
-        datas = await self.scrape_goldbox_info(url)
-        return pd.DataFrame(datas)
-
-
-    async def concurrent_scraping_gb(self, url_lists):
-        print(f"The extraction process has begun and is currently in progress. The web scraper is scanning through all the links and collecting relevant information. Please be patient while the data is being gathered.")
-        coroutines = [self.scrape_and_save_gb(url) for url in url_lists]
-        dfs = await asyncio.gather(*coroutines)
-        results = pd.concat(dfs)
-        await export_sheet(results, "Today's deals")
 

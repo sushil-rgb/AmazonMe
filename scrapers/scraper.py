@@ -181,9 +181,27 @@ class Amazon:
         amazon_dicts = []
         for retry in range(max_retries):
             try:
+<<<<<<< HEAD
                 # Retrieve the page content using 'static_connection' method:
                 content = await static_connection(url)
                 soup = BeautifulSoup(content, 'lxml')
+=======
+                price = float(datas.select_one(self.scrape['price']).text.strip().replace("$", ""))
+            except AttributeError:
+                price = "N/A"
+            try:
+                og_price = float(datas.select_one(self.scrape['old_price']).text.strip().replace("$", ""))
+            except AttributeError:
+                og_price = "N/A"
+            try:
+                review = float(datas.select_one(self.scrape['review']).text.strip().split()[0])
+            except AttributeError:
+                review = "N/A"
+            try:
+                review_count = int(datas.select_one(self.scrape['review_count']).text.strip().replace(",", ''))
+            except AttributeError:
+                review_count = "N/A"
+>>>>>>> parent of 697d286 (added some regex functionalities)
 
                 product = soup.select_one(self.scrape['name']).text.strip()
                 print(product)

@@ -177,28 +177,6 @@ class Amazon:
         results = await asyncio.gather(*coroutines)
         return flat(results)
 
-
-    async def scrape_and_save(self, interval, url):
-        """
-        Scrapes data from a given URL, saves it to a file, and returns the scarped data as a Pandas Dataframe.
-
-        Args:
-            -interval (int): Time interval in seconds to sleep before scraping the data.
-            -url (str): The URL to scrape data from.
-
-        Returns:
-            -pd.DataFrame: A Pandas DataFrame containing the scraped data.
-
-        Raises:
-            -HTTPError: If the HTTP request to the URL returns an error status code.
-            -Exception: If there is an error while scraping the data.
-        """
-        random_sleep = await randomTime(self.rand_time)
-        await asyncio.sleep(random_sleep)
-        datas = await self.scrape_data(url)
-        return pd.DataFrame(datas)
-
-
     async def scrape_product_info(self, url, max_retries = 13):
         amazon_dicts = []
         for retry in range(max_retries):

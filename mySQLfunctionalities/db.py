@@ -21,7 +21,6 @@ async def mysql_connections():
         password = os.getenv('DB_PASSWORD'),
         database = os.getenv('DATABASE'),
     )
-
     return cnx
 
 
@@ -40,7 +39,6 @@ async def verifyASIN(amazon_asin):
     sql_check_query = """SELECT * FROM asin_collections WHERE ASIN = %s"""
     params = (amazon_asin,)
     cursor.execute(sql_check_query, params)
-
     if cursor.fetchone():
         cnx.close()
         return True
@@ -66,31 +64,22 @@ async def export_to_db(amazon_asin, user = None):
     if await verifyASIN(amazon_asin):
         cursor.execute(select_query)
         row = cursor.fetchone()
-
         columns = [col[0] for col in cursor.description]
-
         result_dict = dict(zip(columns, row))
         print(f"{amazon_asin} already exists.")
         cnx.close()
         return result_dict
-
     else:        
-        amazon_datas = await Amazon().dataByAsin(amazon_asin)      
-
+        amazon_datas = await Amazon().dataByAsin(amazon_asin)
         insert_query = f"""INSERT INTO `asin_collections` (`ASIN`, `Name`, `Price`, `Rating`, `Rating count`, `Availability`, `Hyperlink`, `Image`, `Store`, `Store link`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
         values = (amazon_asin, amazon_datas['Name'], amazon_datas['Price'], amazon_datas['Rating'], amazon_datas['Rating count'], amazon_datas['Availability'], amazon_datas['Hyperlink'], amazon_datas['Image'], amazon_datas['Store'], amazon_datas['Store link'])
-
         cursor.execute(insert_query, values)
         cnx.commit()
-
         cursor.execute(select_query)
         row = cursor.fetchone()
-
         columns = [col[0] for col in cursor.description]
-
         result_dict = dict(zip(columns, row))
         print(f"{amazon_asin} added to database.")
-        
         cnx.close()
         return result_dict
 

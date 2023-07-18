@@ -4,13 +4,13 @@ import pymongo as mong
 
 
 async def export_to_mong(url):
-    amazon = Amazon()
+    amazon = Amazon(url)
     client = mong.MongoClient("mongodb://localhost:27017/")
     db = client['amazon']
-    collection_name = await amazon.category_name(url)
+    collection_name = await amazon.category_name()
     print(f"Collecting {collection_name} to Mongo database.")
     collection = db[collection_name]
-    datas = await amazon.concurrent_scraping(url)
+    datas = await amazon.concurrent_scraping()
     result = collection.insert_many(flat(datas))
     client.close()
     return result

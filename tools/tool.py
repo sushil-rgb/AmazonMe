@@ -1,6 +1,5 @@
 import pandas as pd
 import itertools
-import asyncio
 import aiohttp
 import secrets
 import yaml
@@ -24,39 +23,19 @@ def flat(d_lists):
     - d_lists (list): A multi-dimensional list.
 
     Returns:
-    - list: A flattened version of the input list.
-    """
+    - list: A flattened version of the input list.    """
 
     return list(itertools.chain(*d_lists))
 
 
-async def static_connection(url, max_attempts=3):
-    """
-    Sends a GET request to the given URL and returns the response content.
-
-    Args:
-        url (str): The URL to send the GET request to.
-        max_attempts (int): The maximum number of retry attempts (default: 3).
-
-    Returns:
-        bytes: The response content in bytes.
-
-    Raises:
-        aiohttp.ClientError: If an error occurs while making the request after the maximum number of attempts.
-    """
-    attempts = 0
-    while attempts < max_attempts:
-        try:
-            async with aiohttp.ClientSession() as session:
-                async with session.get(url, headers={'User-Agent': userAgents()}) as resp:
-                    content = await resp.read()
-                    return content
-        except aiohttp.ClientError:
-            attempts += 1
-            await asyncio.sleep(1)  # Wait for 1 second before the next attempt
-
-
-    raise aiohttp.ClientError(f"Failed to make the request after {max_attempts} attempts.")
+async def static_connection(url):
+    connector = aiohttp.TCPConnector(ssl = False)
+    async with aiohttp.ClientSession(connector = connector) as session:
+        async with session.get(url,
+                               headers={'User-Agent': userAgents()}
+                               ) as resp:
+            content = await resp.read()
+            return content
 
 
 async def verify_amazon(url):
@@ -89,7 +68,6 @@ async def export_sheet(dicts, name):
     """
     directory_name = 'Amazon database'
     await create_path(directory_name)
-
     df = pd.DataFrame(dicts)
     df.to_excel(f"""{os.getcwd()}//{directory_name}//{name}-Amazon database.xlsx""", index = False)
     print(f"{name} saved.")
@@ -151,6 +129,12 @@ def userAgents():
         return random_values(agents)
 
 
+def rand_proxies():
+    with open('proxies.txt') as f:
+        proxies = f.read().split("\n")
+        return random_values(proxies)
+
+
 def yaml_load(selectors):
     """
     Loads a YAML file containing selectors for web scraping.
@@ -186,7 +170,6 @@ class TryExcept:
             elements = "N/A"
         return elements
 
-
     async def attributes(self, element, attr):
         """
         Returns the value fo an attribute of an HTML element, of "N/A" if the attribute or element is not found.
@@ -202,6 +185,5 @@ class TryExcept:
             elements = element.get(attr)
         except AttributeError:
             elements = "N/A"
-
         return elements
 

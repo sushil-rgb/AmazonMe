@@ -1,5 +1,6 @@
 import pandas as pd
 import itertools
+import asyncio
 import aiohttp
 import secrets
 import yaml
@@ -28,14 +29,26 @@ def flat(d_lists):
     return list(itertools.chain(*d_lists))
 
 
-async def static_connection(url):
+async def static_connection(url, max_retries = 13):
     connector = aiohttp.TCPConnector(ssl = False)
     async with aiohttp.ClientSession(connector = connector) as session:
-        async with session.get(url,
-                               headers={'User-Agent': userAgents()}
-                               ) as resp:
-            content = await resp.read()
-            return content
+        for retry in range(max_retries):
+            try:
+                async with session.get(url,
+                                    headers={'User-Agent': userAgents()},
+                                    proxy = "http://157.245.27.9:3128",
+                                    ) as resp:
+                    content = await resp.read()
+                return content
+            except ConnectionResetError as se:
+                print(f"Connection lost: {str(e)}. Retrying... ({retry + 1} / {max_retries})")
+                if retry < max_retries - 1:
+                    await asyncio.sleep(5)  # Delay before retrying.
+            except Exception as e:
+                print(f"Retry {retry + 1} failed: {str(e)}")
+                if retry < max_retries - 1:
+                    await asyncio.sleep(4)  # Delay before retrying.
+        raise Exception(f"Failed to retrieve valid data after {max_retries} retries.")
 
 
 async def verify_amazon(url):

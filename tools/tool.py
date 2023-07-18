@@ -29,7 +29,7 @@ def flat(d_lists):
     return list(itertools.chain(*d_lists))
 
 
-async def static_connection(url, max_retries = 13):
+async def static_connection(url, max_retries = 50):
     connector = aiohttp.TCPConnector(ssl = False)
     async with aiohttp.ClientSession(connector = connector) as session:
         for retry in range(max_retries):

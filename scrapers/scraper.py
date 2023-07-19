@@ -257,7 +257,7 @@ class Amazon:
         return flat(results)
 
 
-    async def scrape_and_save(self, interval, url):
+    async def scrape_and_save(self, url):
         """
         Scrapes data from a given URL, saves it to a file, and returns the scarped data as a Pandas Dataframe.
 

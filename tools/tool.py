@@ -36,7 +36,7 @@ async def static_connection(url, max_retries = 50):
             try:
                 async with session.get(url,
                                     headers={'User-Agent': userAgents()},
-                                    proxy = "http://157.245.27.9:3128",
+                                    proxy = None,
                                     ) as resp:
                     content = await resp.read()
                 return content

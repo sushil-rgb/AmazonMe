@@ -2,6 +2,8 @@
 **The script keeps throwing a 503 error from Amazon. Need proxies to keep things running until I find a better solution. Hang on!**<br>
 ### Update
 **I managed to grab some free proxies. They might do the trick, but there's no guarantee. It's worth a shot though. Let's see if they can help me overcome the 503 error and keep the scraping going smoothly. Fingers crossed.**
+<br>
+**P.S. If you have your own proxies to use, simply copy and paste them into the proxies.txt file located in the root directory.**
 
 
 

@@ -16,6 +16,35 @@ def filter(raw_lists):
     return filtered_lists
 
 
+async def retry_request(url, max_retries = 13):
+    """
+    Retry the request multiple times with a delay if there are connection errors.
+
+    Args:
+        max_retries (int): The maximum number of retries.
+        url (str): The URL to make the request to.
+
+    Returns:
+        str: The content of the response.
+
+    Raises:
+        Exception: If the request fails after all the retries.
+    """
+    for retry in range(max_retries):
+        try:
+            content = await static_connection(url)
+            return content
+        except ConnectionResetError as e:
+            print(f"Connection lost: {str(e)}. Retrying... ({retry + 1} / {max_retries})")
+            if retry < max_retries - 1:
+                await asyncio.sleep(5)  # Delay before retrying.
+        except Exception as e:
+            print(f"Retry {retry + 1} failed: {str(e)}")
+            if retry < max_retries - 1:
+                await asyncio.sleep(4)  # Delay before retrying.
+    raise Exception(f"Failed to retrieve valid data after {max_retries} retries.")
+
+
 def flat(d_lists):
     """
     Flatten a multi-dimentional list.
@@ -24,31 +53,20 @@ def flat(d_lists):
     - d_lists (list): A multi-dimensional list.
 
     Returns:
-    - list: A flattened version of the input list.    """
-
+    - list: A flattened version of the input list.
+    """
     return list(itertools.chain(*d_lists))
 
 
-async def static_connection(url, max_retries = 50):
+async def static_connection(url):
     connector = aiohttp.TCPConnector(ssl = False)
     async with aiohttp.ClientSession(connector = connector) as session:
-        for retry in range(max_retries):
-            try:
-                async with session.get(url,
-                                    headers={'User-Agent': userAgents()},
-                                    proxy = None,
-                                    ) as resp:
-                    content = await resp.read()
-                return content
-            except ConnectionResetError as se:
-                print(f"Connection lost: {str(e)}. Retrying... ({retry + 1} / {max_retries})")
-                if retry < max_retries - 1:
-                    await asyncio.sleep(5)  # Delay before retrying.
-            except Exception as e:
-                print(f"Retry {retry + 1} failed: {str(e)}")
-                if retry < max_retries - 1:
-                    await asyncio.sleep(4)  # Delay before retrying.
-        raise Exception(f"Failed to retrieve valid data after {max_retries} retries.")
+        async with session.get(url,
+                            headers={'User-Agent': userAgents()},
+                            proxy = None,
+                            ) as resp:
+            content = await resp.read()
+        return content
 
 
 async def verify_amazon(url):

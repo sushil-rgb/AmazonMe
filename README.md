@@ -1,5 +1,7 @@
 # Notice:
+**Update:I managed to grab some free proxies. They might do the trick, but there's no guarantee. It's worth a shot though. Let's see if they can help me overcome the 503 error and keep the scraping going smoothly. Fingers crossed.
 **The script keeps throwing a 503 error from Amazon. Need proxies to keep things running until I find a better solution. Hang on!**
+
 
 <p align='center'>
   <a href='https://www.amazon.com'><img src='https://miro.medium.com/max/799/1*Sjalm0U8yZgRBMmRVuGGLQ.png'

@@ -65,7 +65,7 @@ async def static_connection(url):
                             headers={'User-Agent': userAgents()},
                             proxy = None,
                             ) as resp:
-            content = await resp.read()
+            content = resp.status
         return content
 
 

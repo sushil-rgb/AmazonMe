@@ -1,3 +1,6 @@
+# Notice:
+The script keeps throwing a 503 error from Amazon. Need proxies to keep things running until I find a better solution. Hang on!
+
 <p align='center'>
   <a href='https://www.amazon.com'><img src='https://miro.medium.com/max/799/1*Sjalm0U8yZgRBMmRVuGGLQ.png'
                                         width='300'

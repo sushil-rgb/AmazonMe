@@ -13,6 +13,7 @@ if __name__ == '__main__':
 
     async def main():
         base_url = "https://www.amazon.com/s?k=Jeans&rh=n%3A1040660%2Cn%3A1048188%2Cp_36%3A-5000&ds=v1%3AZrh2YeJ%2Bmo6tc5p1QJD9idnCpBDTF2pKNTUbGqlhFKk&crid=1TZCO6ZC2HZVA&pd_rd_r=05c15343-c72f-4978-a8a1-1d2b10979fd7&pd_rd_w=PFA16&pd_rd_wg=rWgND&pf_rd_p=b0c3902d-ae70-4b80-8f54-4d0a3246745a&pf_rd_r=6ZRR60HE1056ZC3CNW6V&qid=1684823801&rnid=2941120011&sprefix=jeans%2Caps%2C155&ref=pd_gw_unk"
+        return await retry_request(base_url)
         mongo_to_db = await export_to_mong(base_url)
         # sheet_name = "Dinner Plates"  # Please use the name of the collection in your MongoDB database to specify the name of the spreadsheet you intend to export.
         # sheets = await mongo_to_sheet(sheet_name)  # Uncomment this to export to excel database.

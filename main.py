@@ -4,9 +4,6 @@ from scrapers.scraper import Amazon
 import asyncio
 import time
 
-# print(userAgents())
-
-
 
 if __name__ == '__main__':
 

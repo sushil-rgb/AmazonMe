@@ -63,7 +63,7 @@ async def static_connection(url):
     async with aiohttp.ClientSession(connector = connector) as session:
         async with session.get(url,
                             headers={'User-Agent': userAgents()},
-                            proxy = rand_proxies(),
+                            proxy = f"""http://{rand_proxies()}""",
                             ) as resp:
             content = await resp.read()
         return content

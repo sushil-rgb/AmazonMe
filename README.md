@@ -48,9 +48,16 @@ Install necessary requirements:
 ## Usage
 ```python
   async def main():
-    base_url = ""  # Enter a desired URL product category of your choice:
-    mongo_to_db = await export_to_mong(base_url)
-    return mongo_to_db
+        base_url = ""
+        # Type True if you want to use proxy:
+        proxy = False
+        if proxy:
+            mongo_to_db = await export_to_mong(base_url, f"http://{rand_proxies()}")
+        else:
+            mongo_to_db = await export_to_mong(base_url, None)
+        # sheet_name = "Dinner Plates"  # Please use the name of the collection in your MongoDB database to specify the name of the spreadsheet you intend to export.
+        # sheets = await mongo_to_sheet(sheet_name)  # Uncomment this to export to excel database.
+        return mongo_to_db
 ```
 
 # To run the script, go to terminal and type:

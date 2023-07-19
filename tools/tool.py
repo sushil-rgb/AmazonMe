@@ -16,7 +16,7 @@ def filter(raw_lists):
     return filtered_lists
 
 
-async def retry_request(url, max_retries = 13):
+async def retry_request(url, proxy, max_retries = 13):
     """
     Retry the request multiple times with a delay if there are connection errors.
 
@@ -32,7 +32,7 @@ async def retry_request(url, max_retries = 13):
     """
     for retry in range(max_retries):
         try:
-            content = await static_connection(url)
+            content = await static_connection(url, proxy)
             return content
         except ConnectionResetError as e:
             print(f"Connection lost: {str(e)}. Retrying... ({retry + 1} / {max_retries})")
@@ -58,12 +58,12 @@ def flat(d_lists):
     return list(itertools.chain(*d_lists))
 
 
-async def static_connection(url):
+async def static_connection(url, proxy):
     connector = aiohttp.TCPConnector(ssl = False)
     async with aiohttp.ClientSession(connector = connector) as session:
         async with session.get(url,
                             headers={'User-Agent': userAgents()},
-                            proxy = f"""http://{rand_proxies()}""",
+                            proxy = proxy,
                             ) as resp:
             content = await resp.read()
         return content

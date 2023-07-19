@@ -3,8 +3,8 @@ from scrapers.scraper import Amazon
 import pymongo as mong
 
 
-async def export_to_mong(url):
-    amazon = Amazon(url)
+async def export_to_mong(url, proxy):
+    amazon = Amazon(url, proxy)
     client = mong.MongoClient("mongodb://localhost:27017/")
     db = client['amazon']
     collection_name = await amazon.category_name()

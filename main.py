@@ -1,5 +1,5 @@
-from mongo_database.mongo import export_to_mong, mongo_to_sheet
-from tools.tool import static_connection, retry_request, rand_proxies
+from mongo_database.mongo import export_to_mong
+from tools.tool import rand_proxies
 from scrapers.scraper import Amazon
 import asyncio
 import time

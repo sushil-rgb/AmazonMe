@@ -8,41 +8,31 @@ import re
 import os
 
 
+class Response:
+    def __init__(self, base_url):
+        self.base_url = base_url
+
+    async def content(self):
+        async with aiohttp.ClientSession() as session:
+            headers = {'User-Agent': userAgents()}
+            async with session.get(self.base_url, headers = headers) as resp:
+                cont = await resp.read()
+                return cont
+
+    async def response(self):
+        async with aiohttp.ClientSession() as session:
+            headers = {'User-Agent': userAgents()}
+            async with session.get(self.base_url, headers = headers) as resp:
+                cont = resp.status
+                return cont
+
+
 def filter(raw_lists):
     filtered_lists = []
     for file in raw_lists:
         if not file in filtered_lists:
             filtered_lists.append(file)
     return filtered_lists
-
-
-async def retry_request(url, proxy, max_retries = 13):
-    """
-    Retry the request multiple times with a delay if there are connection errors.
-
-    Args:
-        max_retries (int): The maximum number of retries.
-        url (str): The URL to make the request to.
-
-    Returns:
-        str: The content of the response.
-
-    Raises:
-        Exception: If the request fails after all the retries.
-    """
-    for retry in range(max_retries):
-        try:
-            content = await static_connection(url, proxy)
-            return content
-        except ConnectionResetError as e:
-            print(f"Connection lost: {str(e)}. Retrying... ({retry + 1} / {max_retries})")
-            if retry < max_retries - 1:
-                await asyncio.sleep(5)  # Delay before retrying.
-        except Exception as e:
-            print(f"Retry {retry + 1} failed: {str(e)}")
-            if retry < max_retries - 1:
-                await asyncio.sleep(4)  # Delay before retrying.
-    raise Exception(f"Failed to retrieve valid data after {max_retries} retries.")
 
 
 def flat(d_lists):
@@ -59,11 +49,16 @@ def flat(d_lists):
 
 
 async def static_connection(url, proxy):
+    proxy_username = "xtusztej"
+    proxy_password = "bx2x4u4oemm6"
+    auth = aiohttp.BasicAuth(proxy_username, proxy_password)
     connector = aiohttp.TCPConnector(ssl = False)
+
     async with aiohttp.ClientSession(connector = connector) as session:
         async with session.get(url,
                             headers={'User-Agent': userAgents()},
                             proxy = proxy,
+                            proxy_auth = auth,
                             ) as resp:
             content = await resp.read()
         return content

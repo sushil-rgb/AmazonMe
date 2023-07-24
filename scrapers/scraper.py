@@ -1,4 +1,4 @@
-from tools.tool import TryExcept, yaml_load, randomTime, userAgents, verify_amazon, flat, retry_request
+from tools.tool import TryExcept, yaml_load, randomTime, userAgents, verify_amazon, flat, Response
 from playwright.async_api import async_playwright, TimeoutError as PlayError
 from bs4 import BeautifulSoup
 import asyncio
@@ -26,6 +26,10 @@ class Amazon:
         self.catch = TryExcept()
         self.scrape = yaml_load('selector')
 
+    async def status(self):
+        response = await Response(self.base_url).response()
+        return response
+
     async def num_of_pages(self, max_retries = 13):
         """
         Returns the number of pages of search results for the given URL.
@@ -38,7 +42,7 @@ class Amazon:
         """
         for retry in range(max_retries):
             try:
-                content = await retry_request(self.base_url, self.proxy)
+                content = await Response(self.base_url).content()
                 soup = BeautifulSoup(content, 'lxml')
                 # Try except clause for index error, this happens if there are only one page:
                 try:
@@ -75,7 +79,7 @@ class Amazon:
         # Use the 'num_of_pages' method to get the total number of search result pages for the given URL:
         total_pages = await self.num_of_pages()
         # Use the 'static_connection' method to make a static connection to the given URL and get its HTML content:
-        content = await retry_request(self.base_url, self.proxy)
+        content = await Response(self.base_url).content()
         # Making a soup:
         soup = BeautifulSoup(content, 'lxml')
         # Get the URL of the next button on the search result page and costruct the URL of the next search result page:
@@ -108,7 +112,8 @@ class Amazon:
             asin = "N/A"
         return asin
 
-    async def category_name(self, max_retries = 13):
+    async def category_name(self):
+        resp = Response(self.base_url)
         """
         Retrieves the category name of search results on the given Amazon search page URL.
 
@@ -118,24 +123,15 @@ class Amazon:
         Raises:
             -None.
         """
-        for retry in range(max_retries):
-            try:
-                content = await retry_request(self.base_url, self.proxy)
-                soup = BeautifulSoup(content, 'lxml')
-                try:
-                    searches_results = soup.select_one(self.scrape['searches_I']).text.strip()
-                except AttributeError:
-                    searches_results = re.sub(r'["]', '', soup.select_one(self.scrape['searches_II']).text.strip())
-                return searches_results
-            except ConnectionResetError as e:
-                print(f"Connection lost: {str(e)}. Retrying... ({retry + 1} / {max_retries})")
-                if retry < max_retries - 1:
-                    await asyncio.sleep(5)  # Delay before retrying.
-            except Exception as e:
-                print(f"Retry {retry + 1} failed: {str(e)}")
-                if retry < max_retries - 1:
-                    await asyncio.sleep(4)  # Delay before retrying.
-        raise Exception(f"Failed to retrieve valid data after {max_retries} retries.")
+        content = await resp.content()
+        soup = BeautifulSoup(content, 'lxml')
+        # return soup.prettify()
+        try:
+            searches_results = soup.select_one(self.scrape['searches_I']).text.strip()
+        except AttributeError:
+            searches_results = re.sub(r'["]', '', soup.select_one(self.scrape['searches_II']).text.strip())
+        return searches_results
+
 
     async def product_urls(self, url):
         await asyncio.sleep(20)
@@ -149,7 +145,7 @@ class Amazon:
             -Expecation: If there is an error while loading the content of the Amazon search results page.
         """
         # Use the 'static_connection' method to download the HTML content of the search results bage
-        content = await retry_request(url, self.proxy)
+        content = await Response(self.base_url).content()
         soup = BeautifulSoup(content, 'lxml')
         # Check if main content element exists on page:
         try:
@@ -166,74 +162,68 @@ class Amazon:
         results = await asyncio.gather(*coroutines)
         return flat(results)
 
-    async def scrape_product_info(self, url, max_retries = 13):
-        for retry in range(max_retries):
-            try:
-                amazon_dicts = []
-                # Retrieve the page content using 'static_connection' method:
-                content = await retry_request(url, self.proxy)
-                soup = BeautifulSoup(content, 'lxml')
-                # return soup.prettify()
-                product = soup.select_one(self.scrape['name']).text.strip()
-                print(product)
-                if product == "N/A":
-                    raise Exception("Product is 'N/A' retrying...")
-                try:
-                    # Try to extract the image link using the second first selector.
-                    image_link = soup.select_one(self.scrape['image_link_i']).get('src')
-                except Exception as e:
-                    image_link = await self.catch.attributes(soup.select_one(self.scrape['image_link_ii']), 'src')
-                # finally:
-                #     # If the image link cannot be extracted, return an error message:
-                #     return f'Content loading error. Please try again in few minutes. Error message || {str(e)}.'
-                try:
-                    availabilities = soup.select_one(self.scrape['availability']).text.strip()
-                except AttributeError:
-                    availabilities = 'In stock'
-                price = await self.catch.text(soup.select_one(self.scrape['price_us']))
-                if 'Page' in price.split():
-                    price = await self.catch.text(soup.select_one(self.scrape['price_us_i']))
-                # return price
-                if price != "N/A":
-                    price = re.sub(r'[$,()%]', '', price)
-                try:
-                    deal_price = await self.catch.text(soup.select(self.scrape['deal_price'])[0])
-                    if 'Page' in deal_price.split():
-                        deal_price = "N/A"
-                except Exception as e:
-                    deal_price = "N/A"
-                if deal_price != "N/A":
-                    deal_price = re.sub(r'[$,()%]', '', deal_price)
-                try:
-                    savings = await self.catch.text(soup.select(self.scrape['savings'])[-1])
-                except IndexError:
-                    savings = "N/A"
-                store = await self.catch.text(soup.select_one(self.scrape['store']))
-                store_link = f"""https://www.amazon.com{await self.catch.attributes(soup.select_one(self.scrape['store']), 'href')}"""
-                # Construct the data dictionary containing product information:
-                datas = {
-                    'Name': product,
-                    'Description': ' '.join([des.text.strip() for des in soup.select(self.scrape['description'])]),
-                    'Breakdown': ' '.join([br.text.strip() for br in soup.select(self.scrape['prod_des'])]),
-                    'Price': price,
-                    'Deal Price': deal_price,
-                    'You saved': savings,
-                    'Rating': await self.catch.text(soup.select_one(self.scrape['review'])),
-                    'Rating count': await self.catch.text(soup.select_one(self.scrape['rating_count'])),
-                    'Availability': availabilities,
-                    'Hyperlink': url,
-                    'Image': image_link,
-                    'Images': [imgs.get('src') for imgs in soup.select(self.scrape['image_lists'])],
-                    'Store': store.replace("Visit the ", ""),
-                    'Store link': store_link,
-                }
-                amazon_dicts.append(datas)
-                return amazon_dicts
-            except Exception as e:
-                print(f"Retry {retry + 1} failed: {str(e)}")
-                if retry < max_retries - 1:
-                    await asyncio.sleep(4)  # Delay before retrying.
-        raise Exception(f"Failed to retrieve valid data after {max_retries} retries.")
+    async def scrape_product_info(self, url):
+        amazon_dicts = []
+        # Retrieve the page content using 'static_connection' method:
+        content = await Response(url).content()
+        soup = BeautifulSoup(content, 'lxml')
+        # return soup.prettify()
+        product = soup.select_one(self.scrape['name']).text.strip()
+        print(product)
+        if product == "N/A":
+            raise Exception("Product is 'N/A' retrying...")
+        try:
+            # Try to extract the image link using the second first selector.
+            image_link = soup.select_one(self.scrape['image_link_i']).get('src')
+        except Exception as e:
+            image_link = await self.catch.attributes(soup.select_one(self.scrape['image_link_ii']), 'src')
+        # finally:
+        #     # If the image link cannot be extracted, return an error message:
+        #     return f'Content loading error. Please try again in few minutes. Error message || {str(e)}.'
+        try:
+            availabilities = soup.select_one(self.scrape['availability']).text.strip()
+        except AttributeError:
+            availabilities = 'In stock'
+        price = await self.catch.text(soup.select_one(self.scrape['price_us']))
+        if 'Page' in price.split():
+            price = await self.catch.text(soup.select_one(self.scrape['price_us_i']))
+        # return price
+        if price != "N/A":
+            price = float(re.sub(r'[$₹,()%¥]', '', price))
+        try:
+            deal_price = await self.catch.text(soup.select(self.scrape['deal_price'])[0])
+            if 'Page' in deal_price.split():
+                deal_price = "N/A"
+        except Exception as e:
+            deal_price = "N/A"
+        if deal_price != "N/A":
+            deal_price = float(re.sub(r'[$₹,()%¥]', '', deal_price))
+        try:
+            savings = await self.catch.text(soup.select(self.scrape['savings'])[-1])
+        except IndexError:
+            savings = "N/A"
+        store = await self.catch.text(soup.select_one(self.scrape['store']))
+        store_link = f"""https://www.amazon.com{await self.catch.attributes(soup.select_one(self.scrape['store']), 'href')}"""
+        # Construct the data dictionary containing product information:
+        datas = {
+            'Name': product,
+            'Description': ' '.join([des.text.strip() for des in soup.select(self.scrape['description'])]),
+            'Breakdown': ' '.join([br.text.strip() for br in soup.select(self.scrape['prod_des'])]),
+            'Price': price,
+            'Deal Price': deal_price,
+            'You saved': savings,
+            'Rating': await self.catch.text(soup.select_one(self.scrape['review'])),
+            'Rating count': await self.catch.text(soup.select_one(self.scrape['rating_count'])),
+            'Availability': availabilities,
+            'Hyperlink': url,
+            'Image': image_link,
+            'Images': [imgs.get('src') for imgs in soup.select(self.scrape['image_lists'])],
+            'Store': store.replace("Visit the ", ""),
+            'Store link': store_link,
+        }
+        amazon_dicts.append(datas)
+        return amazon_dicts
+
 
     async def crawl_url(self):
         page_lists = await self.split_url()
@@ -294,7 +284,7 @@ class Amazon:
         # Construct the URL using the ASIN:
         url = f"https://www.amazon.com/dp/{asin}"
         # Retrieve the page content using 'static_connection' method:
-        content = await retry_request(url, self.proxy)
+        content = await Response(self.base_url).content()
         soup = BeautifulSoup(content, 'lxml')
         try:
             # Try to extract the image link using the second first selector.

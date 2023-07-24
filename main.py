@@ -1,5 +1,5 @@
 from mongo_database.mongo import export_to_mong
-from tools.tool import rand_proxies
+from tools.tool import rand_proxies, static_connection
 from scrapers.scraper import Amazon
 import asyncio
 import time
@@ -9,7 +9,8 @@ if __name__ == '__main__':
 
 
     async def main():
-        base_url = "https://www.amazon.com/s?k=Jeans&rh=n%3A1040660%2Cn%3A1048188%2Cp_36%3A-5000&ds=v1%3AZrh2YeJ%2Bmo6tc5p1QJD9idnCpBDTF2pKNTUbGqlhFKk&crid=1TZCO6ZC2HZVA&pd_rd_r=05c15343-c72f-4978-a8a1-1d2b10979fd7&pd_rd_w=PFA16&pd_rd_wg=rWgND&pf_rd_p=b0c3902d-ae70-4b80-8f54-4d0a3246745a&pf_rd_r=6ZRR60HE1056ZC3CNW6V&qid=1684823801&rnid=2941120011&sprefix=jeans%2Caps%2C155&ref=pd_gw_unk"
+        # return rand_proxies()
+        base_url = "https://www.amazon.co.jp/AmazonBasics-DisplayPort-Converter-Cable-Monitors/dp/B015OW3M1W?ref_=ast_sto_dp&th=1&psc=1"
         # Type True if you want to use proxy:
         proxy = False
         if proxy:

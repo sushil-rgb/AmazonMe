@@ -10,7 +10,7 @@ if __name__ == '__main__':
 
     async def main():
         # return rand_proxies()
-        base_url = "https://www.amazon.co.jp/AmazonBasics-DisplayPort-Converter-Cable-Monitors/dp/B015OW3M1W?ref_=ast_sto_dp&th=1&psc=1"
+        base_url = "https://www.amazon.com/s?k=gaming+keyboard&_encoding=UTF8&content-id=amzn1.sym.12129333-2117-4490-9c17-6d31baf0582a&pd_rd_r=9dc53e25-e427-4524-9aab-43ef2f176391&pd_rd_w=93ovB&pd_rd_wg=HWQHQ&pf_rd_p=12129333-2117-4490-9c17-6d31baf0582a&pf_rd_r=PCSMEPAVPE6BC9XSR4YS&ref=pd_gw_unk"
         # Type True if you want to use proxy:
         proxy = False
         if proxy:

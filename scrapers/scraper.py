@@ -145,7 +145,7 @@ class Amazon:
             -Expecation: If there is an error while loading the content of the Amazon search results page.
         """
         # Use the 'static_connection' method to download the HTML content of the search results bage
-        content = await Response(self.base_url).content()
+        content = await Response(url).content()
         soup = BeautifulSoup(content, 'lxml')
         # Check if main content element exists on page:
         try:

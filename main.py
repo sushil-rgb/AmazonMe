@@ -9,7 +9,7 @@ if __name__ == '__main__':
 
     async def main():
         # return rand_proxies()
-        base_url = "https://www.amazon.com/s?k=Spring+Jackets&i=fashion-womens&rh=n%3A7141123011&dc&ds=v1%3ABk6NhBRoKfacSsRLqyE%2Fkk6gHCfOi4WHp6oHpf1ajaY&_encoding=UTF8&content-id=amzn1.sym.b4114be9-6d3d-4aed-8b31-fcbf38a83486&crid=28AAZ2JDZCYX1&pd_rd_r=5b632487-9047-466f-8b75-4982d6db5e25&pd_rd_w=9WUr6&pd_rd_wg=3TU7l&pf_rd_p=b4114be9-6d3d-4aed-8b31-fcbf38a83486&pf_rd_r=A1VMNJS2YNT401B381SH&qid=1690625319&sprefix=spring+jackets%2Caps%2C140&ref=sr_ex_n_1"
+        base_url = "https://www.amazon.com/s?k=gaming+laptops&i=computers&rh=n%3A565108%2Cp_n_feature_browse-bin%3A23760604011%2Cp_89%3AASUS%7CDell&dc&pf_rd_i=23508887011&pf_rd_m=ATVPDKIKX0DER&pf_rd_p=434db2ed-6d53-4c59-b173-e8cd550a2e4f&pf_rd_r=DTVBSAXM7V8FZHKX345V&pf_rd_s=merchandised-search-5&pf_rd_t=101&qid=1690628261&rnid=2528832011&ref=sr_nr_p_89_3&ds=v1%3AMeHfsSAH4YAGjb8wbReGtqEAB1Hy7p58P6ccweMULG4"
         # Type True if you want to use proxy:
         proxy = False
         if proxy:

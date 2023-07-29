@@ -203,6 +203,14 @@ class Amazon:
                     savings = await self.catch.text(soup.select(self.scrape['savings'])[-1])
                 except IndexError:
                     savings = "N/A"
+                try:
+                    ratings = float(soup.select_one(self.scrape['review']).text.strip().replace(" out of 5 starts", ''))
+                except Exception as e:
+                    ratings = "N/A"
+                try:
+                    rating_count = float(soup.select_one(self.scrape['rating_count']).text.strip().replace(' ratings', ''))
+                except Exception as e:
+                    rating_count = "N/A"
                 store = await self.catch.text(soup.select_one(self.scrape['store']))
                 store_link = f"""https://www.amazon.com{await self.catch.attributes(soup.select_one(self.scrape['store']), 'href')}"""
                 # Construct the data dictionary containing product information:
@@ -213,8 +221,8 @@ class Amazon:
                     'Price': price,
                     'Deal Price': deal_price,
                     'You saved': savings,
-                    'Rating': await self.catch.text(soup.select_one(self.scrape['review'])),
-                    'Rating count': await self.catch.text(soup.select_one(self.scrape['rating_count'])),
+                    'Rating': ratings,
+                    'Rating count': rating_count,
                     'Availability': availabilities,
                     'Hyperlink': url,
                     'Image': image_link,

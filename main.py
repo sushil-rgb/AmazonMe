@@ -9,7 +9,7 @@ if __name__ == '__main__':
 
     async def main():
         # return rand_proxies()
-        base_url = "https://www.amazon.com/s?k=gaming+laptops&i=computers&rh=n%3A565108%2Cp_n_feature_browse-bin%3A23760604011%2Cp_89%3AASUS%7CDell&dc&pf_rd_i=23508887011&pf_rd_m=ATVPDKIKX0DER&pf_rd_p=434db2ed-6d53-4c59-b173-e8cd550a2e4f&pf_rd_r=DTVBSAXM7V8FZHKX345V&pf_rd_s=merchandised-search-5&pf_rd_t=101&qid=1690628261&rnid=2528832011&ref=sr_nr_p_89_3&ds=v1%3AMeHfsSAH4YAGjb8wbReGtqEAB1Hy7p58P6ccweMULG4"
+        base_url = "https://www.amazon.com/s?i=specialty-aps&bbn=4954955011&rh=n%3A4954955011%2Cn%3A%212617942011%2Cn%3A2747968011&ref=nav_em__nav_desktop_sa_intl_painting_drawing_supplies_0_2_8_2"
         # Type True if you want to use proxy:
         proxy = False
         if proxy:

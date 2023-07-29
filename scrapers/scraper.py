@@ -204,7 +204,7 @@ class Amazon:
                 except IndexError:
                     savings = "N/A"
                 try:
-                    ratings = float(soup.select_one(self.scrape['review']).text.strip().replace(" out of 5 starts", ''))
+                    ratings = float(soup.select_one(self.scrape['review']).text.strip().replace(" out of 5 stars", ''))
                 except Exception as e:
                     ratings = "N/A"
                 try:

@@ -133,28 +133,40 @@ class Amazon:
         return searches_results
 
 
-    async def product_urls(self, url):
-        await asyncio.sleep(20)
-        """
-        Scrapes product data from the Amazon search results page for the given URL.
+    async def product_urls(self, url, max_retries = 13):
+        for retry in range(13):
+            try:
+                await asyncio.sleep(20)
+                """
+                Scrapes product data from the Amazon search results page for the given URL.
 
-        Args:
-            -list: A list of dictionaries, with each dictionary containing product data for single product.
+                Args:
+                    -list: A list of dictionaries, with each dictionary containing product data for single product.
 
-        Raises:
-            -Expecation: If there is an error while loading the content of the Amazon search results page.
-        """
-        # Use the 'static_connection' method to download the HTML content of the search results bage
-        content = await Response(url).content()
-        soup = BeautifulSoup(content, 'lxml')
-        # Check if main content element exists on page:
-        try:
-            soup.select_one(self.scrape['main_content'])
-        except Exception as e:
-            return f"Content loading error. Please try again in few minutes. Error message: {e}"
-        # Get product card contents from current page:
-        card_contents = [f"""https://www.amazon.com{prod.select_one(self.scrape['hyperlink']).get('href')}""" for prod in soup.select(self.scrape['main_content'])]
-        return card_contents
+                Raises:
+                    -Expecation: If there is an error while loading the content of the Amazon search results page.
+                """
+                # Use the 'static_connection' method to download the HTML content of the search results bage
+                content = await Response(url).content()
+                soup = BeautifulSoup(content, 'lxml')
+                # Check if main content element exists on page:
+                try:
+                    soup.select_one(self.scrape['main_content'])
+                except Exception as e:
+                    return f"Content loading error. Please try again in few minutes. Error message: {e}"
+                # Get product card contents from current page:
+                card_contents = [f"""https://www.amazon.com{prod.select_one(self.scrape['hyperlink']).get('href')}""" for prod in soup.select(self.scrape['main_content'])]
+                return card_contents
+            except ConnectionResetError as se:
+                print(f"Connection lost: {str(e)}. Retrying... ({retry + 1} / {max_retries})")
+                if retry < max_retries - 1:
+                    await asyncio.sleep(5)  # Delay before retrying.
+            except Exception as e:
+                print(f"Retry {retry + 1} failed: {str(e)}")
+                if retry < max_retries - 1:
+                    await asyncio.sleep(4)  # Delay before retrying.
+
+        raise Exception(f"Failed to retrieve valid data after {max_retries} retries.")
 
     async def crawl_url(self):
         page_lists = await self.split_url()

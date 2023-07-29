@@ -48,22 +48,6 @@ def flat(d_lists):
     return list(itertools.chain(*d_lists))
 
 
-async def static_connection(url, proxy):
-    proxy_username = "xtusztej"
-    proxy_password = "bx2x4u4oemm6"
-    auth = aiohttp.BasicAuth(proxy_username, proxy_password)
-    connector = aiohttp.TCPConnector(ssl = False)
-
-    async with aiohttp.ClientSession(connector = connector) as session:
-        async with session.get(url,
-                            headers={'User-Agent': userAgents()},
-                            proxy = proxy,
-                            proxy_auth = auth,
-                            ) as resp:
-            content = await resp.read()
-        return content
-
-
 async def verify_amazon(url):
     """
     Verifies if the input URL is a vaild Amazon URL.

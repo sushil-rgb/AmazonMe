@@ -1,6 +1,5 @@
 from mongo_database.mongo import export_to_mong
-from tools.tool import rand_proxies, static_connection
-from scrapers.scraper import Amazon
+from tools.tool import rand_proxies
 import asyncio
 import time
 
@@ -10,7 +9,7 @@ if __name__ == '__main__':
 
     async def main():
         # return rand_proxies()
-        base_url = "https://www.amazon.com/s?k=gaming+keyboard&_encoding=UTF8&content-id=amzn1.sym.12129333-2117-4490-9c17-6d31baf0582a&pd_rd_r=9dc53e25-e427-4524-9aab-43ef2f176391&pd_rd_w=93ovB&pd_rd_wg=HWQHQ&pf_rd_p=12129333-2117-4490-9c17-6d31baf0582a&pf_rd_r=PCSMEPAVPE6BC9XSR4YS&ref=pd_gw_unk"
+        base_url = "https://www.amazon.com/s?k=Spring+Jackets&i=fashion-womens&rh=n%3A7141123011&dc&ds=v1%3ABk6NhBRoKfacSsRLqyE%2Fkk6gHCfOi4WHp6oHpf1ajaY&_encoding=UTF8&content-id=amzn1.sym.b4114be9-6d3d-4aed-8b31-fcbf38a83486&crid=28AAZ2JDZCYX1&pd_rd_r=5b632487-9047-466f-8b75-4982d6db5e25&pd_rd_w=9WUr6&pd_rd_wg=3TU7l&pf_rd_p=b4114be9-6d3d-4aed-8b31-fcbf38a83486&pf_rd_r=A1VMNJS2YNT401B381SH&qid=1690625319&sprefix=spring+jackets%2Caps%2C140&ref=sr_ex_n_1"
         # Type True if you want to use proxy:
         proxy = False
         if proxy:

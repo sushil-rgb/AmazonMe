@@ -189,7 +189,7 @@ class Amazon:
                 price = await self.catch.text(soup.select_one(self.scrape['price_us']))
                 if 'Page' in price.split():
                     price = await self.catch.text(soup.select_one(self.scrape['price_us_i']))
-                if price != "N/A":
+                if price != "N/A" and price.isdigit():
                     price = float(re.sub(r'[$₹,()%¥\s]', '', price))
                 try:
                     deal_price = await self.catch.text(soup.select(self.scrape['deal_price'])[0])
@@ -197,7 +197,7 @@ class Amazon:
                         deal_price = "N/A"
                 except Exception as e:
                     deal_price = "N/A"
-                if deal_price != "N/A":
+                if deal_price != "N/A" and deal_price.isdigit():
                     deal_price = float(re.sub(r'[$₹,()%¥\s]', '', deal_price))
                 try:
                     savings = await self.catch.text(soup.select(self.scrape['savings'])[-1])
@@ -302,16 +302,13 @@ class Amazon:
         # Construct the URL using the ASIN:
         url = f"https://www.amazon.com/dp/{asin}"
         # Retrieve the page content using 'static_connection' method:
-        content = await Response(self.base_url).content()
+        content = await Response(url).content()
         soup = BeautifulSoup(content, 'lxml')
         try:
             # Try to extract the image link using the second first selector.
             image_link = soup.select_one(self.scrape['image_link_i']).get('src')
         except Exception as e:
             image_link = soup.select_one(self.scrape['image_link_ii']).get('src')
-        # finally:
-        #     # If the image link cannot be extracted, return an error message:
-        #     return f'Content loading error. Please try again in few minutes. Error message || {str(e)}.'
         try:
             availabilities = soup.select_one(self.scrape['availability']).text.strip()
         except AttributeError:

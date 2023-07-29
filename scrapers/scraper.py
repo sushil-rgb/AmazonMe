@@ -189,7 +189,7 @@ class Amazon:
                 price = await self.catch.text(soup.select_one(self.scrape['price_us']))
                 if 'Page' in price.split():
                     price = await self.catch.text(soup.select_one(self.scrape['price_us_i']))
-                if price != "N/A" and price.isdigit():
+                if price != "N/A":
                     price = float(re.sub(r'[$₹,()%¥\s]', '', price))
                 try:
                     deal_price = await self.catch.text(soup.select(self.scrape['deal_price'])[0])
@@ -197,7 +197,7 @@ class Amazon:
                         deal_price = "N/A"
                 except Exception as e:
                     deal_price = "N/A"
-                if deal_price != "N/A" and deal_price.isdigit():
+                if deal_price != "N/A":
                     deal_price = float(re.sub(r'[$₹,()%¥\s]', '', deal_price))
                 try:
                     savings = await self.catch.text(soup.select(self.scrape['savings'])[-1])
@@ -208,7 +208,7 @@ class Amazon:
                 except Exception as e:
                     ratings = "N/A"
                 try:
-                    rating_count = float(soup.select_one(self.scrape['rating_count']).text.strip().replace(' ratings', ''))
+                    rating_count = float(re.sub(r'[,\sratings]', '', soup.select_one(self.scrape['rating_count']).text.strip()))
                 except Exception as e:
                     rating_count = "N/A"
                 store = await self.catch.text(soup.select_one(self.scrape['store']))
@@ -309,6 +309,9 @@ class Amazon:
             image_link = soup.select_one(self.scrape['image_link_i']).get('src')
         except Exception as e:
             image_link = soup.select_one(self.scrape['image_link_ii']).get('src')
+        # finally:
+        #     # If the image link cannot be extracted, return an error message:
+        #     return f'Content loading error. Please try again in few minutes. Error message || {str(e)}.'
         try:
             availabilities = soup.select_one(self.scrape['availability']).text.strip()
         except AttributeError:

@@ -20,7 +20,7 @@ class Amazon:
         Initializes an instance of the Amazon class.
         """
         self.proxy = proxy
-        self.rand_time = 10 * 60
+        self.rand_time = 5 * 60
         self.base_url = base_url
         self.headers = {'User-Agent': userAgents()}
         self.catch = TryExcept()

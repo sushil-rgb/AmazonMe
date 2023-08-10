@@ -79,7 +79,7 @@ async def export_sheet(dicts, name):
     directory_name = 'Amazon database'
     await create_path(directory_name)
     df = pd.DataFrame(dicts)
-    df.to_excel(f"""{os.getcwd()}//{directory_name}//{name}-Amazon database.csv""", index = False)
+    df.to_csv(f"""{os.getcwd()}//{directory_name}//{name}-Amazon database.csv""", index = False)
     print(f"{name} saved.")
 
 

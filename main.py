@@ -11,7 +11,7 @@ if __name__ == '__main__':
     async def main():
         base_url = "https://www.amazon.com/s?k=gaming+chairs&_encoding=UTF8&content-id=amzn1.sym.12129333-2117-4490-9c17-6d31baf0582a&pd_rd_r=1d048a4e-2f8b-4a6d-a68a-aa09d90fe435&pd_rd_w=7Jpji&pd_rd_wg=LXVpY&pf_rd_p=12129333-2117-4490-9c17-6d31baf0582a&pf_rd_r=KJRABMFDJE47PA9W5C83&ref=pd_gw_unk"
         # Type True if you want to export to CSV and avoide MongoDB
-        csv = False
+        csv = True
         # Type True if you want to use proxy:
         proxy = False
         if csv:

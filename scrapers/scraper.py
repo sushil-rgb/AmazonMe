@@ -1,6 +1,7 @@
-from tools.tool import TryExcept, yaml_load, randomTime, userAgents, verify_amazon, flat, Response
+from tools.tool import TryExcept, yaml_load, randomTime, userAgents, verify_amazon, flat, Response, export_sheet
 from playwright.async_api import async_playwright, TimeoutError as PlayError
 from bs4 import BeautifulSoup
+import pandas as pd
 import asyncio
 import re
 
@@ -131,7 +132,6 @@ class Amazon:
         except AttributeError:
             searches_results = re.sub(r'["]', '', soup.select_one(self.scrape['searches_II']).text.strip())
         return searches_results
-
 
     async def product_urls(self, url, max_retries = 13):
         for retry in range(13):
@@ -280,6 +280,23 @@ class Amazon:
         await asyncio.sleep(random_sleep)
         datas = await self.scrape_product_info(url)
         return datas
+
+    async def csv_sheet(self, url):
+        frames = await self.scrape_and_save(url)
+        return pd.DataFrame(frames)
+
+    async def export_csv(self):
+        if await verify_amazon(self.base_url):
+            return "I'm sorry, the link you provided is invalid. Could you please provide a valid Amazon link for the product category of your choice?"
+        print(f"-----------------------Welcome to Amazon crawler---------------------------------")
+        print(f"Exporting to CSV")
+        categ = await self.category_name()
+        url_lists = await self.crawl_url()
+        print(f"The extraction process has begun and is currently in progress. The web scraper is scanning through all the links and collecting relevant information. Please be patient while the data is being gathered.")
+        coroutines = [self.csv_sheet(url) for url in url_lists]
+        dfs = await asyncio.gather(*coroutines)
+        results = pd.concat(dfs)
+        await export_sheet(results, categ)
 
     async def concurrent_scraping(self):
         if await verify_amazon(self.base_url):

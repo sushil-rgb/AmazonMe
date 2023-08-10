@@ -9,11 +9,12 @@ if __name__ == '__main__':
 
 
     async def main():
-        base_url = "https://www.amazon.com/s?i=specialty-aps&bbn=4954955011&rh=n%3A4954955011%2Cn%3A%212617942011%2Cn%3A12897221&ref=nav_em__nav_desktop_sa_intl_knitting_crochet_0_2_8_7"
-        # Type True if you want to use proxy:
+        base_url = "https://www.amazon.com/s?k=gaming+chairs&_encoding=UTF8&content-id=amzn1.sym.12129333-2117-4490-9c17-6d31baf0582a&pd_rd_r=1d048a4e-2f8b-4a6d-a68a-aa09d90fe435&pd_rd_w=7Jpji&pd_rd_wg=LXVpY&pf_rd_p=12129333-2117-4490-9c17-6d31baf0582a&pf_rd_r=KJRABMFDJE47PA9W5C83&ref=pd_gw_unk"
+        # Type True if you want to export to CSV and avoide MongoDB
         csv = False
+        # Type True if you want to use proxy:
+        proxy = False
         if csv:
-            proxy = False
             if proxy:
                 amazon = Amazon(base_url, None)
                 return await amazon.export_csv()
@@ -21,7 +22,6 @@ if __name__ == '__main__':
                 amazon = Amazon(base_url, f"http://{rand_proxies()}")
                 return await amazon.export_csv()
         else:
-            proxy = False
             if proxy:
                 mongo_to_db = await export_to_mong(base_url, f"http://{rand_proxies()}")
             else:

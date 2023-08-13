@@ -9,7 +9,10 @@ if __name__ == '__main__':
 
 
     async def main():
-        base_url = "https://www.amazon.com/s?k=gaming+chairs&_encoding=UTF8&content-id=amzn1.sym.12129333-2117-4490-9c17-6d31baf0582a&pd_rd_r=1d048a4e-2f8b-4a6d-a68a-aa09d90fe435&pd_rd_w=7Jpji&pd_rd_wg=LXVpY&pf_rd_p=12129333-2117-4490-9c17-6d31baf0582a&pf_rd_r=KJRABMFDJE47PA9W5C83&ref=pd_gw_unk"
+        base_url = "https://www.amazon.com/s?i=toys-and-games&bbn=165793011&rh=n%3A165793011%2Cp_36%3A-3000&dc&_encoding=UTF8&content-id=amzn1.sym.eb39b83d-c690-496d-9f16-0a9bd66ca6c8&pd_rd_r=db10c08d-805f-4eb2-8215-6db7244dfd33&pd_rd_w=U10YV&pd_rd_wg=XWFTR&pf_rd_p=eb39b83d-c690-496d-9f16-0a9bd66ca6c8&pf_rd_r=1B8D3BHD1HB21JDP9X4B&qid=1663255924&rnid=386491011&ref=pd_gw_unk"
+        status = await Amazon(base_url, None).status()
+        if status == 503:
+            return "503 respsone. Please try again later."
         # Type True if you want to export to CSV and avoid MongoDB
         csv = True
         # Type True if you want to use proxy:

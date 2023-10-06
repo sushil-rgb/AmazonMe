@@ -26,7 +26,7 @@ async def asin_isbn(user, userInput):
     Returns:
         -None
     """
-    datas = await Amazon().getASIN(userInput)
+    datas = await Amazon(userInput, None).getASIN(userInput)
     await user.send(datas)
 
 
@@ -43,7 +43,7 @@ async def getdataByasin(userInput, user):
         -None
     """
     try:
-        datas = await Amazon().dataByAsin(userInput)
+        datas = await Amazon(userInput, None).dataByAsin(userInput)
         name = datas['Name']
         hyperlink = datas['Hyperlink']
         embed = discord.Embed(title=name, url=hyperlink, color=0xff9900)

@@ -5,7 +5,7 @@ environmentVariables
 debug.py
 tempCodeRunnerFile.py
 .vs
-
+cli_integration
 database.sql
 fastAPI_functionalities
 fastapiApp.py

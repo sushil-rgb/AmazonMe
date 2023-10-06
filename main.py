@@ -1,4 +1,5 @@
 from mongo_database.mongo import export_to_mong
+from cli_integration.cli_parser import cli_imp
 from tools.tool import rand_proxies
 from scrapers.scraper import Amazon
 import asyncio
@@ -9,7 +10,8 @@ if __name__ == '__main__':
 
 
     async def main():
-        base_url = "https://www.amazon.com/s?i=toys-and-games&bbn=165793011&rh=n%3A165793011%2Cp_36%3A-3000&dc&_encoding=UTF8&content-id=amzn1.sym.eb39b83d-c690-496d-9f16-0a9bd66ca6c8&pd_rd_r=db10c08d-805f-4eb2-8215-6db7244dfd33&pd_rd_w=U10YV&pd_rd_wg=XWFTR&pf_rd_p=eb39b83d-c690-496d-9f16-0a9bd66ca6c8&pf_rd_r=1B8D3BHD1HB21JDP9X4B&qid=1663255924&rnid=386491011&ref=pd_gw_unk"
+        # return cli_imp()
+        base_url = "https://www.amazon.com/s?k=Madewell&qid=1693942614&ref=sr_pg_1"
         status = await Amazon(base_url, None).status()
         if status == 503:
             return "503 response. Please try again later."

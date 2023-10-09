@@ -1,11 +1,9 @@
-from dotenv import load_dotenv
 from .sendMessages import *
 import discord
 import os
 import re
 
 
-load_dotenv(f"{os.getcwd()}//environmentVariables//.env")
 Token = os.getenv('MY_TOKEN')
 intents = discord.Intents.default()
 intents.members = True

@@ -58,7 +58,7 @@ async def verify_amazon(url):
     Returns:
         -True if the URL is invalid or False if it is valud.
     """
-    amazon_pattern = re.search("""^(https://|www.)|amazon\.(com|co\.uk)(/s\?.|/b/.)+""", url)
+    amazon_pattern = re.search("""^(https://|www.)|amazon\.(com|co\.uk|pl|in|com\.br)(/s\?.|/b/.)+""", url)
     if amazon_pattern == None:
         return True
     else:

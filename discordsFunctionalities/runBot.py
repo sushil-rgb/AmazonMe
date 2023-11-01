@@ -36,7 +36,7 @@ def run_discord_bot():
 
         # If the message is a greeting and is sent in a direct message:
         if message.guild is None and re.match(regex_pattern, message.content, re.IGNORECASE):
-            await message.author.send(f"Hey {username}. Type '!general' to know the overview of bot.")
+            await message.author.send(f"Hey {username}. Type '!general' or '!help' to know the overview of bot.")
         # If the message is !general and is sent in a direct message:
         elif message.content == '!commands':
             await menu(message.content, message.author)

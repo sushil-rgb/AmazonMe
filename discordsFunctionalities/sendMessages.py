@@ -3,11 +3,61 @@ import discord
 import sys
 import os
 
+
 sys.path.append(os.getcwd())
 from scrapers.scraper import Amazon
 
 
-async def on_ready():
+async def menu(message, user, bot = None):
+    if message == '!general' or message == '!help':
+        embed = discord.Embed(title = "General", description = "General overview of bot", color = 0xff9900)
+        embed.add_field(name = '!commands', value = "List of available commands and their explanation", inline = False)
+        embed.add_field(name = '!about', value = "Provides the information about the bot and its purpose", inline = False)
+        embed.add_field(name = "!ping", value = "Check the bot's response time to the server.")
+        embed.set_footer(text = 'Powered by Python', icon_url = 'https://logos-download.com/wp-content/uploads/2016/10/Python_logo_icon.png')
+        embed.set_author(name = "Sushil", url = "https://www.github.com/sushil-rgb", icon_url = "https://avatars.githubusercontent.com/u/107347115?s=400&u=7a5fbfe85d59d828d52b407c999474c8938325c7&v=4")
+        embed.timestamp = datetime.datetime.now()
+
+        await user.send(embed = embed)
+
+    if message == '!commands':
+        embed = discord.Embed(title ='Bot menu', description = "List of available commands and their explanation", color = 0xff9900)
+        embed.add_field(name = "ASIN", value = "Extracts ASIN from the provided product link.", inline = False)
+        embed.add_field(name = "Paste product link", value = "Extracts ASIN from the provided product link.", inline = False)
+        embed.set_footer(text = 'Powered by Python', icon_url = 'https://logos-download.com/wp-content/uploads/2016/10/Python_logo_icon.png')
+        embed.set_author(name = "Sushil", url = "https://www.github.com/sushil-rgb", icon_url = "https://avatars.githubusercontent.com/u/107347115?s=400&u=7a5fbfe85d59d828d52b407c999474c8938325c7&v=4")
+        embed.timestamp = datetime.datetime.now()
+
+        await user.send(embed = embed)
+
+    if message == '!about':
+        embed = discord.Embed(title = "About", description = "Provides the information about the bot and its purpose", color = 0xff9900)
+        embed.add_field(name = "Purpose", value = "The purpose of this bot is to extract product ASIN by product link and retrieve product information by pasting ASIN.", inline = False)
+        embed.add_field(name = "Example Usage:",
+                        value = "`[product link]` - Extracts ASIN from the provided product link. \n"
+                                "`[B0CK3ZWT7X]` - Retrieves detailed product information using the provided ASIN.",
+                        inline = False
+                        )
+        embed.set_footer(text = 'Powered by Python', icon_url = 'https://logos-download.com/wp-content/uploads/2016/10/Python_logo_icon.png')
+        embed.set_author(name = "Sushil", url = "https://www.github.com/sushil-rgb", icon_url = "https://avatars.githubusercontent.com/u/107347115?s=400&u=7a5fbfe85d59d828d52b407c999474c8938325c7&v=4")
+        embed.timestamp = datetime.datetime.now()
+
+        await user.send(embed = embed)
+
+    if message == '!ping':
+        latency = bot.latency
+        embed = discord.Embed(title = "Ping",
+                              description = f"Pong! Bot latency is {latency * 1000:.2f}ms.",
+                              color = 0x008000,
+                              )
+        embed.set_footer(text = 'Powered by Python', icon_url = 'https://logos-download.com/wp-content/uploads/2016/10/Python_logo_icon.png')
+        embed.set_author(name = "Sushil", url = "https://www.github.com/sushil-rgb", icon_url = "https://avatars.githubusercontent.com/u/107347115?s=400&u=7a5fbfe85d59d828d52b407c999474c8938325c7&v=4")
+        embed.timestamp = datetime.datetime.now()
+
+        await user.send(embed = embed)
+
+
+async def on_ready(bot):
     """
     This function prints a message when the bot is ready to use.
     """
@@ -46,7 +96,7 @@ async def getdataByasin(userInput, user):
         datas = await Amazon(userInput, None).dataByAsin(userInput)
         name = datas['Name']
         hyperlink = datas['Hyperlink']
-        embed = discord.Embed(title=name, url=hyperlink, color=0xff9900)
+        embed = discord.Embed(title = name, url = hyperlink, color = 0xff9900)
         embed.add_field(name = 'Price', value = datas['Price'], inline = False)
         embed.add_field(name = 'Availability', value = datas['Availability'], inline = False)
         embed.add_field(name = "Store", value = f"[{datas['Store']}]({datas['Store link']})", inline = False)
@@ -58,4 +108,5 @@ async def getdataByasin(userInput, user):
         await user.send(embed = embed)
     except Exception as e:
         await user.send('Content loading error. Please try again in few minutes.')
+
 

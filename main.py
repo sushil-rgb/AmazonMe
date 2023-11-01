@@ -1,5 +1,5 @@
 from mongo_database.mongo import export_to_mong
-from cli_integration.cli_parser import cli_imp
+from mongo_database.mongo import export_to_mong
 from tools.tool import rand_proxies
 from scrapers.scraper import Amazon
 import asyncio
@@ -10,9 +10,9 @@ if __name__ == '__main__':
 
 
     async def main():
-        # return cli_imp()
-        base_url = "https://www.amazon.com/s?k=Madewell&qid=1693942614&ref=sr_pg_1"
+        base_url = "https://www.amazon.com/s?k=gaming+chairs&_encoding=UTF8&content-id=amzn1.sym.12129333-2117-4490-9c17-6d31baf0582a&pd_rd_r=7cd6c025-439a-4e19-9e29-817277d8de15&pd_rd_w=oFRoZ&pd_rd_wg=JjbKC&pf_rd_p=12129333-2117-4490-9c17-6d31baf0582a&pf_rd_r=AW0QRVHS91TFCEPGS1VD&ref=pd_gw_unk"
         status = await Amazon(base_url, None).status()
+
         if status == 503:
             return "503 response. Please try again later."
         # Type True if you want to export to CSV and avoid MongoDB

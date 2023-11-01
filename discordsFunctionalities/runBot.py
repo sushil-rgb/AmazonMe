@@ -33,24 +33,28 @@ def run_discord_bot():
         asin_pattern = r"""^[A-Z0-9]{10}$"""
         regex_pattern = """^hi|hello|hey|yo"""
         amazon_pattern = '(https?://)?(www\.)?amazon\.(com|in|co\.uk)/.+'
+
         # If the message is a greeting and is sent in a direct message:
         if message.guild is None and re.match(regex_pattern, message.content, re.IGNORECASE):
-            await message.author.send(f"Hey {username}. Type '!help' to know the list of commands.")
-        # If the message is !help and is sent in a direct message:
-        elif message.content == '!help':
-            await message.author.send('Paste the Amazon products link to know the ASIN or ISBN respectively.\nPaste the ASIN/ISBN to get the product details.')
+            await message.author.send(f"Hey {username}. Type '!general' to know the overview of bot.")
+        # If the message is !general and is sent in a direct message:
+        elif message.content == '!commands':
+            await menu(message.content, message.author)
+        elif message.content == '!general' or message.content == '!help':
+            await menu(message.content, message.author)
+        elif message.content == '!about':
+            await menu(message.content, message.author)
+        elif message.content == '!ping':
+            await menu(message.content, message.author, client)
         # If the message is an Amazon product link and is sent in a direct message:
         elif message.guild is None and re.search(amazon_pattern, user_message):
             await asin_isbn(message.author, user_message)
         # IF the message is an ASIN/ISBN and is sent in a direct message:
         elif message.guild is None and (re.match(asin_pattern, message.content)):
-            # await export_to_db(user_message)
-            # await message.author.send('Please wait. Fetching data from Amazon.')
             await message.author.send(f"Please wait. Fetching data from Amazon.")
             await getdataByasin(user_message, message.author)
-        # If the message is not a valid link and is send in a direct message:
         else:
-            await message.author.send(f"Invalid link. Please try a valid Amazon product link.")
+            await message.author.send(f"Invalid command. Type '!general | !help' or '!commands' to know the purpose of the bot.")
     # Run the client with the TOKEN:
     client.run(Token)
 

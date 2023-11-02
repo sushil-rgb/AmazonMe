@@ -1,7 +1,8 @@
 {
     "actorSpecification": 1,
+    "name": "AmazonMe",
     "title": "Scrape the totale page of Amazon's category",
-    "Description": "Scrapes all the product information from the pagination.",
+    "description": "Scrapes all the product information from the pagination.",
     "version": "1.0",
     "meta": {
         "templateId": "python-start"

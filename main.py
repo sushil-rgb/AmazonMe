@@ -1,5 +1,4 @@
 from mongo_database.mongo import export_to_mong
-from mongo_database.mongo import export_to_mong
 from tools.tool import rand_proxies
 from scrapers.scraper import Amazon
 import asyncio

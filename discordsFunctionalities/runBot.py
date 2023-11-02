@@ -46,6 +46,8 @@ def run_discord_bot():
             await menu(message.content, message.author)
         elif message.content == '!ping':
             await menu(message.content, message.author, client)
+        elif message.content == '!status':
+            await menu(message.content, message.author)
         # If the message is an Amazon product link and is sent in a direct message:
         elif message.guild is None and re.search(amazon_pattern, user_message):
             await asin_isbn(message.author, user_message)

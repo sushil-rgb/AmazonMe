@@ -1,3 +1,4 @@
+from tools.tool import Response
 import datetime
 import discord
 import sys
@@ -25,6 +26,7 @@ async def menu(message, user, bot = None):
         embed.add_field(name = '!commands', value = "List of available commands and their explanation.", inline = False)
         embed.add_field(name = '!about', value = "Provides the information about the bot and its purpose.", inline = False)
         embed.add_field(name = "!ping", value = "Check the bot's response time to the server.")
+        embed.add_field(name = "!status", value = "Check the status of the Amazon's server.", inline = False)
         embed.set_footer(text = 'Powered by Python', icon_url = 'https://logos-download.com/wp-content/uploads/2016/10/Python_logo_icon.png')
         embed.set_author(name = "Sushil", url = "https://www.github.com/sushil-rgb", icon_url = "https://avatars.githubusercontent.com/u/107347115?s=400&u=7a5fbfe85d59d828d52b407c999474c8938325c7&v=4")
         embed.timestamp = datetime.datetime.now()
@@ -33,8 +35,8 @@ async def menu(message, user, bot = None):
 
     if message == '!commands':
         embed = discord.Embed(title ='Bot menu', description = "List of available commands and their explanation.", color = 0xff9900)
-        embed.add_field(name = "ASIN", value = "Extracts ASIN from the provided product link.", inline = False)
-        embed.add_field(name = "Paste product link", value = "Extracts ASIN from the provided product link.", inline = False)
+        embed.add_field(name = "ASIN `[B0CK3ZWT7X]`", value = "Extracts ASIN from the provided product link.", inline = False)
+        embed.add_field(name = "Paste product link `https://www.amazon.com/PlayStation-5-Console-CFI-1215A01X/dp/B0BCNKKZ91`", value = "Extracts ASIN from the provided product link.", inline = False)
         embed.set_footer(text = 'Powered by Python', icon_url = 'https://logos-download.com/wp-content/uploads/2016/10/Python_logo_icon.png')
         embed.set_author(name = "Sushil", url = "https://www.github.com/sushil-rgb", icon_url = "https://avatars.githubusercontent.com/u/107347115?s=400&u=7a5fbfe85d59d828d52b407c999474c8938325c7&v=4")
         embed.timestamp = datetime.datetime.now()
@@ -66,6 +68,24 @@ async def menu(message, user, bot = None):
         embed.timestamp = datetime.datetime.now()
 
         await user.send(embed = embed)
+
+
+    if message == '!status':
+        repsonse = await Response('https://www.amazon.com').response()
+        if repsonse == 200:
+            embed = discord.Embed(title = "Status", description = f'Status code: 200', color = 0x008000)
+            embed.set_footer(text = 'Powered by Python', icon_url = 'https://logos-download.com/wp-content/uploads/2016/10/Python_logo_icon.png')
+            embed.set_author(name = "Sushil", url = "https://www.github.com/sushil-rgb", icon_url = "https://avatars.githubusercontent.com/u/107347115?s=400&u=7a5fbfe85d59d828d52b407c999474c8938325c7&v=4")
+            embed.timestamp = datetime.datetime.now()
+
+            await user.send(embed = embed)
+        else:
+            embed = discord.Embed(title = "Status", description = repsonse, color = 0xFF0000)
+            embed.set_footer(text = 'Powered by Python', icon_url = 'https://logos-download.com/wp-content/uploads/2016/10/Python_logo_icon.png')
+            embed.set_author(name = "Sushil", url = "https://www.github.com/sushil-rgb", icon_url = "https://avatars.githubusercontent.com/u/107347115?s=400&u=7a5fbfe85d59d828d52b407c999474c8938325c7&v=4")
+            embed.timestamp = datetime.datetime.now()
+
+            await user.send(embed = embed)
 
 
 async def on_ready():

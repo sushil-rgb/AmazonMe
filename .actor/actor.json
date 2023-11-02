@@ -1,0 +1,11 @@
+{
+    "actorSpecification": 1,
+    "title": "Scrape the totale page of Amazon's category",
+    "Description": "Scrapes all the product information from the pagination.",
+    "version": "1.0",
+    "meta": {
+        "templateId": "python-start"
+    },
+    "input": "/.input_schema.json",
+    "dockerfile": "./Dockerfile"
+}

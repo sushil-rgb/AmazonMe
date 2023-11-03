@@ -252,7 +252,7 @@ class Amazon:
                 print(f"Retry {retry + 1} failed: {str(e)}")
                 if retry < max_retries - 1:
                     await asyncio.sleep(4)  # Delay before retrying.
-
+                return amazon_dicts
         raise Exception(f"Failed to retrieve valid data after {max_retries} retries.")
 
     async def crawl_url(self):

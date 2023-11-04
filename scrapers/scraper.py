@@ -234,8 +234,6 @@ class Amazon:
                         "Ratings": ratings,
                         "Count": rating_count,
                     },
-                    'Rating': ratings,
-                    'Rating count': rating_count,
                     'Availability': availabilities,
                     'Hyperlink': url,
                     'Images': {

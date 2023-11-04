@@ -5,7 +5,6 @@ import aiohttp
 import secrets
 import yaml
 import re
-import os
 
 
 class Response:
@@ -65,24 +64,6 @@ async def verify_amazon(url):
         pass
 
 
-async def export_sheet(dicts, name):
-    """
-    Exports a list of dictinaries to an Excel file with the specified name and saves it to a directory called 'Amazon database':
-
-    Args:
-        -dicts (List[Dict]): A list of dictionaries to export to an Excel file.
-        -name (str): The name to use for the Excel file (without the file extension).
-
-    Returns:
-        -None
-    """
-    directory_name = 'Amazon database'
-    await create_path(directory_name)
-    df = pd.DataFrame(dicts)
-    df.to_csv(f"""{os.getcwd()}//{directory_name}//{name}-Amazon database.csv""", index = False)
-    print(f"{name} saved.")
-
-
 def random_values(d_lists):
     """
     Returns a random value from a list.
@@ -91,23 +72,6 @@ def random_values(d_lists):
     """
     idx = secrets.randbelow(len(d_lists))
     return d_lists[idx]
-
-
-async def create_path(dir_name):
-    """
-    Creates a directory with the specified name if i doesn't already exist.
-
-    Args:
-        -dir_name: A string representing the name of the direcory to create.
-
-    Return:
-        -None
-    """
-    path_dir = os.path.join(os.getcwd(), dir_name)
-    if os.path.exists(path_dir):
-        pass
-    else:
-        os.mkdir(path_dir)
 
 
 async def randomTime(val):
@@ -137,12 +101,6 @@ def userAgents():
     with open('tools//user-agents.txt') as f:
         agents = f.read().split("\n")
         return random_values(agents)
-
-
-def rand_proxies():
-    with open('proxies.txt') as f:
-        proxies = f.read().split("\n")
-        return random_values(proxies)
 
 
 def yaml_load(selectors):

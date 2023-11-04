@@ -37,10 +37,18 @@ To use this Amazon scraper, simply input the category URLs for the products you 
 **Output Format:**
 The scraper outputs data in a structured JSON format, including the following fields for each product:
 - `title`: Product title.
-- `price`: Product price.
+- `asin`: Product ASIN.
 - `description`: Product description.
-- `reviews`: Product reviews and ratings.
-- ... (any additional fields you're scraping)
+- `price`: Product price.
+- `youSaved`: Product saved price.
+- `reviews`: Product reviews, ratings and counts.
+- `availability`: Product availability,
+- `hyperlink`: Product URL,
+- `imageLink`: Product thumbnail URL,
+- `images`: Products thumbnail URL in lists,
+- `store`: Product store name,
+- `storeLink`: Product store URL,
+
 
 Example Output:
 ```json

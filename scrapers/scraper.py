@@ -1,4 +1,4 @@
-from tools.tool import TryExcept, yaml_load, randomTime, userAgents, verify_amazon, flat, Response, export_sheet
+from tools.tool import TryExcept, yaml_load, randomTime, userAgents, verify_amazon, flat, Response
 from bs4 import BeautifulSoup
 import pandas as pd
 import asyncio
@@ -15,12 +15,11 @@ class Amazon:
         scrape (yaml_load): An instance of the yaml_load class, used for selecting page elements to be scraped.
     """
 
-    def __init__(self, base_url, proxy):
+    def __init__(self, base_url):
         """
         Initializes an instance of the Amazon class.
         """
-        self.proxy = proxy
-        self.rand_time = 5 * 60
+        self.rand_time = 2 * 60
         self.base_url = base_url
         self.headers = {'User-Agent': userAgents()}
         self.catch = TryExcept()
@@ -286,23 +285,6 @@ class Amazon:
         datas = await self.scrape_product_info(url)
         return datas
 
-    async def csv_sheet(self, url):
-        frames = await self.scrape_and_save(url)
-        return pd.DataFrame(frames)
-
-    async def export_csv(self):
-        if await verify_amazon(self.base_url):
-            return "I'm sorry, the link you provided is invalid. Could you please provide a valid Amazon link for the product category of your choice?"
-        print(f"-----------------------Welcome to Amazon crawler---------------------------------")
-        print(f"Exporting to CSV")
-        categ = await self.category_name()
-        url_lists = await self.crawl_url()
-        print(f"The extraction process has begun and is currently in progress. The web scraper is scanning through all the links and collecting relevant information. Please be patient while the data is being gathered.")
-        coroutines = [self.csv_sheet(url) for url in url_lists]
-        dfs = await asyncio.gather(*coroutines)
-        results = pd.concat(dfs)
-        await export_sheet(results, categ)
-
     async def concurrent_scraping(self):
         if await verify_amazon(self.base_url):
             return "I'm sorry, the link you provided is invalid. Could you please provide a valid Amazon link for the product category of your choice?"
@@ -318,52 +300,4 @@ class Amazon:
         coroutines = [self.scrape_and_save(url) for url in product_urls]
         dfs = await asyncio.gather(*coroutines)
         return dfs
-
-    async def dataByAsin(self, asin):
-        """
-        Extracts product information from the Amazon product page by ASIN (Amazon Standard Identification Number).
-
-        Args:
-            -asin (str): The ASIN of the product to extract informatio from.
-
-        Returns:
-            -dict: A dictionary containing product information, including name, price, rating, rating count, availability,
-                   hyperlink, image link, store, and store link.
-
-        Raises:
-            -AttributeError: If the product information cannot be extracted from the page.
-        """
-        # Construct the URL using the ASIN:
-        url = f"https://www.amazon.com/dp/{asin}"
-        # Retrieve the page content using 'static_connection' method:
-        content = await Response(url).content()
-        soup = BeautifulSoup(content, 'lxml')
-        try:
-            # Try to extract the image link using the second first selector.
-            image_link = soup.select_one(self.scrape['image_link_i']).get('src')
-        except Exception as e:
-            image_link = soup.select_one(self.scrape['image_link_ii']).get('src')
-        # finally:
-        #     # If the image link cannot be extracted, return an error message:
-        #     return f'Content loading error. Please try again in few minutes. Error message || {str(e)}.'
-        try:
-            availabilities = soup.select_one(self.scrape['availability']).text.strip()
-        except AttributeError:
-            availabilities = 'In stock'
-        store = await self.catch.text(soup.select_one(self.scrape['store']))
-        store_link = f"""https://www.amazon.com{await self.catch.attributes(soup.select_one(self.scrape['store']), 'href')}"""
-        # Construct the data dictionary containing product information:
-        datas = {
-            'Name': await self.catch.text(soup.select_one(self.scrape['name'])),
-            'Price': await self.catch.text(soup.select_one(self.scrape['price_us'])),
-            'Rating': await self.catch.text(soup.select_one(self.scrape['review'])),
-            'Rating count': await self.catch.text(soup.select_one(self.scrape['rating_count'])),
-            'Availability': availabilities,
-            'Hyperlink': url,
-            'Image': image_link,
-            'Store': store,
-            'Store link': store_link,
-
-        }
-        return datas
 

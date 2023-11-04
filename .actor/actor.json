@@ -17,6 +17,7 @@
                     "transformation": {
                         "fields": [
                             "nameField",
+                            "asinField",
                             "descriptionField",
                             "priceField",
                             "dealPriceField",
@@ -36,6 +37,10 @@
                         "properties": {
                             "nameField": {
                                 "label": "Name",
+                                "format": "text"
+                            },
+                            "asinField": {
+                                "label": "ASIN",
                                 "format": "text"
                             },
                             "descriptionField": {

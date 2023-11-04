@@ -1,103 +1,69 @@
-<p align='center'>
-  <a href='https://www.amazon.com'><img src='https://miro.medium.com/max/799/1*Sjalm0U8yZgRBMmRVuGGLQ.png'
-                                        width='300'
-                                        height=auto
-                                        ></a>
-</p>
+# Amazon Scraper Apify Actor
 
-### Discord Integration
-The web scraper now has a Discord bot that can extract the ASIN or ISBN of a product from
-a link sent in a direct message. To use the bot follow these steps:
+This Apify actor is a web scraper specifically built for extracting product information from Amazon based on category URLs. It utilizes Apify's powerful web scraping capabilities and JavaScript to collect detailed product data for analysis, research, or any other purpose.
 
-1. Invite the bot to your Discord server using this <a href = "https://discord.com/api/oauth2/authorize?client_id=1091094561314582528&permissions=1634235578438&scope=bot">amazonBuddy.</a>
-2. Send an Amazon product link to the bot in a direct message.
-3. The bot will search the link for an ASIN or ISBN, and respond with the appropriate identifier.
-4. If you want to retrieve the product details for a specific ASIN, you can send the ASIN to
-the bot in a direct message, and it will repsond with product information.
+## Table of Contents
 
-<p align = 'center'><img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNWU0YjJjMTEyODBmYzI0Mjk1Mjg1YTdmMTVkYWNiNGM5YWFkNDVkZSZlcD12MV9pbnRlcm5hbF9naWZzX2dpZklkJmN0PWc/Jg3cKSlnweCsRp5RC1/giphy.gif" alt="Discord bot"></p>
+- [Introduction](#introduction)
+- [Usage](#usage)
+- [Input](#input)
+- [Output](#output)
+- [Configuration](#configuration)
+- [Development](#development)
+- [Contributing](#contributing)
+- [License](#license)
 
-*The bot is in development and currently works only for US Amazon products on the ".com" domain.*
+## Introduction
 
-# AmazonMe
-Welcome to AmazonMe, a web scraper designed to extract information from the Amazon website and store it in a MongoDB databse. This repository contains
-the code for the scraper, which utilizes the Requests and BeautifulSoup libraries to automate the scraping process. The scraper also leverages
-asyncio concurrency to efficiently extract thousands of data points from the website.
-
-## Install necessary requirments:
-It's always a good practice to install a virtual environment before installing necessary requirements:
-```python
-python.exe -m venv environmentname
-environmentname/scripts/activate
-```
-Install necessary requirements:
-```python
-  pip install -r requirements.txt
-```
+This Apify actor navigates through specified Amazon category URLs, extracts product details such as title, price, description, and reviews, and stores the data in a structured JSON format. It provides a seamless way to collect Amazon product information for various use cases.
 
 ## Usage
-```python
-  async def main():
-        base_url = ""
-        # Type True if you want to use proxy:
-        proxy = False
-        if proxy:
-            mongo_to_db = await export_to_mong(base_url, f"http://{rand_proxies()}")
-        else:
-            mongo_to_db = await export_to_mong(base_url, None)
-        # sheet_name = "Dinner Plates"  # Please use the name of the collection in your MongoDB database to specify the name of the spreadsheet you intend to export.
-        # sheets = await mongo_to_sheet(sheet_name)  # Uncomment this to export to excel database.
-        return mongo_to_db
-```
 
-# To run the script, go to terminal and type:
-```python
-  python main.py
-```
-<p align = 'center'><i>Demo of the scraper scraping the content from Amazon</i></p>
-<p align = 'center'><img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNmNmZjFmNzlkMmZhMGI3ZTVmZTc1MDFiNmZhMDAyOTFmOTI2YTU0ZCZlcD12MV9pbnRlcm5hbF9naWZzX2dpZklkJmN0PWc/z1yvTb9gwvuZG9N0Xz/giphy.gif" alt="Discord bot"></p>
+To use this Amazon scraper, simply input the category URLs for the products you want to scrape. The actor will navigate through the specified categories, extract product details such as title, price, description, and reviews, and store the data in a structured format.
 
-## Features
-Upon executing the program, the scraper commences its operation by extracting the following fields and storing the required product information in Mongo databases.<br>
-<ul>
-  <li><b>Product</b></li>
-  <li><b>Asin</b></li>
-  <li><b>Description</b></li>
-  <li><b>Breakdown</b></li>
-  <li><b>Price</b></li>
-  <li><b>Deal Price</b></li>
-  <li><b>You Saved</b></li>
-  <li><b>Rating</b></li>
-  <li><b>Rating count</b></li>
-  <li><b>Availability</b></li>
-  <li><b>Hyperlink</b></li>
-  <li><b>Image url</b></li>
-  <li><b>Image lists</b></li>
-  <li><b>Store</b></li>
-  <li><b>Store link</b></li>
+**Usage Example:**
+1. Input the Amazon category URLs into the actor.
+2. Run the actor.
+3. Retrieve the scraped product data in the desired output format.
 
-</ul>
+## Input
 
-### MongoDB Integration
-Newly added to AmazonMe is the integration with MongoDB, allowing you to store the scraped data in a database for further analysis or usage. The scraper can now save the scraped data directly to a MongoDB database.
+**Input Parameters:**
+- `categoryUrls` (Array of Strings): An array of Amazon category URLs that you want to scrape.
+  - Example: `["https://www.amazon.com/category1", "https://www.amazon.com/category2"]`
 
-To enable MongoDB integration, you need to follow these steps:
+## Output
 
-1. Make sure you have MongoDB installed and running on your machine or a remote server.
-2. Install the `pymongo` package by running the following command:
-                   <p align = 'center'>
-                    ```python
-                       pip install pymongo
-                    ```
-                    </p>
-3. In the script or module where you handle the scraping and data extraction, import the `pymongo`
-With the MongoDB integration, you can easily query and retrieve the scraped data from the database, perform analytics, or use it for other purposes.
+**Output Format:**
+The scraper outputs data in a structured JSON format, including the following fields for each product:
+- `title`: Product title.
+- `price`: Product price.
+- `description`: Product description.
+- `reviews`: Product reviews and ratings.
+- ... (any additional fields you're scraping)
 
-## Note
-Please note that the script is designed to work with Amazon and may not work with other types of websites. Additionally, the script may be blocked by the website if it detects excessive scraping activity, so please use this tool responsibly and in compliance with Amazon's terms of service
-
-If you have any issues or suggestions for improvements, please feel free to open an issue on the repository or submit a pull request.
-
-## License
-This project is licensed under GPL-3.0 license. This scraper is provided as-is and for educational purposes only. The author is not repsonsible for any damages or legal issues that may result from its user. Use it at your own risk. Thank you for using the AmazonMe!
-
+Example Output:
+```json
+{
+  "products": [
+    {
+      "name": "Skullcandy Jib True 2 In-Ear Wireless Earbuds, 32 Hr Battery, Microphone, Works with iPhone Android and Bluetooth Devices - Black",
+      "asin": "B09VM2TBZF",
+      "description": "Never Lost with Tile - Tile tech makes it easy to track down either earbuds if you ever misplace one. Just download the Tile app and simply 'ring' for your buds. Use Either Bud Solo - Jib True 2 features solo mode, which enables you to use either earbuds separately to take calls or listen to music. Enjoy Fearlessly - With an IPX4 rating, Jib True 2 can handle a little rain during your outdoor adventure. 33 Hours of Power - With Jib True 2, you can experience longer-lasting listening sessions without worry. Enjoy wireless freedom with 24 hours of power in the case and 9 hours in the earbuds. Buy with Confidence - 1 year US warranty included.
+      ",
+      "price": "$29.95",
+      "dealPrice": "N/A",
+      "youSaved": "N/A",
+      "reviews": {
+        "rating": 4.3,
+        "count": 2286
+      },
+      "availability": "In Stock",
+      "Hyperlink": "https://www.amazon.com/Skullcandy-True-Wireless-Ear-Earbuds/dp/B09VM2TBZF",
+      "imageLink": "https://m.media-amazon.com/images/I/61h5ALBhEtL.__AC_SX300_SY300_QL70_ML2_.jpg",
+      "Images": ["https://m.media-amazon.com/images/I/318ZX1G-ZmL._AC_US40_.jpg", "https://m.media-amazon.com/images/I/31jlRyzHkZL._AC_US40_.jpg", "https://m.media-amazon.com/images/I/312lsbggTQL._AC_US40_.jpg", "https://m.media-amazon.com/images/I/419SPoM3U3L._AC_US40_.jpg", "https://m.media-amazon.com/images/I/41DKKeaOe6L._AC_US40_.jpg", "https://m.media-amazon.com/images/I/41D7WcHT+AL._AC_US40_.jpg", "https://m.media-amazon.com/images/I/41Q97yInqUL.SS40_BG85,85,85_BR-120_PKdp-play-icon-overlay__.jpg", "https://images-na.ssl-images-amazon.com/images/G/01/x-locale/common/transparent-pixel._V192234675_.gif"],
+      "Store": "Skullcandy Store",
+      "Store link": "https://www.amazon.com/stores/Skullcandy/page/9F16B940-F912-43FE-888C-5BB1B86337A9?ref_=ast_bln",
+    }
+  ]
+}

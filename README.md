@@ -75,7 +75,7 @@ Example Output:
     }
   ]
 }
-
+```
 
 **Configuration Options:**
 - None at the moment. The actor is configured to scrape product data from the provided category URLs.

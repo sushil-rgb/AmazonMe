@@ -14,7 +14,7 @@ if __name__ == '__main__':
             if status == 503:
                 return '503 response. Please try again later.'
             else:
-                amazon = Amazon(input)
+                amazon = Amazon(input['url'])
                 datasets = await amazon.concurrent_scraping()
                 title = await amazon.category_name()
                 await Actor.push_data({'Products': datasets, 'title': title})

@@ -75,3 +75,24 @@ Example Output:
     }
   ]
 }
+
+
+**Configuration Options:**
+- None at the moment. The actor is configured to scrape product data from the provided category URLs.
+
+
+**Development:**
+- **Installation:** Clone the repository and install the necessary dependencies using `pip install -r requirements.txt`.
+- **Usage:** Run the actor locally using `npm start` and test with different category URLs.
+
+
+**Contributing:**
+- If you find any issues or have suggestions, please open an issue on GitHub.
+- Contributions are welcome! Fork the repository, create a branch, make changes, and open a pull request.
+- Follow the ESLint rules and maintain clean code standards.
+
+
+**License:**
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+

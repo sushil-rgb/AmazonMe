@@ -232,12 +232,18 @@ class Amazon:
                     'Price': price,
                     'Deal Price': deal_price,
                     'You saved': savings,
+                    "Reviews": {
+                        "Ratings": ratings,
+                        "Count": rating_count,
+                    },
                     'Rating': ratings,
                     'Rating count': rating_count,
                     'Availability': availabilities,
                     'Hyperlink': url,
-                    'Image': image_link,
-                    'Images': [imgs.get('src') for imgs in soup.select(self.scrape['image_lists'])],
+                    'Images': {
+                        "URL":image_link,
+                        "URLS": [imgs.get('src') for imgs in soup.select(self.scrape['image_lists'])],
+                    },
                     'Store': store.replace("Visit the ", ""),
                     'Store link': store_link,
                 }

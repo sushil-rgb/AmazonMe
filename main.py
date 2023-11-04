@@ -6,7 +6,7 @@ import os
 
 if __name__ == '__main__':
     USER_ID = os.getenv('USER_ID')
-    APIFY_TOKENS = os.getenv('API_TOKENS')
+    APIFY_TOKENS = os.getenv('APIFY_TOKENS')
     ACTOR_ID = os.getenv('ACTOR_ID')
 
     async def main():

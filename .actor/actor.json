@@ -16,7 +16,6 @@
                     "title": "Overview",
                     "transformation": {
                         "fields": [
-                            "numericField",
                             "nameField",
                             "descriptionField",
                             "priceField",
@@ -35,10 +34,6 @@
                     "display": {
                         "component": "table",
                         "properties": {
-                            "numericField": {
-                                "label": "ID",
-                                "format": "number"
-                            },
                             "nameField": {
                                 "label": "Name",
                                 "format": "text"

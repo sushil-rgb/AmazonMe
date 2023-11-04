@@ -1,5 +1,6 @@
 from scrapers.scraper import Amazon
 from apify import Actor
+import asyncio
 
 
 if __name__ == '__main__':
@@ -17,4 +18,7 @@ if __name__ == '__main__':
                 datasets = await amazon.concurrent_scraping()
                 title = await amazon.category_name()
                 await Actor.push_data({'Products': datasets, 'title': title})
+
+
+    print(asyncio.run(main()))
 

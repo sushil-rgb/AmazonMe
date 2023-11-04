@@ -1,5 +1,4 @@
 from tools.tool import TryExcept, yaml_load, randomTime, userAgents, verify_amazon, flat, Response, export_sheet
-from playwright.async_api import async_playwright, TimeoutError as PlayError
 from bs4 import BeautifulSoup
 import pandas as pd
 import asyncio
@@ -361,37 +360,4 @@ class Amazon:
 
         }
         return datas
-
-    async def product_review(self, asin):
-        # asin = await self.getASIN(url)
-        # review_url = f"""https://{'/'.join(url.split("/")[2:4])}/product-reviews/{asin}/ref=cm_cr_arp_d_paging_btm_next_4?ie=UTF8&pageNumber=4&reviewerType=all_reviews&pageSize=10"""
-        review_url = f"https://www.amazon.com/product-reviews/{asin}"
-        async with async_playwright() as p:
-            browser = await p.chromium.launch(headless = True)
-            context = await browser.new_context(user_agent = userAgents())
-            page = await context.new_page()
-            await page.goto(review_url)
-            content = await page.content()
-            soup = BeautifulSoup(content, 'lxml')
-            profile_name = soup.select(self.scrape['profile_name'])
-            stars = soup.select(self.scrape['stars'])
-            review_title = soup.select(self.scrape['review_title'])
-            full_review = soup.select(self.scrape['full_review'])
-            datas = {
-                'top positive review':
-                    {
-                        'customer': profile_name[0].text.strip(),
-                        'stars': stars[0].text.strip(),
-                        'title': review_title[0].text.strip(),
-                        'review': full_review[0].text.strip()
-                    },
-                'top critical review':
-                    {
-                        'customer': profile_name[1].text.strip(),
-                        'stars': stars[1].text.strip(),
-                        'title': review_title[1].text.strip(),
-                        'review': full_review[1].text.strip()
-                    }
-            }
-            return datas
 

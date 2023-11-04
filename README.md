@@ -1,6 +1,6 @@
 # Amazon Scraper Apify Actor
 
-This Apify actor is a web scraper specifically built for extracting product information from Amazon based on category URLs. It utilizes Apify's powerful web scraping capabilities and JavaScript to collect detailed product data for analysis, research, or any other purpose.
+This Apify actor is a web scraper specifically built for extracting product information from Amazon based on category URLs. It utilizes Apify's powerful web scraping capabilities and Python to collect detailed product data for analysis, research, or any other purpose.
 
 ## Table of Contents
 

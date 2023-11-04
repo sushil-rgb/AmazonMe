@@ -16,7 +16,6 @@ if __name__ == '__main__':
             else:
                 amazon = Amazon(input, None)
                 datasets = await amazon.scrape_product_info(input['url'])
-                title = await amazon.category_name()
-                await Actor.push_data({'datas': datasets, 'title': title})
+                await Actor.push_data(datasets)
 
 

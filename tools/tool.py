@@ -1,6 +1,4 @@
-import pandas as pd
 import itertools
-import asyncio
 import aiohttp
 import secrets
 import yaml

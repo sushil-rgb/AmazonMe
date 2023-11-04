@@ -1,6 +1,5 @@
 from tools.tool import TryExcept, yaml_load, randomTime, userAgents, verify_amazon, flat, Response
 from bs4 import BeautifulSoup
-import pandas as pd
 import asyncio
 import re
 

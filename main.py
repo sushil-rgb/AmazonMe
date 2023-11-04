@@ -1,7 +1,5 @@
-from apify import Actor
-from tools.tool import rand_proxies
 from scrapers.scraper import Amazon
-
+from apify import Actor
 
 
 if __name__ == '__main__':

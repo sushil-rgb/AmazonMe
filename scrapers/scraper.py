@@ -228,6 +228,7 @@ class Amazon:
                 # Construct the data dictionary containing product information:
                 datas = {
                     'Name': product,
+                    'ASIN': await self.getASIN(url),
                     'Description': ' '.join([des.text.strip() for des in soup.select(self.scrape['description'])]),
                     'Breakdown': ' '.join([br.text.strip() for br in soup.select(self.scrape['prod_des'])]),
                     'Price': price,

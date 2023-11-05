@@ -110,25 +110,6 @@ class Amazon:
             asin = "N/A"
         return asin
 
-    async def category_name(self):
-        resp = Response(self.base_url)
-        """
-        Retrieves the category name of search results on the given Amazon search page URL.
-
-        Args:
-            -url (str): The Amazon search page URL to retrive category name.
-
-        Raises:
-            -None.
-        """
-        content = await resp.content()
-        soup = BeautifulSoup(content, 'lxml')
-        try:
-            searches_results = soup.select_one(self.scrape['searches_I']).text.strip()
-        except AttributeError:
-            searches_results = re.sub(r'["]', '', soup.select_one(self.scrape['searches_II']).text.strip())
-        return searches_results
-
     async def product_urls(self, url, max_retries = 13):
         for retry in range(13):
             try:
@@ -286,8 +267,7 @@ class Amazon:
         if await verify_amazon(self.base_url):
             return "I'm sorry, the link you provided is invalid. Could you please provide a valid Amazon link for the product category of your choice?"
         print(f"-----------------------Welcome to Amazon crawler---------------------------------")
-        searches = await self.category_name()
-        print(f"Scraping category || {searches}.")
+        print(f"Scraping datasets.")
         # Pull the number of pages of the category
         number_pages = await self.num_of_pages()
         print(f"Total pages || {number_pages}.")

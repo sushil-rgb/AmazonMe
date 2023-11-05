@@ -17,8 +17,7 @@ if __name__ == '__main__':
             else:
                 amazon = Amazon(url)
                 datasets = await amazon.concurrent_scraping()
-                title = await amazon.category_name()
-                await Actor.push_data({'Products': datasets, 'title': title})
+                await Actor.push_data({'Products': datasets})
 
     try:
         print(asyncio.run(main()))

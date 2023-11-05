@@ -19,8 +19,5 @@ if __name__ == '__main__':
                 datasets = await amazon.concurrent_scraping()
                 await Actor.push_data({'Products': datasets})
 
-    try:
-        print(asyncio.run(main()))
-    except Exception as e:
-        print(f"Scraping done.")
+    print(asyncio.run(main))
 

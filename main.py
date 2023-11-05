@@ -19,5 +19,5 @@ if __name__ == '__main__':
                 datasets = await amazon.concurrent_scraping()
                 await Actor.push_data({'Products': datasets})
 
-    print(asyncio.run(main))
+    print(asyncio.run(main()))
 

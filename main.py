@@ -11,7 +11,7 @@ if __name__ == '__main__':
 
     async def main():
         async with Actor:
-            input = f'https://www.amazon.com/s?k=Jeans&rh=n%3A1040660%2Cn%3A1048188%2Cp_36%3A-5000&dc&ds=v1%3AZrh2YeJ%2Bmo6tc5p1QJD9idnCpBDTF2pKNTUbGqlhFKk&_encoding=UTF8&content-id=amzn1.sym.b0c3902d-ae70-4b80-8f54-4d0a3246745a&crid=1TZCO6ZC2HZVA&pd_rd_r=d2d812ec-1839-446b-b13c-080b49f2026c&pd_rd_w=SQ59S&pd_rd_wg=6taBx&pf_rd_p=b0c3902d-ae70-4b80-8f54-4d0a3246745a&pf_rd_r=MEEWY614NXBTSG4MW7R6&qid=1684823801&rnid=2941120011&sprefix=jeans%2Caps%2C155&ref=pd_gw_unk'
+            input = f'https://www.amazon.com/s?k=home+decor&rh=p_36%3A-5000&_encoding=UTF8&content-id=amzn1.sym.f7def1d9-177b-415d-89b3-9d866650f7d7&pd_rd_r=73b9a32d-328c-4b5e-8ad1-1d20f4186b3b&pd_rd_w=zJqQU&pd_rd_wg=NcDHj&pf_rd_p=f7def1d9-177b-415d-89b3-9d866650f7d7&pf_rd_r=FA9YHY1T5QTM2HRG9QP5&ref=pd_gw_unk'
 
             status = await Amazon(input).status()
 

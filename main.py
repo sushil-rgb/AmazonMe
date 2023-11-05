@@ -9,12 +9,13 @@ if __name__ == '__main__':
     async def main():
         async with Actor:
             input_data = await Actor.get_input()
-            status = await Amazon(input_data).status()
+            url = input_data.get('url')
+            status = await Amazon(url).status()
 
             if status == 503:
                 return '503 response. Please try again later.'
             else:
-                amazon = Amazon(input_data)
+                amazon = Amazon(url)
                 datasets = await amazon.concurrent_scraping()
                 title = await amazon.category_name()
                 await Actor.push_data({'Products': datasets, 'title': title})

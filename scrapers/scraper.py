@@ -123,7 +123,6 @@ class Amazon:
         """
         content = await resp.content()
         soup = BeautifulSoup(content, 'lxml')
-        # return soup.prettify()
         try:
             searches_results = soup.select_one(self.scrape['searches_I']).text.strip()
         except AttributeError:
@@ -162,7 +161,7 @@ class Amazon:
                 print(f"Retry {retry + 1} failed: {str(e)}")
                 if retry < max_retries - 1:
                     await asyncio.sleep(4)  # Delay before retrying.
-
+                return card_contents
         raise Exception(f"Failed to retrieve valid data after {max_retries} retries.")
 
     async def crawl_url(self):
@@ -225,6 +224,7 @@ class Amazon:
                 # Construct the data dictionary containing product information:
                 datas = {
                     'Name': product,
+                    'ASIN': await self.getASIN(url),
                     'Description': ' '.join([des.text.strip() for des in soup.select(self.scrape['description'])]),
                     'Breakdown': ' '.join([br.text.strip() for br in soup.select(self.scrape['prod_des'])]),
                     'Price': price,

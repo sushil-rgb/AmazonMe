@@ -10,7 +10,7 @@ if __name__ == '__main__':
     async def main():
         async with Actor:
             input_data = await Actor.get_input()
-            url = input_data['properties']['url']['prefill']
+            url = input_data['url']['prefill']
             status = await Amazon(url).status()
 
             if status == 503:

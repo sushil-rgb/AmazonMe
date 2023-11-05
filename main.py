@@ -9,7 +9,6 @@ if __name__ == '__main__':
 
     async def main():
         async with Actor:
-            await Actor.init()
             input_data = await Actor.get_input()
             url = input_data['properties']['url']['prefill']
             status = await Amazon(url).status()

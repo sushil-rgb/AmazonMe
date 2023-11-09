@@ -8,7 +8,7 @@
             "type": "string",
             "description": "The URL of the category page you want to get data from.",
             "editor": "textfield",
-            "prefill": "https://www.amazon.com/s?k=gaming+keyboard&_encoding=UTF8&content-id=amzn1.sym.12129333-2117-4490-9c17-6d31baf0582a&pd_rd_r=0f8fe894-c425-4b7c-a73f-a30775c7e73e&pd_rd_w=0az2V&pd_rd_wg=0OH9V&pf_rd_p=12129333-2117-4490-9c17-6d31baf0582a&pf_rd_r=B9HGMHNJ0ZRA5ZR5TZ74&ref=pd_gw_unk"
+            "prefill": "https://www.amazon.com/s?k=tops+knife&i=sporting&rh=n%3A3307781011%2Cp_89%3ATops&dc&ds=v1%3A5Odhkcy1eH6zQfIevJvJaB6pdAghsURlArTFPJ1Fmk8&qid=1699554177&rnid=2528832011&ref=sr_nr_p_89_1"
                 }
             },
             "required": ["url"]

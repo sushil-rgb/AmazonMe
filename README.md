@@ -61,8 +61,21 @@ Upon executing the program, the scraper commences its operation by extracting th
   <li><b>Image lists</b></li>
   <li><b>Store</b></li>
   <li><b>Store link</b></li>
-
 </ul>
+
+##Supported domains:
+- <b>".com"</b>          (US)
+- <b>".co.uk"</b>        (UK)
+- <b>".com.mx"</b>       (Mexico)
+- <b>".com.br"</b>       (Brazil)
+- <b>".com.au"</b>       (Australia)
+- <b>".com.jp"</b>       (Japan)
+- <b>".com.be"</b>       (Belgium)
+- <b>".in"</b>           (India)
+- <b>".fr"</b>           (France)
+- <b>".se"</b>           (Sweden)
+- <b>".de"</b>           (Germany)
+- <b>".it"</b>           (Italy)
 
 ### MongoDB Integration
 Newly added to AmazonMe is the integration with MongoDB, allowing you to store the scraped data in a database for further analysis or usage. The scraper can now save the scraped data directly to a MongoDB database.

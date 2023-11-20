@@ -9,7 +9,7 @@ if __name__ == '__main__':
 
 
     async def main():
-        base_url = "https://www.amazon.com/s?k=beauty&rh=p_36%3A-2500&_encoding=UTF8&content-id=amzn1.sym.f9836480-cfbe-4ad3-ad9c-168436b5cd55&pd_rd_r=e7f0b407-5d50-4304-9834-e16d45350a0d&pd_rd_w=YT9MX&pd_rd_wg=7MvkN&pf_rd_p=f9836480-cfbe-4ad3-ad9c-168436b5cd55&pf_rd_r=Z128GHCSZH9Y2B5ZM15K&ref=pd_gw_unk"
+        base_url = "https://www.amazon.com.mx/s?i=grocery&rh=n%3A21427772011%2Cp_89%3ABadia%7CLASAL%7CMcCormick%7CPontino%7CSanAjo%7CSimply+Organic&dc&fs=true&qid=1700508271&rnid=11790855011&ref=sr_nr_p_89_6&ds=v1%3AJJ1XvzbAzGdCRxEqZssCtUSP9%2Bf3%2BK52f9N5jtkDtvs"
         status = await Amazon(base_url, None).status()
 
         if status == 503:

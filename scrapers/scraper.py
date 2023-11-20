@@ -1,5 +1,4 @@
-from tools.tool import TryExcept, yaml_load, randomTime, userAgents, verify_amazon, flat, Response, export_sheet
-from playwright.async_api import async_playwright, TimeoutError as PlayError
+from tools.tool import TryExcept, Response, yaml_load, randomTime, userAgents, verify_amazon, flat, check_domain, export_sheet, domain
 from bs4 import BeautifulSoup
 import pandas as pd
 import asyncio
@@ -8,12 +7,22 @@ import re
 
 class Amazon:
     """
-    The Amazon class provides methods for scraping data from Amazon.com.
+    Initializes an instance of the Amazon class.
+
+    Args:
+        - base_url (str): The base URL for Amazon.
+        - proxy: The proxy to be used for making requests.
 
     Attributes:
-        headers (dict): A dictionary containing the user agent to be used in the request headers.
-        catch (TryExcept): An instance of TryExcept class, used for catchig exceptions.
-        scrape (yaml_load): An instance of the yaml_load class, used for selecting page elements to be scraped.
+        - proxy: The proxy to be used for making requests.
+        - country_domain: The domain of the country derived from the base URL.
+        - region: The region derived from the base URL.
+        - currency (str): A regular expression pattern for currencies in different regions.
+        - rand_time (int): The random time interval in seconds.
+        - base_url (str): The base URL for Amazon.
+        - headers (dict): A dictionary containing the user agent to be used in the request headers.
+        - catch (TryExcept): An instance of TryExcept class, used for catching exceptions.
+        - scrape (yaml_load): An instance of the yaml_load class, used for selecting page elements to be scraped.
     """
 
     def __init__(self, base_url, proxy):
@@ -21,13 +30,37 @@ class Amazon:
         Initializes an instance of the Amazon class.
         """
         self.proxy = proxy
-        self.rand_time = 5 * 60
+        self.country_domain = domain(base_url)
+        self.region = check_domain(base_url)
+
+        # Define a regular expression pattern for currencies in different regions
+        self.currency = r'[$₹,R\$€£kr()%¥\s]'   # Characters representing various currencies
+        # Explanation:
+        # - '[$₹,R\$€£kr()%¥\s]': Match any of the characters within the square brackets
+        #   - '$': Dollar sign
+        #   - '₹': Indian Rupee
+        #   - '€': Euro
+        #   - '£': Pound Sterling
+        #   - 'kr': Krona or Krone
+        #   - '()%': Parentheses and percent sign
+        #   - '¥': Yen
+        #   - '\s': Whitespace characters
+        # This regex is intended to identify and capture currency-related symbols and characters in a string.
+        # It includes a variety of symbols used across different regions.
+
+        self.rand_time = 3 * 60
         self.base_url = base_url
         self.headers = {'User-Agent': userAgents()}
         self.catch = TryExcept()
         self.scrape = yaml_load('selector')
 
     async def status(self):
+        """
+        Retrieves the HTTP response status code for the given Amazon URL.
+
+        Returns:
+            - int: The HTTP response status code.
+        """
         response = await Response(self.base_url).response()
         return response
 
@@ -45,11 +78,13 @@ class Amazon:
             try:
                 content = await Response(self.base_url).content()
                 soup = BeautifulSoup(content, 'lxml')
+
                 # Try except clause for index error, this happens if there are only one page:
                 try:
                     pages = await self.catch.text(soup.select(self.scrape['pages'])[-1])
                 except IndexError:
                     pages = '1'
+
                 # the current pages returns "Previous" instead of number, this only happens there only two pages, that's why I have returned the value 2.
                 try:
                     return int(pages)
@@ -77,21 +112,27 @@ class Amazon:
         """
         # Create a list to store the split URLs, and add the orignal URL to it:
         split_url = [self.base_url]
+
         # Use the 'num_of_pages' method to get the total number of search result pages for the given URL:
         total_pages = await self.num_of_pages()
+
         # Use the 'static_connection' method to make a static connection to the given URL and get its HTML content:
         content = await Response(self.base_url).content()
         # Making a soup:
         soup = BeautifulSoup(content, 'lxml')
+
         # Get the URL of the next button on the search result page and costruct the URL of the next search result page:
-        next_link = f"""https://www.amazon.com{await self.catch.attributes(soup.select_one(self.scrape['next_button']), 'href')}"""
+        next_link = f"""https://www.amazon.{self.country_domain}{await self.catch.attributes(soup.select_one(self.scrape['next_button']), 'href')}"""
         for num in range(1, total_pages):
+
             # Replace the 'page' number in the URL with curren tpage number increment by 1:
             next_url = re.sub(r'page=\d+', f'page={num+1}' , next_link)
+
             # Replace the 'sr_pg_' parameter in the URL with current page number:
             next_url = re.sub(r'sr_pg_\d+', f'sr_pg_{num}', next_url)
             split_url.append(next_url)
         return split_url
+
 
     async def getASIN(self, url):
         """
@@ -126,17 +167,18 @@ class Amazon:
         """
         content = await resp.content()
         soup = BeautifulSoup(content, 'lxml')
-        # return soup.prettify()
         try:
             searches_results = soup.select_one(self.scrape['searches_I']).text.strip()
         except AttributeError:
             searches_results = re.sub(r'["]', '', soup.select_one(self.scrape['searches_II']).text.strip())
-        return searches_results
+        category_name = f"""{self.region} - {searches_results}."""
+        return category_name
+
 
     async def product_urls(self, url, max_retries = 13):
         for retry in range(13):
             try:
-                await asyncio.sleep(20)
+                await asyncio.sleep(5)
                 """
                 Scrapes product data from the Amazon search results page for the given URL.
 
@@ -149,13 +191,14 @@ class Amazon:
                 # Use the 'static_connection' method to download the HTML content of the search results bage
                 content = await Response(url).content()
                 soup = BeautifulSoup(content, 'lxml')
+
                 # Check if main content element exists on page:
                 try:
                     soup.select_one(self.scrape['main_content'])
                 except Exception as e:
                     return f"Content loading error. Please try again in few minutes. Error message: {e}"
                 # Get product card contents from current page:
-                card_contents = [f"""https://www.amazon.com{prod.select_one(self.scrape['hyperlink']).get('href')}""" for prod in soup.select(self.scrape['main_content'])]
+                card_contents = [f"""https://www.amazon.{self.country_domain}{prod.select_one(self.scrape['hyperlink']).get('href')}""" for prod in soup.select(self.scrape['main_content'])]
                 return card_contents
             except ConnectionResetError as se:
                 print(f"Connection lost: {str(e)}. Retrying... ({retry + 1} / {max_retries})")
@@ -165,35 +208,45 @@ class Amazon:
                 print(f"Retry {retry + 1} failed: {str(e)}")
                 if retry < max_retries - 1:
                     await asyncio.sleep(4)  # Delay before retrying.
-
         raise Exception(f"Failed to retrieve valid data after {max_retries} retries.")
 
-    async def crawl_url(self):
-        page_lists = await self.split_url()
-        coroutines = [self.product_urls(url) for url in page_lists]
-        results = await asyncio.gather(*coroutines)
-        return flat(results)
 
     async def scrape_product_info(self, url, max_retries = 13):
+        """
+        Scrapes product information from the Amazon product page.
+
+        Args:
+            - url (str): The URL of the Amazon product page.
+            - max_retries (int): The maximum number of retry attempts in case of connection errors.
+
+        Returns:
+            - list: A list containing dictionaries with product information.
+
+        Raises:
+            - Exception: If valid data cannot be retrieved after the maximum number of retry attempts.
+        """
+        # List to store product information dictionaries:
         amazon_dicts = []
         for retry in range(max_retries):
             try:
+
                 # Retrieve the page content using 'static_connection' method:
                 content = await Response(url).content()
                 soup = BeautifulSoup(content, 'lxml')
-                # return soup.prettify()
+
+                # Extract product name:
                 product = soup.select_one(self.scrape['name']).text.strip()
                 print(product)
+
+                # Raise an exception if the product name is 'N/A':
                 if product == "N/A":
                     raise Exception("Product is 'N/A' retrying...")
                 try:
+
                     # Try to extract the image link using the second first selector.
                     image_link = soup.select_one(self.scrape['image_link_i']).get('src')
                 except Exception as e:
                     image_link = await self.catch.attributes(soup.select_one(self.scrape['image_link_ii']), 'src')
-                # finally:
-                #     # If the image link cannot be extracted, return an error message:
-                #     return f'Content loading error. Please try again in few minutes. Error message || {str(e)}.'
                 try:
                     availabilities = soup.select_one(self.scrape['availability']).text.strip()
                 except AttributeError:
@@ -202,7 +255,7 @@ class Amazon:
                 if 'Page' in price.split():
                     price = await self.catch.text(soup.select_one(self.scrape['price_us_i']))
                 if price != "N/A":
-                    price = float(re.sub(r'[$₹,()%¥\s]', '', price))
+                    price = float(re.sub(self.currency, '', price))
                 try:
                     deal_price = await self.catch.text(soup.select(self.scrape['deal_price'])[0])
                     if 'Page' in deal_price.split():
@@ -210,7 +263,7 @@ class Amazon:
                 except Exception as e:
                     deal_price = "N/A"
                 if deal_price != "N/A":
-                    deal_price = float(re.sub(r'[$₹,()%¥\s]', '', deal_price))
+                    deal_price = float(re.sub(self.currency, '', deal_price))
                 try:
                     savings = await self.catch.text(soup.select(self.scrape['savings'])[-1])
                 except IndexError:
@@ -224,11 +277,13 @@ class Amazon:
                 except Exception as e:
                     rating_count = "N/A"
                 store = await self.catch.text(soup.select_one(self.scrape['store']))
-                store_link = f"""https://www.amazon.com{await self.catch.attributes(soup.select_one(self.scrape['store']), 'href')}"""
+                store_link = f"""https://www.amazon.{self.country_domain}{await self.catch.attributes(soup.select_one(self.scrape['store']), 'href')}"""
+
                 # Construct the data dictionary containing product information:
                 datas = {
                     'Name': product,
                     'ASIN': await self.getASIN(url),
+                    'Region': self.region,
                     'Description': ' '.join([des.text.strip() for des in soup.select(self.scrape['description'])]),
                     'Breakdown': ' '.join([br.text.strip() for br in soup.select(self.scrape['prod_des'])]),
                     'Price': price,
@@ -256,11 +311,19 @@ class Amazon:
                 return amazon_dicts
         raise Exception(f"Failed to retrieve valid data after {max_retries} retries.")
 
+
     async def crawl_url(self):
+        """
+        Crawls through multiple pages and retrieves a list of product URLs.
+
+        Returns:
+            - list: A list of product URLs.
+        """
         page_lists = await self.split_url()
         coroutines = [self.product_urls(url) for url in page_lists]
         results = await asyncio.gather(*coroutines)
         return flat(results)
+
 
     async def scrape_and_save(self, url):
         """
@@ -282,117 +345,83 @@ class Amazon:
         datas = await self.scrape_product_info(url)
         return datas
 
+
     async def csv_sheet(self, url):
+        """
+            Scrapes data from a given URL, saves it to a file, and returns the scraped data as a Pandas DataFrame.
+
+            Args:
+                - url (str): The URL to scrape data from.
+
+            Returns:
+                - pd.DataFrame: A Pandas DataFrame containing the scraped data.
+
+            Raises:
+                - HTTPError: If the HTTP request to the URL returns an error status code.
+                - Exception: If there is an error while scraping the data.
+        """
         frames = await self.scrape_and_save(url)
         return pd.DataFrame(frames)
 
-    async def export_csv(self):
-        if await verify_amazon(self.base_url):
-            return "I'm sorry, the link you provided is invalid. Could you please provide a valid Amazon link for the product category of your choice?"
-        print(f"-----------------------Welcome to Amazon crawler---------------------------------")
-        print(f"Exporting to CSV")
-        categ = await self.category_name()
-        url_lists = await self.crawl_url()
-        print(f"The extraction process has begun and is currently in progress. The web scraper is scanning through all the links and collecting relevant information. Please be patient while the data is being gathered.")
-        coroutines = [self.csv_sheet(url) for url in url_lists]
-        dfs = await asyncio.gather(*coroutines)
-        results = pd.concat(dfs)
-        await export_sheet(results, categ)
 
     async def concurrent_scraping(self):
+        """
+        Performs concurrent scraping of product information from multiple Amazon search result pages.
+
+        Returns:
+            - list: A list of DataFrames, each containing scraped product information from a different page.
+        """
+        # Check if the provided Amazon link is valid:
         if await verify_amazon(self.base_url):
             return "I'm sorry, the link you provided is invalid. Could you please provide a valid Amazon link for the product category of your choice?"
-        print(f"-----------------------Welcome to Amazon crawler---------------------------------")
+
+        # Print welcome and category scraping message:
+        print(f"----------------------- |Welcome to Amazon {self.region}. |---------------------------------")
         searches = await self.category_name()
         print(f"Scraping category || {searches}.")
-        # Pull the number of pages of the category
+
+        # Pull the total number of pages for the category:
         number_pages = await self.num_of_pages()
         print(f"Total pages || {number_pages}.")
-         # Split the pagination and convert it list of urls
+
+        # Split the pagination and convert it to a list of URLs:
         product_urls = await self.crawl_url()
         print(f"The extraction process has begun and is currently in progress. The web scraper is scanning through all the links and collecting relevant information. Please be patient while the data is being gathered.")
+
+        # Use coroutines to scrape and save data from each URL concurrently:
         coroutines = [self.scrape_and_save(url) for url in product_urls]
         dfs = await asyncio.gather(*coroutines)
         return dfs
 
-    async def dataByAsin(self, asin):
-        """
-        Extracts product information from the Amazon product page by ASIN (Amazon Standard Identification Number).
 
-        Args:
-            -asin (str): The ASIN of the product to extract informatio from.
+    async def export_csv(self):
+        """
+        Scrapes data from a list of URLs, saves it to CSV files, and prints progress messages.
 
         Returns:
-            -dict: A dictionary containing product information, including name, price, rating, rating count, availability,
-                   hyperlink, image link, store, and store link.
-
-        Raises:
-            -AttributeError: If the product information cannot be extracted from the page.
+            - None
         """
-        # Construct the URL using the ASIN:
-        url = f"https://www.amazon.com/dp/{asin}"
-        # Retrieve the page content using 'static_connection' method:
-        content = await Response(url).content()
-        soup = BeautifulSoup(content, 'lxml')
-        try:
-            # Try to extract the image link using the second first selector.
-            image_link = soup.select_one(self.scrape['image_link_i']).get('src')
-        except Exception as e:
-            image_link = soup.select_one(self.scrape['image_link_ii']).get('src')
-        # finally:
-        #     # If the image link cannot be extracted, return an error message:
-        #     return f'Content loading error. Please try again in few minutes. Error message || {str(e)}.'
-        try:
-            availabilities = soup.select_one(self.scrape['availability']).text.strip()
-        except AttributeError:
-            availabilities = 'In stock'
-        store = await self.catch.text(soup.select_one(self.scrape['store']))
-        store_link = f"""https://www.amazon.com{await self.catch.attributes(soup.select_one(self.scrape['store']), 'href')}"""
-        # Construct the data dictionary containing product information:
-        datas = {
-            'Name': await self.catch.text(soup.select_one(self.scrape['name'])),
-            'Price': await self.catch.text(soup.select_one(self.scrape['price_us'])),
-            'Rating': await self.catch.text(soup.select_one(self.scrape['review'])),
-            'Rating count': await self.catch.text(soup.select_one(self.scrape['rating_count'])),
-            'Availability': availabilities,
-            'Hyperlink': url,
-            'Image': image_link,
-            'Store': store,
-            'Store link': store_link,
+        # Check if the provided Amazon link is valid:
+        if await verify_amazon(self.base_url):
+            return "I'm sorry, the link you provided is invalid. Could you please provide a valid Amazon link for the product category of your choice?"
 
-        }
-        return datas
+        # Print welcome and export message:
+        print(f"-----------------------| Welcome to Amazon {self.region}. |---------------------------------")
+        print(f"Exporting to CSV")
 
-    async def product_review(self, asin):
-        # asin = await self.getASIN(url)
-        # review_url = f"""https://{'/'.join(url.split("/")[2:4])}/product-reviews/{asin}/ref=cm_cr_arp_d_paging_btm_next_4?ie=UTF8&pageNumber=4&reviewerType=all_reviews&pageSize=10"""
-        review_url = f"https://www.amazon.com/product-reviews/{asin}"
-        async with async_playwright() as p:
-            browser = await p.chromium.launch(headless = True)
-            context = await browser.new_context(user_agent = userAgents())
-            page = await context.new_page()
-            await page.goto(review_url)
-            content = await page.content()
-            soup = BeautifulSoup(content, 'lxml')
-            profile_name = soup.select(self.scrape['profile_name'])
-            stars = soup.select(self.scrape['stars'])
-            review_title = soup.select(self.scrape['review_title'])
-            full_review = soup.select(self.scrape['full_review'])
-            datas = {
-                'top positive review':
-                    {
-                        'customer': profile_name[0].text.strip(),
-                        'stars': stars[0].text.strip(),
-                        'title': review_title[0].text.strip(),
-                        'review': full_review[0].text.strip()
-                    },
-                'top critical review':
-                    {
-                        'customer': profile_name[1].text.strip(),
-                        'stars': stars[1].text.strip(),
-                        'title': review_title[1].text.strip(),
-                        'review': full_review[1].text.strip()
-                    }
-            }
-            return datas
+        # Create a category name for the CSV file:
+        categ =f"""{self.region} - { await self.category_name()}."""
+        url_lists = await self.crawl_url()
 
+        # Print extraction progress message:
+        print(f"The extraction process has begun and is currently in progress. The web scraper is scanning through all the links and collecting relevant information. Please be patient while the data is being gathered.")
+
+        # Use coroutines to scrape and save data from each URL:
+        coroutines = [self.csv_sheet(url) for url in url_lists]
+        dfs = await asyncio.gather(*coroutines)
+
+        # Concatenate the DataFrames obtained from each URL:
+        results = pd.concat(dfs)
+
+        # Export the concatenated DataFrame to a CSV file:
+        await export_sheet(results, categ)

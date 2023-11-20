@@ -63,7 +63,7 @@ Upon executing the program, the scraper commences its operation by extracting th
   <li><b>Store link</b></li>
 </ul>
 
-##Supported domains:
+## Supported domains:
 - <b>".com"</b>          (US)
 - <b>".co.uk"</b>        (UK)
 - <b>".com.mx"</b>       (Mexico)

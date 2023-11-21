@@ -29,8 +29,8 @@ To use this Amazon scraper, simply input the category URLs for the products you 
 ## Input
 
 **Input Parameters:**
-- `categoryUrls` (Array of Strings): An array of Amazon category URLs that you want to scrape.
-  - Example: `["https://www.amazon.com/category1", "https://www.amazon.com/category2"]`
+- `categoryUrls` (Strings): A string Amazon category URLs that you want to scrape.
+  - Example: `"https://www.amazon.it/s?rh=n%3A10815246031&fs=true&ref=lp_10815246031_sar"`
 
 ## Output
 
@@ -75,6 +75,21 @@ Example Output:
     }
   ]
 }
+
+## Supported domains:
+- <b>".com"</b>          (US)
+- <b>".co.uk"</b>        (UK)
+- <b>".com.mx"</b>       (Mexico)
+- <b>".com.br"</b>       (Brazil)
+- <b>".com.au"</b>       (Australia)
+- <b>".com.jp"</b>       (Japan)
+- <b>".com.be"</b>       (Belgium)
+- <b>".in"</b>           (India)
+- <b>".fr"</b>           (France)
+- <b>".se"</b>           (Sweden)
+- <b>".de"</b>           (Germany)
+- <b>".it"</b>           (Italy)
+
 ```
 
 **Configuration Options:**

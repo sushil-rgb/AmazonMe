@@ -219,6 +219,7 @@ class Amazon:
                 datas = {
                     'Name': product,
                     'ASIN': await self.getASIN(url),
+                    'Region': self.region,
                     'Description': ' '.join([des.text.strip() for des in soup.select(self.scrape['description'])]),
                     'Breakdown': ' '.join([br.text.strip() for br in soup.select(self.scrape['prod_des'])]),
                     'Price': price,
@@ -281,7 +282,7 @@ class Amazon:
     async def concurrent_scraping(self):
         if await verify_amazon(self.base_url):
             return "I'm sorry, the link you provided is invalid. Could you please provide a valid Amazon link for the product category of your choice?"
-        print(f"-----------------------Welcome to Amazon crawler---------------------------------")
+        print(f"-----------------------| Welcome to Amazon {self.region}. |---------------------------------")
         print(f"Scraping datasets.")
         # Pull the number of pages of the category
         number_pages = await self.num_of_pages()

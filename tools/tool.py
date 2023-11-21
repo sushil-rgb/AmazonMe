@@ -65,6 +65,7 @@ class TryExcept:
             elements = "N/A"
         return elements
 
+
     async def attributes(self, element, attr):
         """
         Returns the value fo an attribute of an HTML element, of "N/A" if the attribute or element is not found.
@@ -235,11 +236,9 @@ async def create_path(dir_name):
 
     # Check if the directory already exists:
     if os.path.exists(path_dir):
-
         # If it exists, do nothing:
         pass
     else:
-
         # If it doesn't exist, create the directory:
         os.mkdir(path_dir)
 
@@ -264,11 +263,8 @@ async def export_sheet(dicts, name):
     # Convert the list of dictionaries to a pandas DataFrame:
     df = pd.DataFrame(dicts)
 
-    try:
-        # Save the DataFrame to a CSV file in the specified directory and with the given name:
-        df.to_csv(f"""{os.getcwd()}//{directory_name}//{name} | Amazon database.csv""", index = False)
-    except Exception as e:
-        df.to_csv(f"""{os.getcwd()}//{directory_name}//results | Amazon database.csv""", index = False)
+    # Save the DataFrame to a CSV file in the specified directory and with the given name:
+    df.to_csv(f"""{os.getcwd()}//{directory_name}//{name}.csv""", index = False)
 
     # Print a message indicating that the file has been saved:
     print(f"{name} saved.")
@@ -319,7 +315,7 @@ def rand_proxies():
     Returns:
         - str: A string representing a random proxy.
     """
-    with open('proxies.txt') as f:
+    with open('tools//proxies.txt') as f:
 
         # Read the contents of the file containing proxies and split them into a list:
         proxies = f.read().split("\n")

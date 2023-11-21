@@ -48,11 +48,12 @@ class Amazon:
         # This regex is intended to identify and capture currency-related symbols and characters in a string.
         # It includes a variety of symbols used across different regions.
 
-        self.rand_time = 3 * 60
+        self.rand_time = 2 * 60
         self.base_url = base_url
         self.headers = {'User-Agent': userAgents()}
         self.catch = TryExcept()
         self.scrape = yaml_load('selector')
+
 
     async def status(self):
         """
@@ -64,7 +65,8 @@ class Amazon:
         response = await Response(self.base_url).response()
         return response
 
-    async def num_of_pages(self, max_retries = 13):
+
+    async def num_of_pages(self):
         """
         Returns the number of pages of search results for the given URL.
 
@@ -74,31 +76,21 @@ class Amazon:
         Returns:
             int: The number of pages of search results.
         """
-        for retry in range(max_retries):
-            try:
-                content = await Response(self.base_url).content()
-                soup = BeautifulSoup(content, 'lxml')
+        content = await Response(self.base_url).content()
+        soup = BeautifulSoup(content, 'lxml')
 
-                # Try except clause for index error, this happens if there are only one page:
-                try:
-                    pages = await self.catch.text(soup.select(self.scrape['pages'])[-1])
-                except IndexError:
-                    pages = '1'
+        # Try except clause for index error, this happens if there are only one page:
+        try:
+            pages = await self.catch.text(soup.select(self.scrape['pages'])[-1])
+        except IndexError:
+            pages = '1'
 
-                # the current pages returns "Previous" instead of number, this only happens there only two pages, that's why I have returned the value 2.
-                try:
-                    return int(pages)
-                except ValueError:
-                    return 2
-            except ConnectionResetError as e:
-                print(f"Connection lost: {str(e)}. Retrying... ({retry + 1} / {max_retries})")
-                if retry < max_retries - 1:
-                    await asyncio.sleep(5)  # Delay before retrying.
-            except Exception as e:
-                print(f"Retry {retry + 1} failed: {str(e)}")
-                if retry < max_retries - 1:
-                    await asyncio.sleep(4)  # Delay before retrying.
-        raise Exception(f"Failed to retrieve valid data after {max_retries} retries.")
+        # the current pages returns "Previous" instead of number, this only happens there only two pages, that's why I have returned the value 2.
+        try:
+            return int(pages)
+        except ValueError:
+            return 2
+
 
     async def split_url(self):
         """
@@ -154,6 +146,7 @@ class Amazon:
             asin = "N/A"
         return asin
 
+
     async def category_name(self):
         resp = Response(self.base_url)
         """
@@ -177,47 +170,35 @@ class Amazon:
                     searches_results = soup.select_one(self.scrape['searches_III']).text.strip()
                 except AttributeError:
                     searches_results = soup.select_one(self.scrape['searches_IV']).text.strip()
-        category_name = re.sub(f"""{self.region} - {searches_results}.""", r'\.*', '')
-        return category_name
+
+        return searches_results
 
 
-    async def product_urls(self, url, max_retries = 13):
-        for retry in range(13):
-            try:
-                await asyncio.sleep(5)
-                """
-                Scrapes product data from the Amazon search results page for the given URL.
+    async def product_urls(self, url):
+        """
+        Scrapes product data from the Amazon search results page for the given URL.
 
-                Args:
-                    -list: A list of dictionaries, with each dictionary containing product data for single product.
+        Args:
+            -list: A list of dictionaries, with each dictionary containing product data for single product.
 
-                Raises:
-                    -Expecation: If there is an error while loading the content of the Amazon search results page.
-                """
-                # Use the 'static_connection' method to download the HTML content of the search results bage
-                content = await Response(url).content()
-                soup = BeautifulSoup(content, 'lxml')
+        Raises:
+            -Expecation: If there is an error while loading the content of the Amazon search results page.
+        """
+        # Use the 'static_connection' method to download the HTML content of the search results bage
+        content = await Response(url).content()
+        soup = BeautifulSoup(content, 'lxml')
 
-                # Check if main content element exists on page:
-                try:
-                    soup.select_one(self.scrape['main_content'])
-                except Exception as e:
-                    return f"Content loading error. Please try again in few minutes. Error message: {e}"
-                # Get product card contents from current page:
-                card_contents = [f"""https://www.amazon.{self.country_domain}{prod.select_one(self.scrape['hyperlink']).get('href')}""" for prod in soup.select(self.scrape['main_content'])]
-                return card_contents
-            except ConnectionResetError as se:
-                print(f"Connection lost: {str(e)}. Retrying... ({retry + 1} / {max_retries})")
-                if retry < max_retries - 1:
-                    await asyncio.sleep(5)  # Delay before retrying.
-            except Exception as e:
-                print(f"Retry {retry + 1} failed: {str(e)}")
-                if retry < max_retries - 1:
-                    await asyncio.sleep(4)  # Delay before retrying.
-        raise Exception(f"Failed to retrieve valid data after {max_retries} retries.")
+        # Check if main content element exists on page:
+        try:
+            soup.select_one(self.scrape['main_content'])
+        except Exception as e:
+            return f"Content loading error. Please try again in few minutes. Error message: {e}"
+        # Get product card contents from current page:
+        card_contents = [f"""https://www.amazon.{self.country_domain}{prod.select_one(self.scrape['hyperlink']).get('href')}""" for prod in soup.select(self.scrape['main_content'])]
+        return card_contents
 
 
-    async def scrape_product_info(self, url, max_retries = 13):
+    async def scrape_product_info(self, url, max_retries = 5):
         """
         Scrapes product information from the Amazon product page.
 
@@ -235,7 +216,6 @@ class Amazon:
         amazon_dicts = []
         for retry in range(max_retries):
             try:
-
                 # Retrieve the page content using 'static_connection' method:
                 content = await Response(url).content()
                 soup = BeautifulSoup(content, 'lxml')
@@ -248,7 +228,6 @@ class Amazon:
                 if product == "N/A":
                     raise Exception("Product is 'N/A' retrying...")
                 try:
-
                     # Try to extract the image link using the second first selector.
                     image_link = soup.select_one(self.scrape['image_link_i']).get('src')
                 except Exception as e:
@@ -413,10 +392,13 @@ class Amazon:
 
         # Print welcome and export message:
         print(f"-----------------------| Welcome to Amazon {self.region}. |---------------------------------")
-        print(f"Exporting to CSV")
+        await asyncio.sleep(2)
+        print(f"Scraping and exporting to CSV.")
+        searches = await self.category_name()
+        print(f"Scraping category || {searches}.")
 
         # Create a category name for the CSV file:
-        categ =f"""{self.region} - { await self.category_name()}."""
+        categ_name = f"{self.region} - {searches}"
         url_lists = await self.crawl_url()
 
         # Print extraction progress message:
@@ -430,4 +412,5 @@ class Amazon:
         results = pd.concat(dfs)
 
         # Export the concatenated DataFrame to a CSV file:
-        await export_sheet(results, categ)
+        await export_sheet(results, categ_name)
+

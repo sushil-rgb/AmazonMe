@@ -9,7 +9,7 @@ if __name__ == '__main__':
 
 
     async def main():
-        base_url = "https://www.amazon.it/s?i=electronics&bbn=435506031&rh=n%3A435506031%2Cp_89%3ASAMSUNG%2Cp_36%3A1631632031&dc&qid=1700590496&rnid=1631630031&ref=sr_nr_p_36_1&ds=v1%3AXPJo1OBzjr4wzSErwjROLF6GDPBBqUhBU2T97hTitVM"
+        base_url = "https://www.amazon.com.br/s?rh=n%3A19778000011&fs=true&ref=lp_19778000011_sar"
         status = await Amazon(base_url, None).status()
 
         if status == 503:

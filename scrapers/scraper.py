@@ -34,7 +34,7 @@ class Amazon:
         self.region = check_domain(base_url)
 
         # Define a regular expression pattern for currencies in different regions
-        self.currency = r'[$₹,R\$€£kr()%¥\s]'   # Characters representing various currencies
+        self.currency = r'[$₹,R$€£kr()%¥\s]'   # Characters representing various currencies
         # Explanation:
         # - '[$₹,R\$€£kr()%¥\s]': Match any of the characters within the square brackets
         #   - '$': Dollar sign
@@ -48,6 +48,8 @@ class Amazon:
         # This regex is intended to identify and capture currency-related symbols and characters in a string.
         # It includes a variety of symbols used across different regions.
 
+        # Caution: Adjusting the random time to a value less than the current setting (2 minutes) for faster scraping may increase the risk of getting IP banned.
+                                                # Scrape responsibly:
         self.rand_time = 2 * 60
         self.base_url = base_url
         self.headers = {'User-Agent': userAgents()}

@@ -34,7 +34,7 @@ class Amazon:
         self.region = region(base_url)
 
         # Define a regular expression pattern for currencies in different regions
-        self.currency = r'[$₹,R$€£kr()%¥\s]'   # Characters representing various currencies
+        self.currency = r'["$₹,R$€£kr()%¥\s]'   # Characters representing various currencies
         # Explanation:
         # - '[$₹,R\$€£kr()%¥\s]': Match any of the characters within the square brackets
         #   - '$': Dollar sign
@@ -264,7 +264,7 @@ class Amazon:
                 if 'Page' in price.split():
                     price = await self.catch.text(soup.select_one(self.scrape['price_us_i']))
                 if price != "N/A":
-                    price = float(re.sub(self.currency, '', price))
+                    price = re.sub(self.currency, '', price)
                 try:
                     deal_price = await self.catch.text(soup.select(self.scrape['deal_price'])[0])
                     if 'Page' in deal_price.split():
@@ -272,7 +272,7 @@ class Amazon:
                 except Exception as e:
                     deal_price = "N/A"
                 if deal_price != "N/A":
-                    deal_price = float(re.sub(self.currency, '', deal_price))
+                    deal_price = re.sub(self.currency, '', deal_price)
                 try:
                     savings = await self.catch.text(soup.select(self.scrape['savings'])[-1])
                 except IndexError:
@@ -314,7 +314,7 @@ class Amazon:
                 if retry < max_retries - 1:
                     await asyncio.sleep(5)  # Delay before retrying.
             except Exception as e:
-                print(f"Retry {retry + 1} failed: {str(e)}")
+                print(f"Retry {retry + 1} failed: {str(e)} | Error URL : {url}")
                 if retry < max_retries - 1:
                     await asyncio.sleep(4)  # Delay before retrying.
                 return amazon_dicts

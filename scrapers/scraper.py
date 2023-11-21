@@ -177,7 +177,7 @@ class Amazon:
                     searches_results = soup.select_one(self.scrape['searches_III']).text.strip()
                 except AttributeError:
                     searches_results = soup.select_one(self.scrape['searches_IV']).text.strip()
-        category_name = f"""{self.region} - {searches_results}."""
+        category_name = re.sub(f"""{self.region} - {searches_results}.""", r'\.*', '')
         return category_name
 
 

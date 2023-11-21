@@ -75,6 +75,7 @@ Example Output:
     }
   ]
 }
+```
 
 ## Supported domains:
 - <b>".com"</b>          (US)
@@ -89,8 +90,6 @@ Example Output:
 - <b>".se"</b>           (Sweden)
 - <b>".de"</b>           (Germany)
 - <b>".it"</b>           (Italy)
-
-```
 
 **Configuration Options:**
 - None at the moment. The actor is configured to scrape product data from the provided category URLs.

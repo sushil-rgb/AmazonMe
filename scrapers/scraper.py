@@ -21,6 +21,24 @@ class Amazon:
         self.rand_time = 2 * 60
         self.country_domain = domain(base_url)
         self.region = region(base_url)
+        # Define a regular expression pattern for currencies in different regions
+        self.currency = r'["$₹,R$€£kr()%¥\s]'   # Characters representing various currencies
+        # Explanation:
+        # - '[$₹,R\$€£kr()%¥\s]': Match any of the characters within the square brackets
+        #   - '$': Dollar sign
+        #   - '₹': Indian Rupee
+        #   - '€': Euro
+        #   - '£': Pound Sterling
+        #   - 'kr': Krona or Krone
+        #   - '()%': Parentheses and percent sign
+        #   - '¥': Yen
+        #   - '\s': Whitespace characters
+        # This regex is intended to identify and capture currency-related symbols and characters in a string.
+        # It includes a variety of symbols used across different regions.
+
+        # Caution: Adjusting the random time to a value less than the current setting (2 minutes) for faster scraping may increase the risk of getting IP banned.
+                                                # Scrape responsibly:
+        self.rand_time = 2 * 60
         self.base_url = base_url
         self.headers = {'User-Agent': userAgents()}
         self.catch = TryExcept()
@@ -192,7 +210,7 @@ class Amazon:
                 if 'Page' in price.split():
                     price = await self.catch.text(soup.select_one(self.scrape['price_us_i']))
                 if price != "N/A":
-                    price = re.sub(r'[$₹,()%¥\s]', '', price)
+                    price = re.sub(self.currency, '', price)
                 try:
                     deal_price = await self.catch.text(soup.select(self.scrape['deal_price'])[0])
                     if 'Page' in deal_price.split():
@@ -200,7 +218,7 @@ class Amazon:
                 except Exception as e:
                     deal_price = "N/A"
                 if deal_price != "N/A":
-                    deal_price = re.sub(r'[$₹,()%¥\s]', '', deal_price)
+                    deal_price = re.sub(self.currency, '', deal_price)
                 try:
                     savings = await self.catch.text(soup.select(self.scrape['savings'])[-1])
                 except IndexError:

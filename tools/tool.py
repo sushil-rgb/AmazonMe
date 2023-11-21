@@ -171,7 +171,7 @@ async def verify_amazon(url):
         pass
 
 
-def check_domain(url):
+def region(url):
     """
     Check the domain of a URL and return the country it belongs to.
 

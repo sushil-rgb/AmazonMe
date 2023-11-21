@@ -1,4 +1,4 @@
-from tools.tool import TryExcept, Response, yaml_load, randomTime, userAgents, verify_amazon, flat, check_domain, export_sheet, domain
+from tools.tool import TryExcept, Response, yaml_load, randomTime, userAgents, verify_amazon, flat, region, export_sheet, domain
 from bs4 import BeautifulSoup
 import pandas as pd
 import asyncio
@@ -31,7 +31,7 @@ class Amazon:
         """
         self.proxy = proxy
         self.country_domain = domain(base_url)
-        self.region = check_domain(base_url)
+        self.region = region(base_url)
 
         # Define a regular expression pattern for currencies in different regions
         self.currency = r'[$₹,R$€£kr()%¥\s]'   # Characters representing various currencies
@@ -68,7 +68,7 @@ class Amazon:
         return response
 
 
-    async def num_of_pages(self):
+    async def num_of_pages(self, max_retries = 13):
         """
         Returns the number of pages of search results for the given URL.
 
@@ -78,20 +78,30 @@ class Amazon:
         Returns:
             int: The number of pages of search results.
         """
-        content = await Response(self.base_url).content()
-        soup = BeautifulSoup(content, 'lxml')
+        for retry in range(max_retries):
+            try:
+                content = await Response(self.base_url).content()
+                soup = BeautifulSoup(content, 'lxml')
 
-        # Try except clause for index error, this happens if there are only one page:
-        try:
-            pages = await self.catch.text(soup.select(self.scrape['pages'])[-1])
-        except IndexError:
-            pages = '1'
+                # Try except clause for index error, this happens if there are only one page:
+                try:
+                    pages = await self.catch.text(soup.select(self.scrape['pages'])[-1])
+                except IndexError:
+                    pages = '1'
 
-        # the current pages returns "Previous" instead of number, this only happens there only two pages, that's why I have returned the value 2.
-        try:
-            return int(pages)
-        except ValueError:
-            return 2
+                # the current pages returns "Previous" instead of number, this only happens there only two pages, that's why I have returned the value 2.
+                try:
+                    return int(pages)
+                except ValueError:
+                    return 2
+            except ConnectionResetError as se:
+                print(f"Connection lost: {str(e)}. Retrying... ({retry + 1} / {max_retries})")
+                if retry < max_retries - 1:
+                    await asyncio.sleep(5)  # Delay before retrying.
+            except Exception as e:
+                print(f"Retry {retry + 1} failed: {str(e)}")
+                if retry < max_retries - 1:
+                    await asyncio.sleep(4)  # Delay before retrying.
 
 
     async def split_url(self):
@@ -176,7 +186,7 @@ class Amazon:
         return searches_results
 
 
-    async def product_urls(self, url):
+    async def product_urls(self, url, max_retries = 13):
         """
         Scrapes product data from the Amazon search results page for the given URL.
 
@@ -186,21 +196,33 @@ class Amazon:
         Raises:
             -Expecation: If there is an error while loading the content of the Amazon search results page.
         """
-        # Use the 'static_connection' method to download the HTML content of the search results bage
-        content = await Response(url).content()
-        soup = BeautifulSoup(content, 'lxml')
+        for retry in range(max_retries):
+            try:
+                # Use the 'static_connection' method to download the HTML content of the search results bage
+                content = await Response(url).content()
+                soup = BeautifulSoup(content, 'lxml')
 
-        # Check if main content element exists on page:
-        try:
-            soup.select_one(self.scrape['main_content'])
-        except Exception as e:
-            return f"Content loading error. Please try again in few minutes. Error message: {e}"
-        # Get product card contents from current page:
-        card_contents = [f"""https://www.amazon.{self.country_domain}{prod.select_one(self.scrape['hyperlink']).get('href')}""" for prod in soup.select(self.scrape['main_content'])]
-        return card_contents
+                # Check if main content element exists on page:
+                try:
+                    soup.select_one(self.scrape['main_content'])
+                except Exception as e:
+                    return f"Content loading error. Please try again in few minutes. Error message: {e}"
+                # Get product card contents from current page:
+                card_contents = [f"""https://www.amazon.{self.country_domain}{prod.select_one(self.scrape['hyperlink']).get('href')}""" for prod in soup.select(self.scrape['main_content'])]
+                return card_contents
+            except ConnectionResetError as se:
+                print(f"Connection lost: {str(e)}. Retrying... ({retry + 1} / {max_retries})")
+                if retry < max_retries - 1:
+                    await asyncio.sleep(5)  # Delay before retrying.
+            except Exception as e:
+                print(f"Retry {retry + 1} failed: {str(e)}")
+                if retry < max_retries - 1:
+                    await asyncio.sleep(4)  # Delay before retrying.
+
+        raise Exception(f"Failed to retrieve valid data after {max_retries} retries.")
 
 
-    async def scrape_product_info(self, url, max_retries = 5):
+    async def scrape_product_info(self, url, max_retries = 13):
         """
         Scrapes product information from the Amazon product page.
 

@@ -4,6 +4,7 @@ searches: div[cel_widget_id="UPPER-RESULT_INFO_BAR-0"]
 searches_I: "div#departments span.a-size-base.a-color-base.a-text-bold"
 searches_II: "span.a-color-state.a-text-bold"
 searches_III: "span.a-list-item span.a-size-base.a-color-base.a-text-bold"
+searches_IV: "a.a-link-normal.s-navigation-item span.a-size-base.a-color-base"
 
 
 pages: "span.s-pagination-strip span.s-pagination-item.s-pagination-disabled"

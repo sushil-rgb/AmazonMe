@@ -170,7 +170,13 @@ class Amazon:
         try:
             searches_results = soup.select_one(self.scrape['searches_I']).text.strip()
         except AttributeError:
-            searches_results = re.sub(r'["]', '', soup.select_one(self.scrape['searches_II']).text.strip())
+            try:
+                searches_results = re.sub(r'["]', '', soup.select_one(self.scrape['searches_II']).text.strip())
+            except AttributeError:
+                try:
+                    searches_results = soup.select_one(self.scrape['searches_III']).text.strip()
+                except AttributeError:
+                    searches_results = soup.select_one(self.scrape['searches_IV']).text.strip()
         category_name = f"""{self.region} - {searches_results}."""
         return category_name
 

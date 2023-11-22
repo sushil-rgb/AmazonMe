@@ -34,7 +34,7 @@ class Amazon:
         self.region = region(base_url)
 
         # Define a regular expression pattern for currencies in different regions
-        self.currency = r'["$₹,R$€£kr()%¥\s]'   # Characters representing various currencies
+        self.currency = r'["$₹R$€£kr()%¥\s]'   # Characters representing various currencies
         # Explanation:
         # - '[$₹,R\$€£kr()%¥\s]': Match any of the characters within the square brackets
         #   - '$': Dollar sign

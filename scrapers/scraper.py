@@ -25,6 +25,7 @@ class Amazon:
         - scrape (yaml_load): An instance of the yaml_load class, used for selecting page elements to be scraped.
     """
 
+
     def __init__(self, base_url, proxy):
         """
         Initializes an instance of the Amazon class.

@@ -1,3 +1,4 @@
+from fake_useragent import UserAgent
 from urllib.parse import urlparse
 import itertools
 import aiohttp
@@ -248,11 +249,8 @@ def userAgents():
         -A string representing a ranom user agent.
     """
     # Read the contents of the file containing user agents and split them into a list:
-    with open('tools//user-agents.txt') as f:
-        agents = f.read().split("\n")
-
-         # Use the random_values function to select a random user agent from the list:
-        return random_values(agents)
+    agents = UserAgent()
+    return agents.random
 
 
 def yaml_load(selectors):

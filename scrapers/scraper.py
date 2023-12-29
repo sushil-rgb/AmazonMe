@@ -243,8 +243,10 @@ class Amazon:
             try:
                 # Retrieve the page content using 'static_connection' method:
                 content = await Response(url).content()
+
                 # Adding a random time interval between each requests
-                await asyncio.sleep(self.rand_time)
+                random_time_interval = await randomTime(self.rand_time)
+                await asyncio.sleep(random_time_interval)
 
                 soup = BeautifulSoup(content, 'lxml')
 

@@ -243,6 +243,9 @@ class Amazon:
             try:
                 # Retrieve the page content using 'static_connection' method:
                 content = await Response(url).content()
+                # Adding a random time interval between each requests
+                await asyncio.sleep(self.rand_time)
+
                 soup = BeautifulSoup(content, 'lxml')
 
                 # Extract product name:
@@ -335,46 +338,7 @@ class Amazon:
         return flat(results)
 
 
-    async def scrape_and_save(self, url):
-        """
-        Scrapes data from a given URL, saves it to a file, and returns the scarped data as a Pandas Dataframe.
-
-        Args:
-            -interval (int): Time interval in seconds to sleep before scraping the data.
-            -url (str): The URL to scrape data from.
-
-        Returns:
-            -pd.DataFrame: A Pandas DataFrame containing the scraped data.
-
-        Raises:
-            -HTTPError: If the HTTP request to the URL returns an error status code.
-            -Exception: If there is an error while scraping the data.
-        """
-        random_sleep = await randomTime(self.rand_time)
-        await asyncio.sleep(random_sleep)
-        datas = await self.scrape_product_info(url)
-        return datas
-
-
-    async def csv_sheet(self, url):
-        """
-            Scrapes data from a given URL, saves it to a file, and returns the scraped data as a Pandas DataFrame.
-
-            Args:
-                - url (str): The URL to scrape data from.
-
-            Returns:
-                - pd.DataFrame: A Pandas DataFrame containing the scraped data.
-
-            Raises:
-                - HTTPError: If the HTTP request to the URL returns an error status code.
-                - Exception: If there is an error while scraping the data.
-        """
-        frames = await self.scrape_and_save(url)
-        return pd.DataFrame(frames)
-
-
-    async def concurrent_scraping(self):
+    async def concurrency(self):
         """
         Performs concurrent scraping of product information from multiple Amazon search result pages.
 
@@ -386,7 +350,7 @@ class Amazon:
             return "I'm sorry, the link you provided is invalid. Could you please provide a valid Amazon link for the product category of your choice?"
 
         # Print welcome and category scraping message:
-        print(f"----------------------- |Welcome to Amazon {self.region}. |---------------------------------")
+        print(f"----------------------- | Welcome to Amazon {self.region}. |---------------------------------")
         searches = await self.category_name()
         print(f"Scraping category || {searches}.")
 
@@ -399,9 +363,9 @@ class Amazon:
         print(f"The extraction process has begun and is currently in progress. The web scraper is scanning through all the links and collecting relevant information. Please be patient while the data is being gathered.")
 
         # Use coroutines to scrape and save data from each URL concurrently:
-        coroutines = [self.scrape_and_save(url) for url in product_urls]
-        dfs = await asyncio.gather(*coroutines)
-        return dfs
+        coroutines = [self.scrape_product_info(url) for url in product_urls]
+        results = await asyncio.gather(*coroutines)
+        return results
 
 
     async def export_csv(self):
@@ -412,30 +376,13 @@ class Amazon:
             - None
         """
         # Check if the provided Amazon link is valid:
-        if await verify_amazon(self.base_url):
-            return "I'm sorry, the link you provided is invalid. Could you please provide a valid Amazon link for the product category of your choice?"
-
-        # Print welcome and export message:
-        print(f"-----------------------| Welcome to Amazon {self.region}. |---------------------------------")
-        await asyncio.sleep(2)
-        print(f"Scraping and exporting to CSV.")
-        searches = await self.category_name()
-        print(f"Scraping category || {searches}.")
-
-        # Create a category name for the CSV file:
-        categ_name = f"{self.region} - {searches}"
-        url_lists = await self.crawl_url()
-
-        # Print extraction progress message:
-        print(f"The extraction process has begun and is currently in progress. The web scraper is scanning through all the links and collecting relevant information. Please be patient while the data is being gathered.")
-
-        # Use coroutines to scrape and save data from each URL:
-        coroutines = [self.csv_sheet(url) for url in url_lists]
-        dfs = await asyncio.gather(*coroutines)
+        categ_name = f"{self.region} - {await self.category_name()}"
+        concurrency_results = await self.concurrency()
+        results_dataframes = [pd.DataFrame(result) for result in concurrency_results]
 
         # Concatenate the DataFrames obtained from each URL:
-        results = pd.concat(dfs)
+        final_results = pd.concat(results_dataframes)
 
         # Export the concatenated DataFrame to a CSV file:
-        await export_sheet(results, categ_name)
+        await export_sheet(final_results, categ_name)
 

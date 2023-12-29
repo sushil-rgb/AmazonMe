@@ -1,4 +1,4 @@
-from tools.tool import flat, export_sheet
+from tools.tool import flat, export_sheet, region
 from scrapers.scraper import Amazon
 import pymongo as mong
 
@@ -13,7 +13,8 @@ async def export_to_mong(url, proxy):
 
     Returns:
         - pymongo.results.InsertManyResult: The result of the insertion into the MongoDB collection.
-    """# Create an instance of the Amazon class with the provided URL and proxy:
+    """
+    # Create an instance of the Amazon class with the provided URL and proxy:
     amazon = Amazon(url, proxy)
 
     # Connect to the MongoDB database:
@@ -21,7 +22,7 @@ async def export_to_mong(url, proxy):
     db = client['amazon']
 
     # Get the collection name based on the category name:
-    collection_name = await amazon.category_name()
+    collection_name = f"{region(url)} - {await amazon.category_name()}"
 
     # Print a message about collecting data to the Mongo database:
     print(f"Collecting {collection_name} to Mongo database.")
@@ -30,7 +31,7 @@ async def export_to_mong(url, proxy):
     collection = db[collection_name]
 
     # Scrape and save product information concurrently:
-    datas = await amazon.concurrent_scraping()
+    datas = await amazon.concurrency()
 
     # Insert the scraped data into the MongoDB collection:
     result = collection.insert_many(flat(datas))

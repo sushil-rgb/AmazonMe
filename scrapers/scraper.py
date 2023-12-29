@@ -25,11 +25,10 @@ class Amazon:
     """
 
 
-    def __init__(self, base_url, proxy):
+    def __init__(self, base_url):
         """
         Initializes an instance of the Amazon class.
         """
-        self.proxy = proxy
         self.country_domain = domain(base_url)
         self.region = region(base_url)
 

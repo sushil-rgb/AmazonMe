@@ -197,6 +197,7 @@ class Amazon:
         Raises:
             -Expecation: If there is an error while loading the content of the Amazon search results page.
         """
+        url_lists = []
         for retry in range(max_retries):
             try:
                 # Use the 'static_connection' method to download the HTML content of the search results bage
@@ -210,17 +211,15 @@ class Amazon:
                     return f"Content loading error. Please try again in few minutes. Error message: {e}"
                 # Get product card contents from current page:
                 card_contents = [f"""https://www.amazon.{self.country_domain}{prod.select_one(self.scrape['hyperlink']).get('href')}""" for prod in soup.select(self.scrape['main_content'])]
-                return card_contents
-            except ConnectionResetError as se:
-                print(f"Connection lost: {str(e)}. Retrying... ({retry + 1} / {max_retries})")
+                url_lists.append(card_contents)
+                break
+            except Exception as e:
+                print(f"Retry {retry + 1} failed: {str(e)} || Retrying... {retry + 1} / {max_retries}")
                 if retry < max_retries - 1:
                     await asyncio.sleep(5)  # Delay before retrying.
-            except Exception as e:
-                print(f"Retry {retry + 1} failed: {str(e)}")
-                if retry < max_retries - 1:
-                    await asyncio.sleep(4)  # Delay before retrying.
-
-        raise Exception(f"Failed to retrieve valid data after {max_retries} retries.")
+                else:
+                    raise Exception(f"Failed to retrieve valid data after {max_retries} retries.")
+        return flat(url_lists)
 
 
     async def scrape_product_info(self, url, max_retries = 13):
@@ -314,17 +313,14 @@ class Amazon:
                     'Store link': store_link,
                 }
                 amazon_dicts.append(datas)
-                return amazon_dicts
-            except ConnectionResetError as se:
-                print(f"Connection lost: {str(e)}. Retrying... ({retry + 1} / {max_retries})")
+                break
+            except Exception as e:
+                print(f"Retry {retry + 1} failed: {str(e)} || Retrying... {retry + 1} / {max_retries}")
                 if retry < max_retries - 1:
                     await asyncio.sleep(5)  # Delay before retrying.
-            except Exception as e:
-                print(f"Retry {retry + 1} failed: {str(e)} | Error URL : {url}")
-                if retry < max_retries - 1:
-                    await asyncio.sleep(4)  # Delay before retrying.
-                return amazon_dicts
-        raise Exception(f"Failed to retrieve valid data after {max_retries} retries.")
+                else:
+                    raise Exception(f"Failed to retrieve valid data after {max_retries} retries.")
+            return amazon_dicts
 
 
     async def crawl_url(self):

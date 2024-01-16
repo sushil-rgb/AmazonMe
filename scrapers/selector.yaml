@@ -2,7 +2,7 @@
 product_name: "div.a-section.a-spacing-none.a-spacing-top-small.s-title-instructions-style h2 a span"
 searches: div[cel_widget_id="UPPER-RESULT_INFO_BAR-0"]
 searches_I: "div#departments span.a-size-base.a-color-base.a-text-bold"
-searches_II: "span.a-color-state.a-text-bold"
+searches_II: "h1.a-size-base.s-desktop-toolbar.a-text-normal div.s-desktop-width-max.sg-row-align-items-center.s-wide-grid-style-t1.s-wide-grid-style.sg-row div.sg-col-14-of-20.sg-col-18-of-24.sg-col.s-breadcrumb.sg-col-10-of-16.sg-col-6-of-12 div.sg-col-inner span.a-color-state.a-text-bold span.a-color-state.a-text-bold"
 searches_III: "span.a-list-item span.a-size-base.a-color-base.a-text-bold"
 searches_IV: "a.a-link-normal.s-navigation-item span.a-size-base.a-color-base"
 

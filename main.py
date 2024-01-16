@@ -9,11 +9,12 @@ if __name__ == '__main__':
 
 
     async def main():
-        base_url = "https://www.amazon.com/s?k=gaming+keyboard&_encoding=UTF8&content-id=amzn1.sym.12129333-2117-4490-9c17-6d31baf0582a&pd_rd_r=34c04b08-58c2-4dec-8cce-e1ba5b33f1b4&pd_rd_w=6uYt1&pd_rd_wg=yxxCi&pf_rd_p=12129333-2117-4490-9c17-6d31baf0582a&pf_rd_r=0FTRXQKJYSVRXBPV695G&ref=pd_gw_unk"
+        base_url = "https://www.amazon.com/s?i=specialty-aps&bbn=4954955011&rh=n%3A4954955011%2Cn%3A%212617942011%2Cn%3A2747968011&ref=nav_em__nav_desktop_sa_intl_painting_drawing_supplies_0_2_8_2"
         status = await Amazon(base_url, None).status()
 
         if status == 503:
-            return "503 response. Please try again later."
+            return "503 response. Please try again in few minutes."
+
         # Type True if you want to export to CSV and avoid MongoDB
         csv = True
         # Type True if you want to use proxy:

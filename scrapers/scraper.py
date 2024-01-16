@@ -128,8 +128,8 @@ class Amazon:
 
         # Get the URL of the next button on the search result page and costruct the URL of the next search result page:
         next_link = f"""https://www.amazon.{self.country_domain}{await self.catch.attributes(soup.select_one(self.scrape['next_button']), 'href')}"""
-        for num in range(1, total_pages):
 
+        for num in range(1, total_pages):
             # Replace the 'page' number in the URL with curren tpage number increment by 1:
             next_url = re.sub(r'page=\d+', f'page={num+1}' , next_link)
 
@@ -197,6 +197,7 @@ class Amazon:
         Raises:
             -Expecation: If there is an error while loading the content of the Amazon search results page.
         """
+        url_lists = []
         for retry in range(max_retries):
             try:
                 # Use the 'static_connection' method to download the HTML content of the search results bage
@@ -210,17 +211,15 @@ class Amazon:
                     return f"Content loading error. Please try again in few minutes. Error message: {e}"
                 # Get product card contents from current page:
                 card_contents = [f"""https://www.amazon.{self.country_domain}{prod.select_one(self.scrape['hyperlink']).get('href')}""" for prod in soup.select(self.scrape['main_content'])]
-                return card_contents
-            except ConnectionResetError as se:
-                print(f"Connection lost: {str(e)}. Retrying... ({retry + 1} / {max_retries})")
-                if retry < max_retries - 1:
-                    await asyncio.sleep(5)  # Delay before retrying.
+                url_lists.append(card_contents)
             except Exception as e:
-                print(f"Retry {retry + 1} failed: {str(e)}")
+                print(f"Retry {retry + 1} || Error: {str(e)}\n URL: {url}")
                 if retry < max_retries - 1:
-                    await asyncio.sleep(4)  # Delay before retrying.
+                    await asyncio.sleep(5)
+                else:
+                    return f"Failed to retrieve valid data after {max_retries} retries. Scraped URLS are saved and ready for crawling process."
 
-        raise Exception(f"Failed to retrieve valid data after {max_retries} retries.")
+        return flat(url_lists)
 
 
     async def scrape_product_info(self, url, max_retries = 13):
@@ -314,17 +313,14 @@ class Amazon:
                     'Store link': store_link,
                 }
                 amazon_dicts.append(datas)
-                return amazon_dicts
-            except ConnectionResetError as se:
-                print(f"Connection lost: {str(e)}. Retrying... ({retry + 1} / {max_retries})")
-                if retry < max_retries - 1:
-                    await asyncio.sleep(5)  # Delay before retrying.
+                break
             except Exception as e:
-                print(f"Retry {retry + 1} failed: {str(e)} | Error URL : {url}")
+                print(f"Retry {retry + 1} || Error: {str(e)}\nURL: {url}")
                 if retry < max_retries - 1:
-                    await asyncio.sleep(4)  # Delay before retrying.
-                return amazon_dicts
-        raise Exception(f"Failed to retrieve valid data after {max_retries} retries.")
+                    await asyncio.sleep(5)
+                else:
+                    raise Exception(f"Failed to retrieve valid data after {max_retries} retries. Scraped datas are saved and exported.")
+        return amazon_dicts
 
 
     async def crawl_url(self):
@@ -351,18 +347,8 @@ class Amazon:
         if await verify_amazon(self.base_url):
             return "I'm sorry, the link you provided is invalid. Could you please provide a valid Amazon link for the product category of your choice?"
 
-        # Print welcome and category scraping message:
-        print(f"----------------------- | Welcome to Amazon {self.region}. |---------------------------------")
-        searches = await self.category_name()
-        print(f"Scraping category || {searches}.")
-
-        # Pull the total number of pages for the category:
-        number_pages = await self.num_of_pages()
-        print(f"Total pages || {number_pages}.")
-
         # Split the pagination and convert it to a list of URLs:
         product_urls = await self.crawl_url()
-        print(f"The extraction process has begun and is currently in progress. The web scraper is scanning through all the links and collecting relevant information. Please be patient while the data is being gathered.")
 
         # Use coroutines to scrape and save data from each URL concurrently:
         coroutines = [self.scrape_product_info(url) for url in product_urls]
@@ -378,7 +364,25 @@ class Amazon:
             - None
         """
         # Check if the provided Amazon link is valid:
-        categ_name = f"{self.region} - {await self.category_name()}"
+        # Print welcome and category scraping message:
+        try:
+            searches = await self.category_name()
+        except Exception as e:
+            return "Content loading error. Please try again in few minutes."
+
+        print(f"----------------------- | Welcome to Amazon {self.region}. |---------------------------------")
+        await asyncio.sleep(2)
+        print(f"Scraping category || {searches}.")
+
+        # Pull the total number of pages for the category:
+        number_pages = await self.num_of_pages()
+        print(f"Total pages || {number_pages}.")
+
+        await asyncio.sleep(2)
+
+        print(f"The extraction process has begun and is currently in progress. The web scraper is scanning through all the links and collecting relevant information. Please be patient while the data is being gathered.")
+
+        categ_name = f"{self.region} - {searches}."
         concurrency_results = await self.concurrency()
         results_dataframes = [pd.DataFrame(result) for result in concurrency_results]
 
